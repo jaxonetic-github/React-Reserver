@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -9,19 +8,13 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Menu from '@mui/material/Menu';
 
-import ProfileDialog from './ProfileDialog';
-import SignInDialogue from './SignInDialogue';
 import { useRealmApp } from "./RealmApp";
-import {Link, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 require('./css/appbarr.css'); 
 /**
@@ -81,8 +74,9 @@ console.log(app.profile);
           align="center"
           color="text.primary"
           gutterBottom
+          sx={{fontFamily: "cursive",fontWeight: 650}}
          >
-            8 Angels Transportation
+            8Angels Transportation
           </Typography>
           </Box>
           

@@ -37,14 +37,13 @@ function Title(props) {
  *
  */
 export default function Reservations() {
-  const [realmApp, setRealmApp] = useState(useRealmApp());
-  const [reservations, setReservations] = useState([]);
+  const [app, setApp] = useState(useRealmApp());
+  const [reservations, setReservations] = useState(app.reservations||[]);
   const navigate = useNavigate();
   useEffect(async    ()=>{
-     const res= await realmApp?.currentUser?.functions?.FindReservation();
-       if(res){
-         setReservations(JSON.parse(res));     
-       }
+console.log(reservations, '   ',app.reservations);
+//         setReservations(JSON.parse(res));     
+  //setReservations(app.reservations );   
   })
   
   const adjustDate = (someDate)=>
@@ -53,8 +52,8 @@ export default function Reservations() {
   return (
     <React.Fragment>
     <Container >
-      <Typography component="h2" variant="h6" color="primary" gutterBottom>
-      Reservations
+     <Typography component="h2" variant="h6" color="primary" gutterBottom>
+      {reservations.length} Reservations 
     </Typography>
       <Table size="small">
         <TableHead>

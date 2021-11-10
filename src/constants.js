@@ -1,4 +1,46 @@
 
+const title = 'Service';
+const subtitle = 'Entertainment and Pleasure';
+const reservationButton = 'Make A Reservation';
+const paragraph0Text = '8ANGELS is uniquely prepared to meet your private transportation needs. Our  program serves  a range of industries and occasions, including Concert/tours, sporting events, business venues, wedding events and more. You can depend on an affordable spacious vehicle. We\'ve got you covered! ';
+const paragraph1Text = 'This Vehicle is exclusively for transportation to and from hotels and events.  It is also a perfect choice to transport groomsmen and bridesmaids during wedding preparations'
+export const HOME_PAGE_DEFAULT = {title, subtitle, reservationButton,paragraphs: [paragraph0Text, paragraph1Text]};
+
+
+export const TIERS = [
+  {
+    title: 'Features',
+    price: 'For your Comfort and Protection',
+    description: [
+      'Seats upto 8 Passengers',
+      'No smoking or Pets',
+      'camera in vehicle',
+      'hand sanitizers and wipes',
+    ],
+  },
+  {
+    title: 'More Info',
+
+    price: '15',
+    description: [
+      'Driver:            Mr Awan Kur',
+      'Phone :           480-809-7897',
+      'Email :      kurawan@yahoo.com',
+      'Or click below  to get started',     ],
+    buttonText: 'Get started',
+    buttonVariant: 'contained',
+  },
+  {
+    title: 'Arrive in styles',
+    price: '30',
+    description: [
+      'Weddings',
+      'Airport Escorts',
+      'Business Conventions',
+      'Concentions',
+    ],
+  },
+]
 
 export function handleAuthenticationError(err, setError) {
   let returnMsg=null;

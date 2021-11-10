@@ -1,7 +1,10 @@
 import React from "react";
 import * as Realm from "realm-web";
 
+import {HOME_PAGE_DEFAULT, TIERS} from './constants';
+
 const RealmAppContext = React.createContext();
+
 
 export const useRealmApp = () => {
   const app = React.useContext(RealmAppContext);
@@ -15,14 +18,27 @@ export const useRealmApp = () => {
 
 export const RealmAppProvider = ({ appId, children }) => {
   const [app, setApp] = React.useState(new Realm.App(appId));
+  const stubbed = false;
+
   React.useEffect(() => {
     setApp(new Realm.App(appId)); 
-     console.log("realm effect user >>>",app.currentUser);
-     const prof = getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});
+    setCurrentUser(app.currentUser);
+   getSiteData().then((info)=>{console.log('site info',info); setSiteData(info);});
+
+    if(app?.currentUser?.customData?.firstName){
+     console.log("realm effect user >>>",app?.currentUser?.customData);
+     
+      getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
+   }
   }, [appId]);
+
 
   // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = React.useState(app.currentUser);
+  
+  /**
+   *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
+   */
   async function logIn(credentials) {
 
     const newUser = await app.logIn(credentials);
@@ -30,32 +46,46 @@ export const RealmAppProvider = ({ appId, children }) => {
     setCurrentUser(newUser); 
     const prof = await newUser.functions.GetUserData(newUser.id);
     setProfile(prof);
-    console.log("get userdata",prof)
+     getReservations();
     // If successful, app.currentUser is the user that just logged in
-    return newUser;
+    return newUser;   
   }
 
+
+/**
+ *  Logout current user, by clearing the CurrentUSer, Profile, and Reservations
+ */
   async function logOut() {
 
     // Log out the currently active user
      app.currentUser?.logOut();
     setCurrentUser(null);
     setProfile(null);
+    setReservations(null);
 
   }
 
-  async function registerWithEmail(email, password, firstName, lastName) {
+
+/**
+ * Register user by autoconfirmaed email, 
+ * @params email, password needed for registration
+ * @params firstName, lastName : needed for profile
+ * @params phone: optional
+ * 
+ */
+  async function registerWithEmail(email, password, firstName, lastName, phone) {
     try{
     // Log out the currently active user
      const aux =   await app.emailPasswordAuth.registerUser(email, password);
      console.log("registeremail result",aux);
     app.logIn(Realm.Credentials.emailPassword(email, password)).then(async(usr)=>{
       console.log("register with email inner Uusr",usr);
-     const userdata =  await usr.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email, userid:usr.id});
-    console.log(app.currentUser,'userdata = ', usr);
+     const userdata =  await usr.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email,phone, userid:usr.id});
+    console.log('userdata = ', userdata);
     setCurrentUser(usr);
-    const prof = await usr.functions.GetUserData(usr.id);
-    setProfile(prof)
+    //const prof = await usr.functions.GetUserData(usr.id);
+    setProfile({firstname:firstName, lastname:lastName,email:email,phone, userid:usr.id})
+      getReservations();
      })
     
 //console.log(app.currentUser.funct-ions,'registeringnewCurrent=');
@@ -72,15 +102,78 @@ export const RealmAppProvider = ({ appId, children }) => {
 
 const [profile, setProfile] = React.useState();
 
- async function getProfile(usr) {
+/**
+ * Return Profile of registered user.
+ * 
+ */
+ async function getProfile() {
     
-     const prof = await app?.currentUser?.functions?.GetUserData(app.currentUser.id);
-
+     let prof = null;
+     try{
+     prof = await app?.currentUser?.functions?.GetUserData(app.currentUser.id);
+    }catch(error){
+      console.log("Profile Access error",prof);
+    }
 return prof;
 }
 
+
+const [siteData, setSiteData] = React.useState( /*{pageData, cardData:tiers}*/);
+
+
+/**
+ * Read Site Data: If user object has the *?.functions* variable available
+ *   then retrieve the Site Data, otherwise anonymously login first for access 
+ *   to backend functions.
+ *
+ */
+ async function getSiteData() {
+     let site = stubbed && {pageData:HOME_PAGE_DEFAULT, cardData:TIERS};
+try{
+
+   site =   await app?.currentUser?.functions?.GetSiteData();
+
+  if(!site)
+  {
+    const user = await app.logIn(Realm.Credentials.anonymous());
+  site = await user?.functions?.GetSiteData();
+  }
+  setSiteData(site);
+
+  return site;
+}catch(error){
+  console.log("GetSiteData Error",error)
+}
+console.log('returning null site data');
+return null;
+}
+
+
+/**
+ * Edits data  for the Home Page by a registered Admin user.  
+ * @param newPageData takes a HOME_PAGE_DEFAULT type object
+ */
+ async function editHomeData(newPageData) {
+   let sdata = null; 
+     let site = null;
+try{console.log(newPageData);
+     const editResults = await app?.currentUser?.functions?.EditHomeData({screen:'home_general',pageData:newPageData, cardData:siteData.cardData});
+console.log(siteData.cardData);
+setSiteData({screen:'home_general',pageData:newPageData, cardData:siteData.cardData});
+}catch(error){
+  console.log("GetSiteData Error",error)
+}
+ 
+return sdata;
+}
+
+
 const [reservations, setReservations] = React.useState(null);
 
+/**
+ *  Allows a registered user to add a new reservation
+ * 
+ */
  async function insertReservations(reservation) {
     // Log out the currently active user
      const prof =  currentUser &&  await currentUser.functions.InsertReservation(reservation);
@@ -88,7 +181,42 @@ const [reservations, setReservations] = React.useState(null);
     // Otherwise, app.currentUser is null.
 }
 
-  const wrapped = { ...app, currentUser,registerWithEmail,insertReservations,profile,getProfile, logIn, logOut };
+
+/**
+ *  Restore changes to a default
+ */
+ async function resetHomeData() {
+     let editResults = null; 
+     let site = null;
+try{
+  console.log('reseting home data with ',{HOME_PAGE_DEFAULT, cardData:TIERS});
+      editResults = await app?.currentUser?.functions?.EditHomeData({HOME_PAGE_DEFAULT, cardData:TIERS});
+
+console.log('sitdaata?==',editResults);
+setSiteData({HOME_PAGE_DEFAULT, cardData:TIERS});
+
+}catch(error){
+  console.log("resetHomeData() Error",error)
+}
+ /*const user =//null await app.logIn(Realm.Credentials.anonymous());
+  sdata = await user?.functions?.GetSiteData();
+  console.log("SideData retrieved",sdata);
+*/
+return editResults;
+}
+
+/**
+ *  Return all Reservations by query, for loggedIn and connected users
+ */
+async function getReservations(){
+  const res = await app?.currentUser?.functions?.FindReservation();
+  setReservations(JSON.parse(res));
+  return (JSON.parse(res));
+}
+
+
+//the variables wrapped and available to the components within this Providor
+  const wrapped = { ...app,resetHomeData,siteData,editHomeData, currentUser,registerWithEmail,insertReservations, reservations,profile,getProfile, logIn, logOut };
 
   return (
     <RealmAppContext.Provider value={wrapped}>
