@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Switch from '@mui/material/Switch';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
+import Drawer from '@mui/material/Drawer';
 
 //import CardContent from '@mui/material/CardContent';
 //import CardHeader from '@mui/material/CardHeader';
@@ -37,7 +38,15 @@ export default function GeneralInfo(props) {
   const [subtitle, setSubTitle] = useState(app?.siteData?.pageData?.subtitle);
   const [paragraph1, setParagraph1] = useState();
   const [paragraph2, setParagraph2] = useState();
-  
+   const [drawerState, setDrawerState] = React.useState(false);
+
+  const toggleDrawer = (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDrawerState(!drawerState);
+  };
+
 
    React.useEffect(() => {
 console.log(app,"generl info");
@@ -69,6 +78,7 @@ console.log(app,"generl info");
     } catch (err) {
      console.log(err)
   }
+  window.location.reload(true);
 }
 
 
@@ -77,7 +87,14 @@ console.log(app,"generl info");
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-   { editable && <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
+   { editable && <React.Fragment key={'right'}>
+          <Button onClick={toggleDrawer}>Admin</Button>
+          <Drawer
+            anchor={'right'}
+            open={drawerState}
+            onClose={toggleDrawer}
+          >
+          <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
  <p>Welcome Awan to your private Admin section</p>
 
  <Typography component="h5" variant="h5" align="left" color="text.primary" gutterBottom>Admin Options</Typography>
@@ -88,8 +105,9 @@ console.log(app,"generl info");
 />
   <label>Edit</label>
   <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.editHomeData(null); }}>Reset</Button>
-</Box>}
+  <Button onClick={()=>{app.editHomeData(null);window.location.reload(true); }}>Reset</Button>
+</Box>  </Drawer>
+        </React.Fragment>}
       <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
           {edit  ? <Box> <label>Replace title with::</label><Input   id="subTitle-replacement"
                   label="Replacetitle"

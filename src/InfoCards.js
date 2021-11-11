@@ -5,6 +5,7 @@ import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import Input from '@mui/material/Input';
 import Box from '@mui/material/Box';
 import Switch from '@mui/material/Switch';
+import Drawer from '@mui/material/Drawer';
 
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -27,7 +28,14 @@ const [displayData, setDisplayData] = useState(app?.siteData?.cardData);
 const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg'); 
    const [edit, setEditMode] = useState(false);
   const [editable, setEditableMode] = useState(app?.currentUser?.customData?.email);
+ const [drawerState, setDrawerState] = React.useState(false);
 
+  const toggleDrawer = (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDrawerState(!drawerState);
+  };
 
    React.useEffect(() => {
 setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
@@ -54,12 +62,21 @@ console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-isedita
     } catch (err) {
      console.log('Infocards err',err);
   }
+  window.location.reload(true);
 } 
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-          {editable && <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
+{editable && 
+      <React.Fragment key={'right'}>
+          <Button onClick={toggleDrawer}>Admin</Button>
+          <Drawer
+            anchor={'right'}
+            open={drawerState}
+            onClose={toggleDrawer}
+          >
+            <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
  <p>Admin section</p>
 Edit CardInfo
  <Typography component="h5" variant="h5" align="left" color="text.primary" gutterBottom>Admin Options</Typography>
@@ -70,8 +87,12 @@ Edit CardInfo
 />
   <label>Edit</label>
   <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.resetHomeData(); }}>Reset</Button>
-</Box>}
+  <Button onClick={()=>{app.resetHomeData(); window.location.reload(true); }}>Reset</Button>
+</Box>
+          </Drawer>
+        </React.Fragment>
+  }
+
       <Container sx={{marginTop:10}} maxWidth="md" component="main">
         <Grid container spacing={2} alignItems="flex-end">
           { displayData && displayData?.map((tier, index) => (

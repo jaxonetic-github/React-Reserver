@@ -40,7 +40,7 @@ export default function Reservations() {
   const [app, setApp] = useState(useRealmApp());
   const [reservations, setReservations] = useState(app.reservations||[]);
   const navigate = useNavigate();
-  useEffect(async    ()=>{
+  useEffect(()=>{
 console.log(reservations, '   ',app.reservations);
 //         setReservations(JSON.parse(res));     
   //setReservations(app.reservations );   
