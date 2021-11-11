@@ -49,7 +49,7 @@ console.log(app,"generl info");
     !paragraph2 && app?.siteData?.pageData?.paragraphs && setParagraph2(app?.siteData?.pageData?.paragraphs[1]);
 
 
-    setEditableMode(app?.profile?.email && (app?.profile?.email==='kurawan@yahoo.com'));
+    setEditableMode(app?.currentUser?.customData.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
 
   });  
 
@@ -60,8 +60,10 @@ console.log(app,"generl info");
     
       try {   
       const obj = {title, subtitle, reservationButton,paragraphs: [paragraph1, paragraph2]};
-      console.log(obj);
-       app?.editHomeData(obj)
+       const cardData = {pageData:obj,cardData:app?.siteData?.cardData };
+
+      console.log(cardData);
+       app?.editHomeData(cardData)
        .then((userdata)=>{console.log('edit data generalinfo',userdata)});
 
     } catch (err) {
@@ -86,7 +88,7 @@ console.log(app,"generl info");
 />
   <label>Edit</label>
   <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.resetHomeData(); }}>Reset</Button>
+  <Button onClick={()=>{app.editHomeData(null); }}>Reset</Button>
 </Box>}
       <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
           {edit  ? <Box> <label>Replace title with::</label><Input   id="subTitle-replacement"

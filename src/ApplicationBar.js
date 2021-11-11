@@ -24,7 +24,7 @@ export default function MenuAppBar(props) {
   const app = useRealmApp();
   const navigate = useNavigate();
   
-  const [auth, setAuth] = React.useState(app.profile);
+  const [auth, setAuth] = React.useState(app?.currentUser?.customData?.email);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleChange = (event) => {
@@ -41,13 +41,12 @@ export default function MenuAppBar(props) {
 
 React.useEffect(() => {
 console.log(app.profile);
-  if(app.profile)
-  {
-    setAuth(app.profile)
+ 
+    setAuth(app?.currentUser?.customData?.email)
       /* console.log(app.currentUser,"realm effect user >>>",props);
           setAuth(app?.currentUser?.customData);
 */
-  }});
+  });
 
   return (
     <Box sx={{ flexGrow: 1 }}>

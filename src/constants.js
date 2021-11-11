@@ -17,6 +17,7 @@ export const TIERS = [
       'camera in vehicle',
       'hand sanitizers and wipes',
     ],
+     imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/banner_inside_carview.jpeg',
   },
   {
     title: 'More Info',
@@ -27,6 +28,7 @@ export const TIERS = [
       'Phone :           480-809-7897',
       'Email :      kurawan@yahoo.com',
       'Or click below  to get started',     ],
+      imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg',
     buttonText: 'Get started',
     buttonVariant: 'contained',
   },
@@ -39,6 +41,8 @@ export const TIERS = [
       'Business Conventions',
       'Concentions',
     ],
+      imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/sideview_closeddoors.jpeg',
+
   },
 ]
 

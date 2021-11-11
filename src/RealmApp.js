@@ -22,14 +22,14 @@ export const RealmAppProvider = ({ appId, children }) => {
 
   React.useEffect(() => {
     setApp(new Realm.App(appId)); 
-    setCurrentUser(app.currentUser);
+   // setCurrentUser(app.currentUser);
    getSiteData().then((info)=>{console.log('site info',info); setSiteData(info);});
 
-    if(app?.currentUser?.customData?.firstName){
+/*    if(app?.currentUser?.customData?.firstName){
      console.log("realm effect user >>>",app?.currentUser?.customData);
      
       getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
-   }
+   }*/
   }, [appId]);
 
 
@@ -132,9 +132,9 @@ const [siteData, setSiteData] = React.useState( /*{pageData, cardData:tiers}*/);
 try{
 
    site =   await app?.currentUser?.functions?.GetSiteData();
-
+console.log("1st sitedata attempt",site);
   if(!site)
-  {
+  {console.log('No site innfo, attempting to log in ß');
     const user = await app.logIn(Realm.Credentials.anonymous());
   site = await user?.functions?.GetSiteData();
   }
@@ -156,15 +156,30 @@ return null;
  async function editHomeData(newPageData) {
    let sdata = null; 
      let site = null;
-try{console.log(newPageData);
-     const editResults = await app?.currentUser?.functions?.EditHomeData({screen:'home_general',pageData:newPageData, cardData:siteData.cardData});
-console.log(siteData.cardData);
-setSiteData({screen:'home_general',pageData:newPageData, cardData:siteData.cardData});
+
+try{
+if (newPageData){
+const obj ={screen:'home_general',pageData:newPageData.pageData, cardData:newPageData.cardData}
+console.log('passing to edithomefuncion',obj);
+
+     const editResults = await app?.currentUser?.functions.EditHomeData(obj);
+console.log('editResults from realm', editResults);
+setSiteData({screen:'home_general',pageData:newPageData.pageData, cardData:newPageData.cardData});
+
+}else
+{
+  console.log('reseting dome data')
+  const resetResults = await app?.currentUser?.functions?.EditHomeData();
+  console.log(resetResults);
+  const newdata = await getSiteData();
+  console.log('new site returned from db=',newdata);
+
+}
 }catch(error){
-  console.log("GetSiteData Error",error)
+  console.log("EditHomeData Error",error)
 }
  
-return sdata;
+
 }
 
 
@@ -189,11 +204,10 @@ const [reservations, setReservations] = React.useState(null);
      let editResults = null; 
      let site = null;
 try{
-  console.log('reseting home data with ',{HOME_PAGE_DEFAULT, cardData:TIERS});
-      editResults = await app?.currentUser?.functions?.EditHomeData({HOME_PAGE_DEFAULT, cardData:TIERS});
+      editResults = await app?.currentUser?.functions?.InsertSiteData(false);
 
 console.log('sitdaata?==',editResults);
-setSiteData({HOME_PAGE_DEFAULT, cardData:TIERS});
+setSiteData({screen:'home_general', pageData:HOME_PAGE_DEFAULT, cardData:TIERS});
 
 }catch(error){
   console.log("resetHomeData() Error",error)
@@ -209,6 +223,7 @@ return editResults;
  *  Return all Reservations by query, for loggedIn and connected users
  */
 async function getReservations(){
+  console.log('getReservations');
   const res = await app?.currentUser?.functions?.FindReservation();
   setReservations(JSON.parse(res));
   return (JSON.parse(res));

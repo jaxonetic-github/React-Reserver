@@ -8,6 +8,10 @@ margin-top: "-200px";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* remove the padding in the InfoCard component */
+.css-46bh2p-MuiCardContent-root {
+     padding: 0px !important; }
 /* over-writing the default AppBar style*/
 .css-11b3ww9-MuiPaper-root-MuiAppBar-root {background-color:'white' !important}
 
@@ -26,6 +30,8 @@ code {
   width: 100%;
   max-height: 400px;
   display: block;}
+
+.driver1-image{width: 100%}
 
 #reservation-details{ border: 1px inset black;}
 .company{ display: flex;

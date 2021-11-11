@@ -23,12 +23,11 @@ const theme = createTheme();
  */
 export default function Profile(props) {
   const app = useRealmApp();
- const [profile, setProfile] = React.useState(app.profile);
+ const [profile, setProfile] = React.useState(app?.currentUser?.customData);
 
 
  React.useEffect(() => {
- console.log(props,'   ',app.profile)
- setProfile(app.profile)
+ 
   });  
 
   const [error, setErrorMsg] = React.useState('');
