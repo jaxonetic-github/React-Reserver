@@ -24,7 +24,7 @@ export default function MenuAppBar(props) {
   const app = useRealmApp();
   const navigate = useNavigate();
   
-  const [auth, setAuth] = React.useState(app?.currentUser?.customData?.email);
+  const [auth, setAuth] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleChange = (event) => {

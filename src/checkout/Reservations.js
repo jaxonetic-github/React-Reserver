@@ -4,6 +4,7 @@ import Container from '@mui/material/Container';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
+import Grid from '@mui/material/Grid';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -11,7 +12,9 @@ import Typography from '@mui/material/Typography';
 import { useRealmApp } from "../RealmApp";
 import { useNavigate} from "react-router-dom";
 import SendIcon from '@mui/icons-material/Send';
-
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 function Title(props) {
   return (
@@ -37,10 +40,11 @@ function Title(props) {
  *
  */
 export default function Reservations() {
-  const [app, setApp] = useState(useRealmApp());
-  const [reservations, setReservations] = useState(app.reservations||[]);
+  const app = useRealmApp();
+  const [reservations, setReservations] = useState(app.reservations);
   const navigate = useNavigate();
   useEffect(()=>{
+    setReservations(app.reservations);
 console.log(reservations, '   ',app.reservations);
 //         setReservations(JSON.parse(res));     
   //setReservations(app.reservations );   
@@ -52,9 +56,15 @@ console.log(reservations, '   ',app.reservations);
   return (
     <React.Fragment>
     <Container >
-     <Typography component="h2" variant="h6" color="primary" gutterBottom>
-      {reservations.length} Reservations 
-    </Typography>
+   <Toolbar>
+
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+             {reservations.length} Reservations 
+          </Typography>
+          <Button contained color="success" onClick={()=>app.getReservations()}>Refresh</Button>
+        </Toolbar>
+   
+  
       <Table size="small">
         <TableHead>
           <TableRow>

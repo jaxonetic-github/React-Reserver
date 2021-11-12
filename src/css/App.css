@@ -9,6 +9,8 @@ margin-top: "-200px";
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* for even spacing of the Info Cards
+.css-jhdc2n-MuiGrid-root>.MuiGrid-item {padding-left: 16px; margin: auto;}
 /* remove the padding in the InfoCard component */
 .css-46bh2p-MuiCardContent-root {
      padding: 0px !important; }

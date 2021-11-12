@@ -18,7 +18,11 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import { useNavigate} from "react-router-dom";
 import InfoCards from './InfoCards'
+import ContactCard from './ContactCard'
 import { useRealmApp } from "./RealmApp";
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+
  require('./css/App.css');
 
 
@@ -78,7 +82,7 @@ console.log(app,"generl info");
     } catch (err) {
      console.log(err)
   }
-  window.location.reload(true);
+  //window.location.reload(true);
 }
 
 
@@ -87,8 +91,22 @@ console.log(app,"generl info");
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-   { editable && <React.Fragment key={'right'}>
-          <Button onClick={toggleDrawer}>Admin</Button>
+
+
+      <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+      { editable && <React.Fragment key={'right'}>
+
+             <IconButton
+                  onClick={toggleDrawer}
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 ,position:'relative', top:'50px'}}
+          >
+            <MenuIcon />Admin
+          </IconButton>
+
           <Drawer
             anchor={'right'}
             open={drawerState}
@@ -105,10 +123,9 @@ console.log(app,"generl info");
 />
   <label>Edit</label>
   <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.editHomeData(null);window.location.reload(true); }}>Reset</Button>
+  <Button onClick={()=>{app.editHomeData(null); }}>Reset</Button>
 </Box>  </Drawer>
         </React.Fragment>}
-      <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
           {edit  ? <Box> <label>Replace title with::</label><Input   id="subTitle-replacement"
                   label="Replacetitle"
                   name="Replacetitle"
@@ -150,7 +167,8 @@ console.log(app,"generl info");
 
          <Typography>  </Typography>
          <Typography>  </Typography>
-          <InfoCards />        
+          <InfoCards /> 
+          <ContactCard />       
       </Container>
        
     </React.Fragment>

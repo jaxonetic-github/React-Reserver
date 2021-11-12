@@ -225,13 +225,14 @@ return editResults;
 async function getReservations(){
   console.log('getReservations');
   const res = await app?.currentUser?.functions?.FindReservation();
+  console.log('Reservations found?=',JSON.parse(res));
   setReservations(JSON.parse(res));
   return (JSON.parse(res));
 }
 
 
 //the variables wrapped and available to the components within this Providor
-  const wrapped = { ...app,resetHomeData,siteData,editHomeData, currentUser,registerWithEmail,insertReservations, reservations,profile,getProfile, logIn, logOut };
+  const wrapped = { ...app,resetHomeData,siteData,editHomeData, currentUser,registerWithEmail,insertReservations, reservations,profile,getReservations, getProfile, logIn, logOut };
 
   return (
     <RealmAppContext.Provider value={wrapped}>

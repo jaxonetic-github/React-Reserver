@@ -6,6 +6,19 @@ const paragraph0Text = '8ANGELS is uniquely prepared to meet your private transp
 const paragraph1Text = 'This Vehicle is exclusively for transportation to and from hotels and events.  It is also a perfect choice to transport groomsmen and bridesmaids during wedding preparations'
 export const HOME_PAGE_DEFAULT = {title, subtitle, reservationButton,paragraphs: [paragraph0Text, paragraph1Text]};
 
+export const CONTACTINFO =  {
+    title: 'More Info',
+
+    price: '15',
+    description: [
+      'Driver:            Mr Awan Kur',
+      'Phone :           480-809-7897',
+      'Email :      kurawan@yahoo.com',
+      'Or click below  to get started',     ],
+      imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg',
+    buttonText: 'Get started',
+    buttonVariant: 'contained',
+  };
 
 export const TIERS = [
   {
@@ -19,19 +32,7 @@ export const TIERS = [
     ],
      imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/banner_inside_carview.jpeg',
   },
-  {
-    title: 'More Info',
-
-    price: '15',
-    description: [
-      'Driver:            Mr Awan Kur',
-      'Phone :           480-809-7897',
-      'Email :      kurawan@yahoo.com',
-      'Or click below  to get started',     ],
-      imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg',
-    buttonText: 'Get started',
-    buttonVariant: 'contained',
-  },
+ 
   {
     title: 'Arrive in styles',
     price: '30',

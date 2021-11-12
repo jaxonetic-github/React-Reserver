@@ -6,6 +6,8 @@ import Input from '@mui/material/Input';
 import Box from '@mui/material/Box';
 import Switch from '@mui/material/Switch';
 import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -19,13 +21,12 @@ import Container from '@mui/material/Container';
 import { useNavigate} from "react-router-dom";
 import { useRealmApp } from "./RealmApp";
 
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import { CONTACTINFO} from './constants'
 
-export default function InfoCards(props) {
+export default function ContactCard(props) {
   const navigate = useNavigate();
     const app = useRealmApp();
-const [displayData, setDisplayData] = useState(app?.siteData?.cardData);
+const [displayData, setDisplayData] = useState(app?.siteData?.contactData||CONTACTINFO);
 const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg'); 
    const [edit, setEditMode] = useState(false);
   const [editable, setEditableMode] = useState(app?.currentUser?.customData?.email);
@@ -40,10 +41,9 @@ const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxoneti
 
    React.useEffect(() => {
 setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
-console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-iseditable->', editable);
  if(!displayData){
   console.log('setting displayData');
-  setDisplayData(app?.siteData?.cardData);
+  setDisplayData(app?.siteData?.contactData);
 }
 //console.log(app,'----',editable,"editable",app?.profile?.email);
   //const displayData = props.cardData? props.cardData :app?.siteData?.cardData;
@@ -56,14 +56,13 @@ console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-isedita
     // eslint-disable-next-line no-console
     
       try {   
-      const obj = {cardData:displayData,pageData:app?.siteData?.pageData };
-      const editResults= await app?.editHomeData({cardData:displayData,pageData:app?.siteData?.pageData })
+      const obj = {cardData:app?.siteData?.contactData,pageData:app?.siteData?.pageData, contactData:displayData };
+      const editResults= await app?.editHomeData({cardData:app?.siteData?.cardData, pageData:app?.siteData?.pageData,contactData:displayData })
       console.log(obj,'--',editResults);
 
     } catch (err) {
-     console.log('Infocards err',err);
+     console.log('CONTACT err',err);
   }
-  window.location.reload(true);
 } 
   return (
     <React.Fragment>
@@ -71,19 +70,16 @@ console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-isedita
       <CssBaseline />
 {editable && 
       <React.Fragment key={'right'}>
-
-        <IconButton
+                  <IconButton
                   onClick={toggleDrawer}
             size="large"
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 ,position:'relative', top:'50px'}}
+            sx={{ mr: 2 ,position:'relative', top:'50px', color:'#605757'}}
           >
             <MenuIcon />Admin
           </IconButton>
-    
-
           <Drawer
             anchor={'right'}
             open={drawerState}
@@ -91,7 +87,7 @@ console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-isedita
           >
             <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
  <p>Admin section</p>
-Edit CardInfo
+Edit ContactInfo
  <Typography component="h5" variant="h5" align="left" color="text.primary" gutterBottom>Admin Options</Typography>
 <Switch
   checked={edit}
@@ -107,16 +103,15 @@ Edit CardInfo
   }
 
       <Container sx={{marginTop:10}} maxWidth="md" component="main">
-        <Grid container spacing={6} alignItems="flex-end">
-          { displayData && displayData?.map((tier, index) => (
-            // Enterprise card is full width at sm breakpoint
-            <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 6} md={4}>
-              <Card><img src={tier.imageURL}  className="driver1-image" alt="logo" />
+        <Grid container spacing={2} alignItems="flex-end">
+        
+            <Grid item key={CONTACTINFO.title} xs={12} sm={12} md={12}>
+              <Card><img src={CONTACTINFO.imageURL}  className="driver1-image" alt="logo" />
                 <CardHeader
-                  title={tier.title}
-                  subheader={tier.subheader}
+                  title={CONTACTINFO.title}
+                  subheader={CONTACTINFO.subheader}
                   titleTypographyProps={{ align: 'center' }}
-                  action={tier.title === 'Pro' ? <StarIcon /> : null}
+                  action={CONTACTINFO.title === 'Pro' ? <StarIcon /> : null}
                   subheaderTypographyProps={{
                     align: 'center',
                   }}
@@ -130,26 +125,26 @@ Edit CardInfo
                 <CardContent>
                   
                   <ul>
-                    {tier.description.map((line,descriptionIndex) => (
+                    {CONTACTINFO.description.map((line,descriptionIndex) => (
                       <Typography
                         component="li"
                        
                         align="center"
-                        key={index+descriptionIndex+line}
+                        key={descriptionIndex+line}
                       >
                   {line}
                    {edit &&    <Input   id="makeReservation"
                   label="Make Reservation"
                   onBlur={(event)=>{
                     const clone = JSON.parse(JSON.stringify(displayData));
-                    clone[index].description[descriptionIndex]=event.target.value;
+                    clone.description[descriptionIndex]=event.target.value;
                     console.log( event.target, 'cloning and resetting', clone);
                   setDisplayData(clone);
                     event.target.focus();
 
                 }}
                   name="makeReservation"
-                  defaultValue={displayData[index].description[descriptionIndex]}
+                  defaultValue={displayData.description[descriptionIndex]}
                
                 />}
                       </Typography>
@@ -160,7 +155,7 @@ Edit CardInfo
         
               </Card>
             </Grid>
-          ))}
+          
         </Grid>
       </Container>
      
