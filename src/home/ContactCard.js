@@ -19,15 +19,14 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 //import {Link as ReactLink} from "react-router-dom";
 import { useNavigate} from "react-router-dom";
-import { useRealmApp } from "./RealmApp";
+import { useRealmApp } from "../RealmApp";
 
-import { CONTACTINFO} from './constants'
+import { CONTACTINFO} from '../constants'
 
 export default function ContactCard(props) {
   const navigate = useNavigate();
     const app = useRealmApp();
-const [displayData, setDisplayData] = useState(app?.siteData?.contactData||CONTACTINFO);
-const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg'); 
+const [displayData, setDisplayData] = useState(app?.siteData?.contactData);
    const [edit, setEditMode] = useState(false);
   const [editable, setEditableMode] = useState(app?.currentUser?.customData?.email);
  const [drawerState, setDrawerState] = React.useState(false);
@@ -40,9 +39,9 @@ const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxoneti
   };
 
    React.useEffect(() => {
+
 setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
  if(!displayData){
-  console.log('setting displayData');
   setDisplayData(app?.siteData?.contactData);
 }
 //console.log(app,'----',editable,"editable",app?.profile?.email);
@@ -56,9 +55,8 @@ setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.custom
     // eslint-disable-next-line no-console
     
       try {   
-      const obj = {cardData:app?.siteData?.contactData,pageData:app?.siteData?.pageData, contactData:displayData };
-      const editResults= await app?.editHomeData({cardData:app?.siteData?.cardData, pageData:app?.siteData?.pageData,contactData:displayData })
-      console.log(obj,'--',editResults);
+      const obj = {cardData:app?.siteData?.cardData,pageData:app?.siteData?.pageData, contactData:displayData };
+      const editResults= await app?.editHomeData(obj)
 
     } catch (err) {
      console.log('CONTACT err',err);
@@ -125,7 +123,7 @@ Edit ContactInfo
                 <CardContent>
                   
                   <ul>
-                    {CONTACTINFO.description.map((line,descriptionIndex) => (
+                    { displayData && displayData.description.map((line,descriptionIndex) => (
                       <Typography
                         component="li"
                        
@@ -140,7 +138,7 @@ Edit ContactInfo
                     clone.description[descriptionIndex]=event.target.value;
                     console.log( event.target, 'cloning and resetting', clone);
                   setDisplayData(clone);
-                    event.target.focus();
+                    
 
                 }}
                   name="makeReservation"

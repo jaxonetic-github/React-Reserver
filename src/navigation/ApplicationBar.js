@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React  from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 
@@ -13,23 +13,18 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Menu from '@mui/material/Menu';
 
-import { useRealmApp } from "./RealmApp";
+import { useRealmApp } from "../RealmApp";
 import { useNavigate} from "react-router-dom";
 
-require('./css/appbarr.css'); 
+require('../css/appbarr.css'); 
 /**
  * Main Application Bar with menus
  */
-export default function MenuAppBar(props) {
+export default function MenuAppBar() {
   const app = useRealmApp();
   const navigate = useNavigate();
-  
-  const [auth, setAuth] = React.useState(false);
+   
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -39,14 +34,7 @@ export default function MenuAppBar(props) {
     setAnchorEl(null);
   };
 
-React.useEffect(() => {
-console.log(app.profile);
- 
-    setAuth(app?.currentUser?.customData?.email)
-      /* console.log(app.currentUser,"realm effect user >>>",props);
-          setAuth(app?.currentUser?.customData);
-*/
-  });
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -82,7 +70,7 @@ console.log(app.profile);
   </Grid>
 
 </Grid>
-      { (auth) ?   <Menu
+      { (app?.currentUser?.customData?.email) ?   <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
@@ -101,7 +89,7 @@ console.log(app.profile);
           
                 <MenuItem onClick={()=>{handleClose(); navigate('profile');}}><AccountCircle />Profile</MenuItem>
                 <MenuItem onClick={()=>{handleClose(); navigate('/reservations');}}><AssignmentIcon />Reservations</MenuItem>
-                <MenuItem onClick={()=>{handleClose(); app.logOut(); setAuth(false); navigate('/');}}>Logout</MenuItem>
+                <MenuItem onClick={()=>{handleClose(); app.logOut();  navigate('/');}}>Logout</MenuItem>
               </Menu>
                :<Menu
                 id="menu-appbar"
@@ -126,8 +114,9 @@ console.log(app.profile);
       
          
             
-         
+         {app?.currentUser?.customData?.firstname ? `Hello,${app?.currentUser?.customData?.firstname}` : ''}
         </Toolbar>
+
       </AppBar>
     </Box>
   );

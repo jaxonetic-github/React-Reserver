@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {handleAuthenticationError, parseAuthenticationError} from './constants'
+import validator from 'validator';
 
 
 
@@ -24,18 +25,30 @@ const theme = createTheme();
 export default function Profile(props) {
   const app = useRealmApp();
  const [profile, setProfile] = React.useState(app?.currentUser?.customData);
-
-
- React.useEffect(() => {
- 
-  });  
+ const [firstName, setFirstName] = React.useState(app.currentUser?.customData?.firstname);
+  const [lastName, setLastName] = React.useState(app.currentUser?.customData?.lastname);
+  const [email, setEmail] = React.useState(app?.currentUser?.customData?.email||'');
+  const [phone, setPhone] = React.useState(app?.currentUser?.customData?.phone||'');
 
   const [error, setErrorMsg] = React.useState('');
+
+
+
+   function itineraryValidated  (){
+    let validated = false;
+         const phoneValidated = phone && validator.isMobilePhone(phone);
+         const emailValidated = email && validator.isEmail(email);
+        
+         const firstNameValidated = firstName && !validator.isEmpty(firstName);
+         const lastNameValidated = lastName && !validator.isEmpty(lastName);
+           validated = (phoneValidated && emailValidated  && firstNameValidated && lastNameValidated);
+             return validated;
+}
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
     
       try {   
       
@@ -70,7 +83,7 @@ export default function Profile(props) {
               <Grid item xs={12} sm={6}>
                 <Input
                   name="firstName"
-                  defaultValue={profile?.firstname}
+                  defaultValue={firstName}
                   fullWidth
                   id="firstName"
                   label="First Name"
@@ -82,14 +95,14 @@ export default function Profile(props) {
                   id="lastName"
                   label="Last Name"
                   name="lastName"
-              defaultValue={profile?.lastname}
+              defaultValue={lastName}
 
                   placeholder='Last Name'
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  defaultValue={profile?.email}
+                  defaultValue={email}
                   fullWidth
                   id="email"
                   label="Email Address"
@@ -99,12 +112,13 @@ export default function Profile(props) {
               </Grid>
               <Grid item xs={12}>
                 <TextField 
-                  defaultValue={profile?.phone}
+                  defaultValue={phone||''}
                   fullWidth
                   name="phone"
                   label="phone"
                   type="phone"
                   id="phone"
+                  onChange={(event)=>setPhone(event.target.value)}
                 />
               </Grid>
              
@@ -114,6 +128,7 @@ export default function Profile(props) {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={!itineraryValidated()}
             >
               Edit
             </Button>

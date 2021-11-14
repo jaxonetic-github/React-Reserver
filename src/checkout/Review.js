@@ -64,7 +64,9 @@ export default function Review(props) {
             Itinerary
           </Typography>
           <Typography gutterBottom>{props.reservation.firstName} {props.reservation.lastName}</Typography>
-          <Typography gutterBottom>{props.reservation.dropOffLocation}</Typography>
+          <Typography gutterBottom>{props.reservation.pickupLocation}</Typography>
+          <Typography gutterBottom>{props.reservation.pickupLocation}{new Date(props.reservation.pickupLocation).toLocaleString()}</Typography>
+          <Typography gutterBottom>{props.reservation.dropOffLocation}{new Date(props.reservation.dropOffDate).toLocaleString()}</Typography>                    
         </Grid>
         <Grid item container direction="column" xs={12} sm={6}>
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>

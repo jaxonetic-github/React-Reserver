@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
-import * as Realm from "realm-web";
-import { useRealmApp } from "./RealmApp";
-import {Link as ReactLink, useNavigate} from "react-router-dom";
+import { useRealmApp } from "../RealmApp";
+import {useNavigate} from "react-router-dom";
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -16,8 +15,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Signin from './Signin';
 import validator from 'validator'
+
 function handleAuthenticationError(err, setError) {
   let returnMsg=null;
   const { status, message } = parseAuthenticationError(err);
@@ -104,8 +103,6 @@ const theme = createTheme();
 export default function SignUp(props) {
   const app = useRealmApp();
     const navigate = useNavigate();
-
-  const [usr, setUser] = React.useState(app.currentUser);
  // app.userWatcher(setUser);
 
   useEffect(() => {
@@ -124,7 +121,7 @@ console.log("SignUp user in Signup Effect. ",app.currentUser);
       try {
   await app.registerWithEmail(data.get('email'),data.get('password'),data.get('firstName'),data.get('lastName'))
 
-        
+        await app.currentUser.refreshCustomData();
     } catch (err) {
       console.log(err,'11submit eror mesg');
 
@@ -132,6 +129,7 @@ console.log("SignUp user in Signup Effect. ",app.currentUser);
       console.log(err,'submit eror mesg',errMsg);
       setErrorMsg(errMsg);
     }
+
     navigate('/');
   };
 console.log(error);
@@ -215,7 +213,7 @@ console.log(error);
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Button onClick={()=>navigate('signin')} href="#" variant="body2">
+                <Button onClick={()=>navigate('/signin')} href="#" variant="body2">
                   Already have an account? Sign in
                 </Button>
               </Grid>

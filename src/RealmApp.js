@@ -2,6 +2,8 @@ import React from "react";
 import * as Realm from "realm-web";
 
 import {HOME_PAGE_DEFAULT, TIERS} from './constants';
+    import emailjs, { init } from 'emailjs-com';
+import envVars from './envVars.js';
 
 const RealmAppContext = React.createContext();
 
@@ -23,7 +25,10 @@ export const RealmAppProvider = ({ appId, children }) => {
   React.useEffect(() => {
     setApp(new Realm.App(appId)); 
    // setCurrentUser(app.currentUser);
-   getSiteData().then((info)=>{console.log('site info',info); setSiteData(info);});
+   getSiteData().then((info)=>{
+    setSiteData(info);
+    getReservations();
+  });
 
 /*    if(app?.currentUser?.customData?.firstName){
      console.log("realm effect user >>>",app?.currentUser?.customData);
@@ -62,7 +67,7 @@ export const RealmAppProvider = ({ appId, children }) => {
     setCurrentUser(null);
     setProfile(null);
     setReservations(null);
-
+    
   }
 
 
@@ -78,15 +83,16 @@ export const RealmAppProvider = ({ appId, children }) => {
     // Log out the currently active user
      const aux =   await app.emailPasswordAuth.registerUser(email, password);
      console.log("registeremail result",aux);
-    app.logIn(Realm.Credentials.emailPassword(email, password)).then(async(usr)=>{
-      console.log("register with email inner Uusr",usr);
-     const userdata =  await usr.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email,phone, userid:usr.id});
+     const newUser = await app.logIn(Realm.Credentials.emailPassword(email, password));
+     setCurrentUser(newUser);
+      console.log(app,"registered with email inner Uusr",newUser);
+     const userdata =  await newUser.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email,phone, userid:newUser.id});
     console.log('userdata = ', userdata);
-    setCurrentUser(usr);
-    //const prof = await usr.functions.GetUserData(usr.id);
-    setProfile({firstname:firstName, lastname:lastName,email:email,phone, userid:usr.id})
+     await app.currentUser.refreshCustomData();
+    const prof = await newUser.functions.GetUserData(newUser.id);
+    setProfile(prof)
       getReservations();
-     })
+     
     
 //console.log(app.currentUser.funct-ions,'registeringnewCurrent=');
 
@@ -160,11 +166,11 @@ return null;
 try{
 if (newPageData){
 const obj ={screen:'home_general',pageData:newPageData.pageData, cardData:newPageData.cardData}
-console.log('passing to edithomefuncion',obj);
+console.log(newPageData,'passing to edithomefuncion',obj);
 
-     const editResults = await app?.currentUser?.functions.EditHomeData(obj);
+     const editResults = await app?.currentUser?.functions.EditHomeData(newPageData);
 console.log('editResults from realm', editResults);
-setSiteData({screen:'home_general',pageData:newPageData.pageData, cardData:newPageData.cardData});
+setSiteData({screen:'home_general',pageData:newPageData.pageData, contactData:newPageData.contactData, cardData:newPageData.cardData});
 
 }else
 {
@@ -191,20 +197,31 @@ const [reservations, setReservations] = React.useState(null);
  */
  async function insertReservations(reservation) {
     // Log out the currently active user
-     const prof =  currentUser &&  await currentUser.functions.InsertReservation(reservation);
-    // If another user was logged in too, they're now the current user.
-    // Otherwise, app.currentUser is null.
+     const prof =   await currentUser?.functions.InsertReservation(reservation);
+
+init(envVars.EMAIL_USERID);
+const message = `Hello Awan,\n\nA new reservation has been requested online from ${reservation.firstName} ${reservation.lastName}. The client requests to be picked up from ${reservation.pickupLocation} @${reservation.pickUpDate}. The drop-off location would be at ${reservation.dropOffLocation} @${reservation.dropOffDate}.\n\nYou can contact ${reservation.firstName} at ${reservation.phone} or by email ${reservation.email}.  `
+ const emailTemplate  = 
+ {to_name:'Awan', from_name:'8Angels Transportation Email Notifier',
+  message:message};
+
+emailjs.send(envVars.SERVICEID, envVars.EMAILJS_TEMPLATEID, emailTemplate, envVars.EMAILJS_USERID);
+reservation.dateAdded = new Date();
+   reservations? reservations.push(reservation): setReservations(reservation);
+        console.log( 'Insert Reservation Results',prof);
+
+//setReservations(reservations);
 }
 
 
 /**
  *  Restore changes to a default
- */
+ *
  async function resetHomeData() {
      let editResults = null; 
      let site = null;
 try{
-      editResults = await app?.currentUser?.functions?.InsertSiteData(false);
+      editResults = await app?.currentUser?.functions?.Ed(false);
 
 console.log('sitdaata?==',editResults);
 setSiteData({screen:'home_general', pageData:HOME_PAGE_DEFAULT, cardData:TIERS});
@@ -212,12 +229,13 @@ setSiteData({screen:'home_general', pageData:HOME_PAGE_DEFAULT, cardData:TIERS})
 }catch(error){
   console.log("resetHomeData() Error",error)
 }
- /*const user =//null await app.logIn(Realm.Credentials.anonymous());
-  sdata = await user?.functions?.GetSiteData();
-  console.log("SideData retrieved",sdata);
-*/
+ //const user =//null await app.logIn(Realm.Credentials.anonymous());
+  //sdata = await user?.functions?.GetSiteData();
+  //console.log("SideData retrieved",sdata);
+
 return editResults;
 }
+*/
 
 /**
  *  Return all Reservations by query, for loggedIn and connected users
@@ -232,7 +250,7 @@ async function getReservations(){
 
 
 //the variables wrapped and available to the components within this Providor
-  const wrapped = { ...app,resetHomeData,siteData,editHomeData, currentUser,registerWithEmail,insertReservations, reservations,profile,getReservations, getProfile, logIn, logOut };
+  const wrapped = { ...app,siteData,editHomeData, currentUser,registerWithEmail,insertReservations, reservations,profile,getReservations, getProfile, logIn, logOut };
 
   return (
     <RealmAppContext.Provider value={wrapped}>

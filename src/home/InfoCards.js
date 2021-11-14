@@ -17,7 +17,7 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 //import {Link as ReactLink} from "react-router-dom";
 import { useNavigate} from "react-router-dom";
-import { useRealmApp } from "./RealmApp";
+import { useRealmApp } from "../RealmApp";
 
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -26,7 +26,6 @@ export default function InfoCards(props) {
   const navigate = useNavigate();
     const app = useRealmApp();
 const [displayData, setDisplayData] = useState(app?.siteData?.cardData);
-const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/driver1.jpeg'); 
    const [edit, setEditMode] = useState(false);
   const [editable, setEditableMode] = useState(app?.currentUser?.customData?.email);
  const [drawerState, setDrawerState] = React.useState(false);
@@ -40,9 +39,7 @@ const [banner, setBanner] = useState('https://raw.githubusercontent.com/jaxoneti
 
    React.useEffect(() => {
 setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
-console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-iseditable->', editable);
  if(!displayData){
-  console.log('setting displayData');
   setDisplayData(app?.siteData?.cardData);
 }
 //console.log(app,'----',editable,"editable",app?.profile?.email);
@@ -58,7 +55,6 @@ console.log(displayData,"--<Info Card info-->",app?.siteData?.cardData,'-isedita
       try {   
       const obj = {cardData:displayData,pageData:app?.siteData?.pageData };
       const editResults= await app?.editHomeData({cardData:displayData,pageData:app?.siteData?.pageData })
-      console.log(obj,'--',editResults);
 
     } catch (err) {
      console.log('Infocards err',err);
@@ -107,10 +103,9 @@ Edit CardInfo
   }
 
       <Container sx={{marginTop:10}} maxWidth="md" component="main">
-        <Grid container spacing={6} alignItems="flex-end">
+        <Grid container spacing={2} alignItems="flex-end">
           { displayData && displayData?.map((tier, index) => (
-            // Enterprise card is full width at sm breakpoint
-            <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 6} md={4}>
+            <Grid item key={tier.title} xs={12} sm={12} md={6}>
               <Card><img src={tier.imageURL}  className="driver1-image" alt="logo" />
                 <CardHeader
                   title={tier.title}
@@ -143,7 +138,6 @@ Edit CardInfo
                   onBlur={(event)=>{
                     const clone = JSON.parse(JSON.stringify(displayData));
                     clone[index].description[descriptionIndex]=event.target.value;
-                    console.log( event.target, 'cloning and resetting', clone);
                   setDisplayData(clone);
                     event.target.focus();
 

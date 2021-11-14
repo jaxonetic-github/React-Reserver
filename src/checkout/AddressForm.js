@@ -5,18 +5,12 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+
 
 export default function AddressForm(props) {
 const app = useRealmApp();
-  useEffect(  ()=>{
-     const res= app.currentUser ; //await realmApp.currentUser.functions.FindReservation();
-        
-         console.log(app.currentUser, '  --   ',app?.currentUser?.customData);
-  })
-const isPasswdNeeded = (app.currentUser==null);
+
+const isPasswdNeeded = (app.currentUser?.customData?.email==null);
 
   return (
     <React.Fragment>
@@ -89,7 +83,7 @@ onChange = {props.onChange}
                   name="lastName"
                   placeholder='Last Name'
                    defaultValue={app?.currentUser?.customData?.lastname}
-
+onChange = {props.onChange}
                 />
               </Grid>
        <Grid item xs={12} sm={6}>

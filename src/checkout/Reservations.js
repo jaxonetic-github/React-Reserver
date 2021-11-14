@@ -4,25 +4,17 @@ import Container from '@mui/material/Container';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
-import Grid from '@mui/material/Grid';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { useRealmApp } from "../RealmApp";
 import { useNavigate} from "react-router-dom";
-import SendIcon from '@mui/icons-material/Send';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import Divider from '@mui/material/Divider';
 
-function Title(props) {
-  return (
-    <Typography component="h2" variant="h6" color="primary" gutterBottom>
-      {props.children}
-    </Typography>
-  );
-}
+
 
 /**
  *  View a history of Reservations
@@ -41,11 +33,13 @@ function Title(props) {
  */
 export default function Reservations() {
   const app = useRealmApp();
-  const [reservations, setReservations] = useState(app.reservations);
+  const [reservations, setReservations] = useState(app?.reservations);
   const navigate = useNavigate();
+
+
   useEffect(()=>{
-    setReservations(app.reservations);
-console.log(reservations, '   ',app.reservations);
+    setReservations(app?.reservations);
+
 //         setReservations(JSON.parse(res));     
   //setReservations(app.reservations );   
   })
@@ -59,9 +53,9 @@ console.log(reservations, '   ',app.reservations);
    <Toolbar>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-             {reservations.length} Reservations 
+             {reservations?.length} Reservations 
           </Typography>
-          <Button contained color="success" onClick={()=>app.getReservations()}>Refresh</Button>
+          <Button contained="true" color="success" onClick={()=>app?.getReservations()}>Refresh</Button>
         </Toolbar>
    
   
@@ -74,10 +68,11 @@ console.log(reservations, '   ',app.reservations);
             </TableRow>
         </TableHead>
         <TableBody>
-          {reservations.map((reservation, index) => 
+          {app?.reservations?.map((reservation, index) => 
             (<TableRow key={index}>
               <TableCell>{reservation.createdDate}</TableCell>
-              <TableCell>{reservation.firstName} {reservation.lastName}{reservation.email}<p>{reservation.phone}</p></TableCell>
+              <TableCell>{reservation.firstName} {reservation.lastName}
+              <Divider/>{reservation.email}<p>{reservation.phone}</p></TableCell>
               <TableCell>{reservation.pickupLocation}<p>{new Date( reservation.pickUpDate).toLocaleString()}</p>{reservation.dropOffLocation}<p>{new Date(reservation.dropOffDate).toLocaleString()}</p></TableCell>
             </TableRow>)
           )}

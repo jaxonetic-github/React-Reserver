@@ -12,18 +12,18 @@ import CssBaseline from '@mui/material/CssBaseline';
 //import Grid from '@mui/material/Grid';
 //import StarIcon from '@mui/icons-material/StarBorder';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+//import Link from '@mui/material/Link';
 import Input from '@mui/material/Input';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import { useNavigate} from "react-router-dom";
 import InfoCards from './InfoCards'
 import ContactCard from './ContactCard'
-import { useRealmApp } from "./RealmApp";
+import { useRealmApp } from "../RealmApp";
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
- require('./css/App.css');
+ require('../css/App.css');
 
 
 
@@ -53,7 +53,6 @@ export default function GeneralInfo(props) {
 
 
    React.useEffect(() => {
-console.log(app,"generl info");
 
     !title && setTitle(app?.siteData?.pageData?.title );
     !reservationButton && setReservationButton(app?.siteData?.pageData?.reservationButton);
