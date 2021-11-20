@@ -17,128 +17,60 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import validator from 'validator'
 
-function handleAuthenticationError(err, setError) {
-  let returnMsg=null;
-  const { status, message } = parseAuthenticationError(err);
-  const errorType = message || status;
-  console.log(err,'--em--',message,'--s--', status);
-  switch (errorType) {
-    case "invalid username":
-       returnMsg = "Invalid email address." ;
-      break;
-    case "invalid username/password":
-    case "invalid password":
-    case "401":
-
-      returnMsg =  "Incorrect password.";
-      break;
-    case "name already in use":
-    case "409":
-      setError((err) => ({ ...err, errorMsg: "Email is already registered." }));
-      returnMsg = "Email is already registered." ;
-      break;
-    case "password must be between 6 and 128 characters":
-    case "400":
-      setError((err) => ({
-        ...err,
-        errorMsg: "Password must be between 6 and 128 characters."
-      }));
-      returnMsg = "Password must be between 6 and 128 characters.";
-      break;
-    default:
-    console.log(err);
-    returnMsg='See Logs';
-      break;
-  }
-  return returnMsg ;
-}
-
-function parseAuthenticationError(err) {
-  const parts = err.message.split(":");
-  const reason = parts[parts.length - 1].trimStart();
-  if (!reason) return { status: "", message: "" };
-  const reasonRegex = /(?<message>.+)\s\(status (?<status>[0-9][0-9][0-9])/;
-  const match = reason.match(reasonRegex);
-  const { status, message } = match?.groups ?? {};
-  return { status, message };
-}
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-  /*const handleRegistrationAndLogin = async (app, email, password, setError) => {
-    const isValidEmailAddress = validator.isEmail(email);
-    //setError((e) => ({ ...e, password: null }));
-    if (isValidEmailAddress) {
-      try {
-        // Register the user and, if successful, log them in
-       await app.registerWithEmail(email, password);
-       // const usr =  await app.logIn(Realm.Credentials.emailPassword(email, password));
-
-               console.log(app.currentUser,'usr?????????');
-
-
-       // const usr =  await app.logIn(Realm.Credentials.emailPassword(email, password));
-
-       return app.currentUser;
-      } catch (err) {
-        console.log('error in handleregiagraionand login', err);
-        handleAuthenticationError(err, setError);
-      }
-    } else {
-      setError((err) => ({ ...err, email: "Email is invalid." }));
-    }
-  };*/
 
 const theme = createTheme();
+const PasswordAriaLabel = { 'aria-label': 'Password' };
+const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
+const ErrorAriaLabel = { 'aria-label': 'Error' };
+ const submitAriaLabel = { 'aria-label': 'Submit' };
+const FirstNameAriaLabel = { 'aria-label': 'FirstName' };
+const LastNameAriaLabel = { 'aria-label': 'LastName' };
 
+/**
+ * SignUp: take basic info and use it to register a user and log in 
+ * 
+ * 
+ */
 export default function SignUp(props) {
-  const app = useRealmApp();
-    const navigate = useNavigate();
- // app.userWatcher(setUser);
-
-  useEffect(() => {
-console.log("SignUp user in Signup Effect. ",app.currentUser);
-
-  });
-
   const [error, setErrorMsg] = React.useState('');
+  const app = useRealmApp();
+  const navigate = useNavigate();
 
+/**
+ * Performs the registration when user Submits form by 
+ * 1. reads the form data 
+ * 2. Attempts to register with credentials{email, password}.
+ * 3. Navigates home on success or displays any errors
+ * 
+ * @param event: the submit event
+ */
   const handleSubmit = async (event) => {
+//clear errors on resubmission
+    setErrorMsg(null);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
    
-  
+
       try {
-  await app.registerWithEmail(data.get('email'),data.get('password'),data.get('firstName'),data.get('lastName'))
-
-        await app.currentUser.refreshCustomData();
-    } catch (err) {
-      console.log(err,'11submit eror mesg');
-
-      const errMsg = handleAuthenticationError(err, setErrorMsg);
-      console.log(err,'submit eror mesg',errMsg);
-      setErrorMsg(errMsg);
-    }
-
-    navigate('/');
+           const regResult = await app.registerWithEmail(data.get('email'),data.get('password'),data.get('firstName'),data.get('lastName'))
+           if(regResult.error) {
+            setErrorMsg(regResult.error);
+           }
+            else 
+              if(regResult.success) navigate('/');
+          } catch (err) {
+            //display any caught errors in error field
+            setErrorMsg(err.toString());
+          }
+        //  console.log("if error,don't navigate",error);
   };
-console.log(error);
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Box
-          sx={{
+        <Box  sx={{
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',
@@ -151,7 +83,9 @@ console.log(error);
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-       
+           <Typography component="span"  align="center" sx={{color:'red'}}>
+       {error}
+          </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -163,6 +97,7 @@ console.log(error);
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  inputProps={FirstNameAriaLabel}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -171,6 +106,8 @@ console.log(error);
                   fullWidth
                   id="lastName"
                   label="Last Name"
+                  inputProps={LastNameAriaLabel}
+
                   name="lastName"
                   autoComplete="family-name"
                 />
@@ -180,6 +117,7 @@ console.log(error);
                   required
                   fullWidth
                   id="email"
+                  inputProps={EmailAriaLabel}
                   label="Email Address"
                   name="email"
                   autoComplete="email"
@@ -191,6 +129,7 @@ console.log(error);
                   fullWidth
                   name="password"
                   label="Password"
+                  inputProps={PasswordAriaLabel}
                   type="password"
                   id="password"
                   autoComplete="new-password"
@@ -205,6 +144,7 @@ console.log(error);
             </Grid>
             <Button
               type="submit"
+              aria-label="Submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
@@ -213,14 +153,13 @@ console.log(error);
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Button onClick={()=>navigate('/signin')} href="#" variant="body2">
+                <Button aria-label='signInLink' onClick={()=>navigate('/signin')} href="#" variant="body2">
                   Already have an account? Sign in
                 </Button>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );

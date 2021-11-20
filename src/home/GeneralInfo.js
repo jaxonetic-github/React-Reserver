@@ -12,7 +12,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 //import Grid from '@mui/material/Grid';
 //import StarIcon from '@mui/icons-material/StarBorder';
 import Typography from '@mui/material/Typography';
-//import Link from '@mui/material/Link';
+import AdminDrawerMenu from './AdminMenu';
 import Input from '@mui/material/Input';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
@@ -23,16 +23,16 @@ import { useRealmApp } from "../RealmApp";
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
- require('../css/App.css');
+/**
+ * General Info, is the home page.  If User is Admin then 
+ *      a special "admin" menu is available allowing the user to change text
+ */
+export default function GeneralInfo() {
+  const app  = useRealmApp();
 
-
-
-
-export default function GeneralInfo(props) {
+  const [card, setCard] = useState();         
   const navigate = useNavigate();
-  //const app = useRealmApp();
-    const app  = useRealmApp();
-    const [appSite, setAppSite] = useState(app?.siteData);
+  const [appSite, setAppSite] = useState(app?.siteData);
   const [edit, setEditMode] = useState(false);
   const [editable, setEditableMode] = useState(false);
 
@@ -42,15 +42,8 @@ export default function GeneralInfo(props) {
   const [subtitle, setSubTitle] = useState(app?.siteData?.pageData?.subtitle);
   const [paragraph1, setParagraph1] = useState();
   const [paragraph2, setParagraph2] = useState();
-   const [drawerState, setDrawerState] = React.useState(false);
-
-  const toggleDrawer = (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-    setDrawerState(!drawerState);
-  };
-
+  const [drawerState, setDrawerState] = React.useState(false);
+   
 
    React.useEffect(() => {
 
@@ -64,19 +57,27 @@ export default function GeneralInfo(props) {
     setEditableMode(app?.currentUser?.customData.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
 
   });  
+  
+
+  const toggleDrawer = (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDrawerState(!drawerState);
+  };
 
 
 
+/**
+ * Admin method which allows Admin to edit or save text changes
+ */
   const handleSave = async (event) => {
     // eslint-disable-next-line no-console
     
       try {   
-      const obj = {title, subtitle, reservationButton,paragraphs: [paragraph1, paragraph2]};
+       const obj = {title, subtitle, reservationButton,paragraphs: [paragraph1, paragraph2]};
        const cardData = {pageData:obj,cardData:app?.siteData?.cardData };
-
-      console.log(cardData);
-       app?.editHomeData(cardData)
-       .then((userdata)=>{console.log('edit data generalinfo',userdata)});
+       app?.editHomeData(cardData);
 
     } catch (err) {
      console.log(err)
@@ -90,41 +91,9 @@ export default function GeneralInfo(props) {
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-
-
       <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
-      { editable && <React.Fragment key={'right'}>
+{AdminDrawerMenu(toggleDrawer,handleSave, drawerState,editable,setEditMode, edit)}
 
-             <IconButton
-                  onClick={toggleDrawer}
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 ,position:'relative', top:'50px'}}
-          >
-            <MenuIcon />Admin
-          </IconButton>
-
-          <Drawer
-            anchor={'right'}
-            open={drawerState}
-            onClose={toggleDrawer}
-          >
-          <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
- <p>Welcome Awan to your private Admin section</p>
-
- <Typography component="h5" variant="h5" align="left" color="text.primary" gutterBottom>Admin Options</Typography>
-<Switch
-  checked={edit}
-  onChange={(event)=>setEditMode(event.target.checked)}
-  inputProps={{ 'aria-label': 'controlled' }}
-/>
-  <label>Edit</label>
-  <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.editHomeData(null); }}>Reset</Button>
-</Box>  </Drawer>
-        </React.Fragment>}
           {edit  ? <Box> <label>Replace title with::</label><Input   id="subTitle-replacement"
                   label="Replacetitle"
                   name="Replacetitle"
@@ -163,9 +132,8 @@ export default function GeneralInfo(props) {
                   placeholder='Enter Button Text'
                 /></Box>: <Button variant='outlined' fullWidth size="large" onClick={()=>navigate('/checkout')}  sx={{ mt: 2 , color:'605757'}}>{reservationButton}<AirportShuttleIcon/></Button>}
           
-
-         <Typography>  </Typography>
-         <Typography>  </Typography>
+         <Typography> </Typography>
+         <Typography> </Typography>
           <InfoCards /> 
           <ContactCard />       
       </Container>

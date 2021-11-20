@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -13,7 +14,7 @@ import AddressForm from './AddressForm';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import Reservations from './Reservations';
-import PaymentForm from './PaymentForm';
+import AgreementForm from './AgreementForm';
 import Review from './Review';
 import { useRealmApp } from "../RealmApp";
 import {Link, useNavigate} from "react-router-dom";
@@ -34,6 +35,7 @@ export default function Checkout() {
   const [lastName, setLastName] = React.useState(realmApp.currentUser?.customData?.lastname||'');
   const [email, setEmail] = React.useState(realmApp?.currentUser?.customData?.email||'');
   const [password, setPassword] = React.useState();
+  const [error, setError] = React.useState();
   const [phone, setPhone] = React.useState(realmApp?.currentUser?.customData?.phone||'');
 
   const [activeStep, setActiveStep] = React.useState(0);
@@ -45,8 +47,12 @@ export default function Checkout() {
 
   const [agreementSignature, setAgreementSignature] = React.useState('');
   const [agreementChecked, setAgreementChecked] =React.useState(false);
+
+  const [paymentSucceeded, setPaymentSucceeded] = React.useState(false);
+
+
   React.useEffect(() => {
-   console.log( realmApp.currentUser,lastName, firstName);
+   console.log( activeStep,lastName, firstName,error);
     /*setFirstName(realmApp?.currentUser?.customData?.firstname);
     setLastName(realmApp?.currentUser?.customData?.lastname);
     setEmail(realmApp?.currentUser?.customData?.email);
@@ -67,8 +73,6 @@ export default function Checkout() {
          const firstNameValidated = firstName && !validator.isEmpty(firstName);
          const lastNameValidated = lastName && !validator.isEmpty(lastName);
            validated = (phoneValidated && emailValidated && pickupLocationValidated && dropOffLocationValidated && firstNameValidated && lastNameValidated);
-    console.log(phoneValidated, emailValidated,pickupLocationValidated,dropOffLocationValidated,firstNameValidated,lastNameValidated);
-    console.log(lastName)
       }else
          if(currentStep===1){
           const agreementSignatureValidated = !validator.isEmpty(agreementSignature);
@@ -77,32 +81,41 @@ export default function Checkout() {
          else 
           if(currentStep===2) {
             //if we made it this far everything has been validated
-            validated = true;
+            validated = paymentSucceeded;
           }
 
-             return validated;
+      return validated;
 }
 
 function getStepContent(step) {
+  const tmpRes = {
+                    userid:realmApp?.currentUser?.id,
+                   pickUpDate:pickUpDate,
+                    dropOffDate:dropOffDate,
+                   dropOffLocation:dropOffLocation,
+                   pickupLocation:pickupLocation,
+                   firstName:firstName,
+                    lastName:lastName,
+                      email:email,
+                      createdDate:new Date(),
+                      phone:phone}; 
+
   switch (step) {
     case 0:
       return <AddressForm onChange={onChange}/>;
     case 1:
-      return <PaymentForm onChange={onChange} />;
+      return <AgreementForm onChange={onChange} />;
     case 2:
-      return <Review reservation={{
-                                      userid:realmApp?.profile?.userid,
-                                    pickUpDate:pickUpDate,
-                                    dropOffDate:dropOffDate,
-                                    dropOffLocation:dropOffLocation,
-                                    pickupLocation:pickupLocation,
-                                    firstName:firstName,
-                                    lastName:lastName,
-                                    phone:phone,
-                                    email: email,
-                                    createdDate:new Date(),
-                                    phone:phone}}
-                                    />;
+      return <Review handleSuccess={(successEvent)=> 
+                                        {
+                                          if(successEvent.status=='OK'){
+                                          setPaymentSucceeded(true); 
+                                        realmApp.insertReservations(tmpRes); 
+                                         setActiveStep(activeStep + 1);
+                                       }else{console.log("Credit Error::=>",successEvent.errors)}
+                                      }}
+                      reservation={tmpRes}
+            />;
     default:
       throw new Error('Unknown step');
   }
@@ -133,37 +146,43 @@ function getStepContent(step) {
 }
 
   const handleNext = async (event) => {
+          let canContinue = false;
     if(activeStep === steps.length - 1){
         //  const data = new FormData(event.currentTarget);
-              realmApp.insertReservations({
-        userid:realmApp?.currentUser?.id,
-        pickUpDate:pickUpDate,
-        dropOffDate:dropOffDate,
-        dropOffLocation:dropOffLocation,
-        pickupLocation:pickupLocation,
-        firstName:firstName,
-        lastName:lastName,
-        email:email,
-        createdDate:(new Date()).toDateString(),
-        phone:phone});
+       
     }
     else if (activeStep === 0){
-          console.log(realmApp.currentUser,"handl00000enext", activeStep)
         //if(fullyValidated){
-      if(password ){
-      //register with the email and password
-      await realmApp.registerWithEmail(email, password, firstName,lastName, phone) ;
-      console.log(realmApp,"verify new user added from checkout?");
-      }
-//}//fully validated
+          if(password ){
+          //register with the email and password
+              try{
+             const {error} =  await realmApp.registerWithEmail(email, password, firstName,lastName, phone) ;
+             console.log('result....',error);
+             //canContinue = success  ;
+             if(error)
+             setError(error);
+           else canContinue=true;
+            // console.log(success,'========',error )
+            }catch(err){
+        console.log('Error attempting to register user',err);
+            }
+          
+          }//if passwd
+    else { canContinue=true;}
+if (canContinue) {setActiveStep(activeStep + 1); setError(null)}
+
    }//if(activestep ===0)
+else if(activeStep ===1){
+setError(null);
+  setActiveStep(activeStep + 1);
 
-
-    setActiveStep(activeStep + 1);
+}
   }//handlenext();
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
+    setError(null);
+
   };
 
   return (
@@ -173,7 +192,7 @@ function getStepContent(step) {
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
-            Checkout
+            Checkout 
           </Typography>
           <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
@@ -182,6 +201,7 @@ function getStepContent(step) {
               </Step>
             ))}
           </Stepper>
+
           <React.Fragment>
             {activeStep === steps.length ? (
               <React.Fragment>
@@ -213,6 +233,9 @@ function getStepContent(step) {
                     {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
                   </Button>
                 </Box>
+    <Typography component="span"  align="center" sx={{color:'red'}}>
+       {error}
+          </Typography>
               </React.Fragment>
             )}
           </React.Fragment>

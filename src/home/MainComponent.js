@@ -5,7 +5,8 @@ import ApplicationBar from '../navigation/ApplicationBar.js'
 import { useRealmApp } from "../RealmApp";
 import { Outlet} from 'react-router-dom';
 import Footer from '../navigation/Footer'
-require('../css/App.css');
+
+
 //const banner = '../images/sideview_closeddoors.jpeg';
 const banner = 'https://picsum.photos/id/1018/1000/600/';
 //const driverImg = 'https://application-0-iyetn.mongodbstitch.com/assets/driver1.jpeg';
@@ -16,7 +17,6 @@ const banner = 'https://picsum.photos/id/1018/1000/600/';
  * MainComponent: The Base component for the application without Providers
  */
 export default function MainComponent () {
-
   return(
 
     <div >

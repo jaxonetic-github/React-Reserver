@@ -1,43 +1,54 @@
 import React from "react";
 import * as Realm from "realm-web";
+import {useNavigate} from "react-router-dom";
 
-import {HOME_PAGE_DEFAULT, TIERS} from './constants';
+import {HOME_PAGE_DEFAULT, TIERS, handleAuthenticationError, parseAuthenticationError} from './constants';
     import emailjs, { init } from 'emailjs-com';
 import envVars from './envVars.js';
 
+
+
 const RealmAppContext = React.createContext();
 
-
+/**
+ * Using the React Context to have one source of truth for the
+ * backend reference, like a Singleton.
+ * 
+ */
 export const useRealmApp = () => {
   const app = React.useContext(RealmAppContext);
   if (!app) {
-    throw new Error(
-      `You must call useRealmApp() inside of a <RealmAppProvider />`
-    );
+    const stub = {stubbed:true, logIn:(credentials)=>{console.log(credentials); return (new Promise()).resolve('success')}, registerWithEmail:(credentials)=>{console.log(credentials); return (new Promise()).resolve('resolved registration') }, logOut:()=>{console.log('logout')}};
+    console.log(`You must call useRealmApp() inside of a <RealmAppProvider />`);
+    console.log('Entering Debug/Independent mode with stub', stub);
+    return stub;
   }
+
   return app;
 };
 
-export const RealmAppProvider = ({ appId, children }) => {
-  const [app, setApp] = React.useState(new Realm.App(appId));
-  const stubbed = false;
 
+export  const RealmAppProvider = ({ appId, children }) => {
+  const navigate = useNavigate();
+  const [app, setApp] = React.useState(new Realm.App(appId));
+  const stubbed = app.stubbed;
+ console.log(app,'------', stubbed);
   React.useEffect(() => {
     setApp(new Realm.App(appId)); 
-   // setCurrentUser(app.currentUser);
-   getSiteData().then((info)=>{
-    setSiteData(info);
-    getReservations();
-  });
+   getSiteData();
+   
+    if(app?.currentUser?.customData?.firstName){
+     console.log(app?.currentUser?.customData?.email,"realm effect user reefresh?>>>",app?.currentUser?.customData);
+      app.currentUser.refreshCustomData();
+     getReservations();
 
-/*    if(app?.currentUser?.customData?.firstName){
-     console.log("realm effect user >>>",app?.currentUser?.customData);
-     
       getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
-   }*/
+   }
   }, [appId]);
 
-
+async function refreshCustomData(){
+ await app.currentUser.refreshCustomData();  
+}
   // Wrap the Realm.App object's user state with React state
   const [currentUser, setCurrentUser] = React.useState(app.currentUser);
   
@@ -45,17 +56,26 @@ export const RealmAppProvider = ({ appId, children }) => {
    *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
    */
   async function logIn(credentials) {
-
-    const newUser = await app.logIn(credentials);
+try
+{
+  console.log(`login credentials ${credentials}`);
+   const newUser = await app.logIn(Realm.Credentials.emailPassword(credentials.email, credentials.password));
 
     setCurrentUser(newUser); 
+    //This is a redundate with customData but docs mention customData sometimes being stale?
+    // The stale data issue may be fixed with the call to  refreshCustomData().
+    //
     const prof = await newUser.functions.GetUserData(newUser.id);
     setProfile(prof);
      getReservations();
+     
+     //ensure fresh customData cache
+     newUser.refreshCustomData();
     // If successful, app.currentUser is the user that just logged in
     return newUser;   
-  }
-
+  }catch(error){return {error:handleAuthenticationError(error)};}
+  
+}
 
 /**
  *  Logout current user, by clearing the CurrentUSer, Profile, and Reservations
@@ -63,7 +83,7 @@ export const RealmAppProvider = ({ appId, children }) => {
   async function logOut() {
 
     // Log out the currently active user
-     app.currentUser?.logOut();
+     app?.currentUser?.logOut();
     setCurrentUser(null);
     setProfile(null);
     setReservations(null);
@@ -81,29 +101,20 @@ export const RealmAppProvider = ({ appId, children }) => {
   async function registerWithEmail(email, password, firstName, lastName, phone) {
     try{
     // Log out the currently active user
-     const aux =   await app.emailPasswordAuth.registerUser(email, password);
-     console.log("registeremail result",aux);
+   await app.emailPasswordAuth.registerUser(email, password);
      const newUser = await app.logIn(Realm.Credentials.emailPassword(email, password));
      setCurrentUser(newUser);
-      console.log(app,"registered with email inner Uusr",newUser);
      const userdata =  await newUser.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email,phone, userid:newUser.id});
-    console.log('userdata = ', userdata);
      await app.currentUser.refreshCustomData();
     const prof = await newUser.functions.GetUserData(newUser.id);
     setProfile(prof)
       getReservations();
-     
-    
-//console.log(app.currentUser.funct-ions,'registeringnewCurrent=');
 
-   // const udResults = app.currentUser.functions.AddUserData({firstname:firstName, lastname:lastName, userid:'app.curren'}).
-//console.log('udResults=',udResults);
-     //no need to set User or Profile,
-     //this should be done in the local login
+     return {success:true};
 }catch(error){
-  console.log(error);
+  return {error:handleAuthenticationError(error)};
 }
-
+return null;
   }
 
 const [profile, setProfile] = React.useState();
@@ -116,9 +127,11 @@ const [profile, setProfile] = React.useState();
     
      let prof = null;
      try{
-     prof = await app?.currentUser?.functions?.GetUserData(app.currentUser.id);
+     prof = await app?.currentUser?.functions?.GetUserData(app?.currentUser?.id);
     }catch(error){
-      console.log("Profile Access error",prof);
+       const { status, message } = parseAuthenticationError(error);
+       console.log(message);
+       return {error:message};
     }
 return prof;
 }
@@ -138,9 +151,9 @@ const [siteData, setSiteData] = React.useState( /*{pageData, cardData:tiers}*/);
 try{
 
    site =   await app?.currentUser?.functions?.GetSiteData();
-console.log("1st sitedata attempt",site);
+//console.log("1st sitedata attempt",site);
   if(!site)
-  {console.log('No site innfo, attempting to log in ß');
+  {//console.log('No site innfo, attempting to log in ß');
     const user = await app.logIn(Realm.Credentials.anonymous());
   site = await user?.functions?.GetSiteData();
   }
@@ -148,10 +161,11 @@ console.log("1st sitedata attempt",site);
 
   return site;
 }catch(error){
-  console.log("GetSiteData Error",error)
+ const { status, message } = parseAuthenticationError(error);
+      // console.log(message);
+       return {error:message};
 }
-console.log('returning null site data');
-return null;
+
 }
 
 
@@ -182,7 +196,10 @@ setSiteData({screen:'home_general',pageData:newPageData.pageData, contactData:ne
 
 }
 }catch(error){
-  console.log("EditHomeData Error",error)
+  console.log("EditHomeData Error",error);
+  const { status, message } = parseAuthenticationError(error);
+       console.log(message);
+       return {error:message};
 }
  
 
@@ -196,54 +213,29 @@ const [reservations, setReservations] = React.useState(null);
  * 
  */
  async function insertReservations(reservation) {
-    // Log out the currently active user
+
      const prof =   await currentUser?.functions.InsertReservation(reservation);
 
 init(envVars.EMAIL_USERID);
-const message = `Hello Awan,\n\nA new reservation has been requested online from ${reservation.firstName} ${reservation.lastName}. The client requests to be picked up from ${reservation.pickupLocation} @${reservation.pickUpDate}. The drop-off location would be at ${reservation.dropOffLocation} @${reservation.dropOffDate}.\n\nYou can contact ${reservation.firstName} at ${reservation.phone} or by email ${reservation.email}.  `
+const message = `Reservation requested from (${reservation.firstName} ${reservation.lastName}). Contact Info:${reservation.phone}, ${reservation.email}`;
  const emailTemplate  = 
  {to_name:'Awan', from_name:'8Angels Transportation Email Notifier',
   message:message};
 
-emailjs.send(envVars.SERVICEID, envVars.EMAILJS_TEMPLATEID, emailTemplate, envVars.EMAILJS_USERID);
+const emailResult = await emailjs.send(envVars.SERVICEID, envVars.EMAILJS_TEMPLATEID, emailTemplate, envVars.EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
+console.log("Notification Result",emailResult);
+
 reservation.dateAdded = new Date();
    reservations? reservations.push(reservation): setReservations(reservation);
         console.log( 'Insert Reservation Results',prof);
-
-//setReservations(reservations);
 }
 
-
-/**
- *  Restore changes to a default
- *
- async function resetHomeData() {
-     let editResults = null; 
-     let site = null;
-try{
-      editResults = await app?.currentUser?.functions?.Ed(false);
-
-console.log('sitdaata?==',editResults);
-setSiteData({screen:'home_general', pageData:HOME_PAGE_DEFAULT, cardData:TIERS});
-
-}catch(error){
-  console.log("resetHomeData() Error",error)
-}
- //const user =//null await app.logIn(Realm.Credentials.anonymous());
-  //sdata = await user?.functions?.GetSiteData();
-  //console.log("SideData retrieved",sdata);
-
-return editResults;
-}
-*/
 
 /**
  *  Return all Reservations by query, for loggedIn and connected users
  */
 async function getReservations(){
-  console.log('getReservations');
   const res = await app?.currentUser?.functions?.FindReservation();
-  console.log('Reservations found?=',JSON.parse(res));
   setReservations(JSON.parse(res));
   return (JSON.parse(res));
 }
@@ -258,3 +250,4 @@ async function getReservations(){
     </RealmAppContext.Provider>
   );
 };
+

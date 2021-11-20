@@ -21,7 +21,13 @@ import { useRealmApp } from "../RealmApp";
 
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import AdminDrawerMenu from './AdminMenu';
 
+
+/**
+ * InfoCards, is a an editable fragment of the  home page.  If User is Admin then 
+ *      a special "admin" menu is available allowing the user to change text
+ */
 export default function InfoCards(props) {
   const navigate = useNavigate();
     const app = useRealmApp();
@@ -30,6 +36,14 @@ const [displayData, setDisplayData] = useState(app?.siteData?.cardData);
   const [editable, setEditableMode] = useState(app?.currentUser?.customData?.email);
  const [drawerState, setDrawerState] = React.useState(false);
 
+   React.useEffect(() => {
+setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
+ if(!displayData){
+  setDisplayData(app?.siteData?.cardData);
+}
+  });  
+
+
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -37,17 +51,10 @@ const [displayData, setDisplayData] = useState(app?.siteData?.cardData);
     setDrawerState(!drawerState);
   };
 
-   React.useEffect(() => {
-setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
- if(!displayData){
-  setDisplayData(app?.siteData?.cardData);
-}
-//console.log(app,'----',editable,"editable",app?.profile?.email);
-  //const displayData = props.cardData? props.cardData :app?.siteData?.cardData;
-//setDisplayData(app?.siteData?.cardData)
- //console.log(title,'  +==============++',app?.siteData?.pageData?.title);
-  });  
 
+/**
+ * Admin method which allows Admin to edit or save text changes
+ */
 
   const handleSave = async (event) => {
     // eslint-disable-next-line no-console
@@ -65,42 +72,7 @@ setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.custom
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-{editable && 
-      <React.Fragment key={'right'}>
-
-        <IconButton
-                  onClick={toggleDrawer}
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 ,position:'relative', top:'50px'}}
-          >
-            <MenuIcon />Admin
-          </IconButton>
-    
-
-          <Drawer
-            anchor={'right'}
-            open={drawerState}
-            onClose={toggleDrawer}
-          >
-            <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
- <p>Admin section</p>
-Edit CardInfo
- <Typography component="h5" variant="h5" align="left" color="text.primary" gutterBottom>Admin Options</Typography>
-<Switch
-  checked={edit}
-  onChange={(event)=>setEditMode(event.target.checked)}
-  inputProps={{ 'aria-label': 'controlled' }}
-/>
-  <label>Edit</label>
-  <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.resetHomeData(); window.location.reload(true); }}>Reset</Button>
-</Box>
-          </Drawer>
-        </React.Fragment>
-  }
+{AdminDrawerMenu(toggleDrawer,handleSave, drawerState,editable,setEditMode, edit)}
 
       <Container sx={{marginTop:10}} maxWidth="md" component="main">
         <Grid container spacing={2} alignItems="flex-end">

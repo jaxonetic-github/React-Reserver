@@ -16,7 +16,7 @@ import Menu from '@mui/material/Menu';
 import { useRealmApp } from "../RealmApp";
 import { useNavigate} from "react-router-dom";
 
-require('../css/appbarr.css'); 
+
 /**
  * Main Application Bar with menus
  */

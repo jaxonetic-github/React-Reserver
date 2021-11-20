@@ -6,6 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
+import Input from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,74 +16,33 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 
-/*
-  const handleLogin = async (email, password) => {
-   // setIsLoggingIn(true);
-    //setError((e) => ({ ...e, password: null }));
-    try {
-      await this.props.logIn(Realm.Credentials.emailPassword(email, password));
-    } catch (err) {
-      handleAuthenticationError(err, ()=>{});
-    }
-  };
-*/
-function handleAuthenticationError(err, setError) {
-  let returnMsg=null;
-  const { status, message } = parseAuthenticationError(err);
-  const errorType = message || status;
-  console.log(message, status);
-  switch (errorType) {
-    case "invalid username":
-       returnMsg = "Invalid email address." ;
-      break;
-    case "invalid username/password":
-    case "invalid password":
-    case "401":
-
-      returnMsg =  "Incorrect password.";
-      break;
-    case "name already in use":
-    case "409":
-      setError((err) => ({ ...err, errorMsg: "Email is already registered." }));
-      returnMsg = "Email is already registered." ;
-      break;
-    case "password must be between 6 and 128 characters":
-    case "400":
-      setError((err) => ({
-        ...err,
-        errorMsg: "Password must be between 6 and 128 characters."
-      }));
-      returnMsg = "Password must be between 6 and 128 characters.";
-      break;
-    default:
-      break;
-  }
-  return returnMsg ;
-}
-
-function parseAuthenticationError(err) {
-  const parts = err.message.split(":");
-  const reason = parts[parts.length - 1].trimStart();
-  if (!reason) return { status: "", message: "" };
-  const reasonRegex = /(?<message>.+)\s\(status (?<status>[0-9][0-9][0-9])/;
-  const match = reason.match(reasonRegex);
-  const { status, message } = match?.groups ?? {};
-  return { status, message };
-}
-
 const theme = createTheme();
+const PasswordAriaLabel = { 'aria-label': 'Password' };
+const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
+const ErrorAriaLabel = { 'aria-label': 'Error' };
+ const submitAriaLabel = { 'aria-label': 'Submit' };
 
-export default function SignIn(props) {
-  const app = useRealmApp();
-  const navigate = useNavigate();
-
+/**
+ * Perform Sign-in when user Submits form by 
+ * 1. Reads the form data 
+ * 2. Attempts to signin with credentials{email, password}.
+ * 3. Navigates home on success or displays any errors
+ * 
+ * @param event: the submit event
+ */
+export default function SignIn({dispatch}) {
+ 
+ const  app = useRealmApp();
+const navigate = useNavigate();
   const [error, setErrorMsg] = React.useState('');
-    // Similar to componentDidMount and componentDidUpdate:
-  useEffect(() => {console.log("topbar",app.currentUser); 
-  });
-
+   
+/**
+ * Performs the registration when user Submits form
+ * 
+ */
   const handleSubmit = async (event) => {
-
+//clear errors on resubmission
+    setErrorMsg(null);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
@@ -90,13 +50,17 @@ export default function SignIn(props) {
       email: data.get('email'),
       password: data.get('password'),
     }
-      try {
-        console.log('prepare to login');
-       await app.logIn(Realm.Credentials.emailPassword(data.get('email'), data.get('password')));
-        navigate('/');
+    try {
+     const result = await app.logIn(credentials);
+     if(result.error){
+      setErrorMsg(result.error);
+     }else
+       if(result.success) navigate('/');
+     dispatch && dispatch({type: 'USER_LOGIN_REQUESTED', payload: credentials});
+    
     } catch (err) {
-      const errMsg = handleAuthenticationError(err, setErrorMsg);
-      setErrorMsg(errMsg);
+      console.log('signin handle submit error',err)
+      setErrorMsg(err.toString());
     }
   };
 
@@ -118,14 +82,16 @@ export default function SignIn(props) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <p>{error}</p>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+              <Typography component="span" aria-label='Error'  align="center" sx={{color:'red'}}>
+    {error}
+          </Typography>
+          <Box component="form" onSubmit={(event)=>handleSubmit(event)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Email Address"
+              inputProps={EmailAriaLabel}
               name="email"
               autoComplete="email"
               autoFocus
@@ -134,13 +100,15 @@ export default function SignIn(props) {
               margin="normal"
               required
               fullWidth
+
+              inputProps={PasswordAriaLabel}
               name="password"
-              label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
             />
             <Button
+              aria-label="Submit"
               type="submit"
               fullWidth
               variant="contained"
@@ -150,9 +118,9 @@ export default function SignIn(props) {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Button  href="#" variant="body2">
                   Forgot password?
-                </Link>
+                </Button>
               </Grid>
               <Grid item>
                 <Button onClick={()=>navigate('/signup')} variant="body2">

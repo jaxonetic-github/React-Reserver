@@ -62,7 +62,7 @@ export default function Reservations() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Created On</TableCell>
+            <TableCell aria-label='createdColumn'>Created On</TableCell>
             <TableCell>Contact</TableCell>
             <TableCell>PickUp & Drop Off</TableCell>
             </TableRow>
@@ -70,7 +70,7 @@ export default function Reservations() {
         <TableBody>
           {app?.reservations?.map((reservation, index) => 
             (<TableRow key={index}>
-              <TableCell>{reservation.createdDate}</TableCell>
+              <TableCell>{reservation.createdDate.toString()}</TableCell>
               <TableCell>{reservation.firstName} {reservation.lastName}
               <Divider/>{reservation.email}<p>{reservation.phone}</p></TableCell>
               <TableCell>{reservation.pickupLocation}<p>{new Date( reservation.pickUpDate).toLocaleString()}</p>{reservation.dropOffLocation}<p>{new Date(reservation.dropOffDate).toLocaleString()}</p></TableCell>

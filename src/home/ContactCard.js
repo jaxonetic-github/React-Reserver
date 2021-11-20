@@ -8,6 +8,7 @@ import Switch from '@mui/material/Switch';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import AdminDrawerMenu from './AdminMenu';
 
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -66,39 +67,8 @@ setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.custom
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
-{editable && 
-      <React.Fragment key={'right'}>
-                  <IconButton
-                  onClick={toggleDrawer}
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 ,position:'relative', top:'50px', color:'#605757'}}
-          >
-            <MenuIcon />Admin
-          </IconButton>
-          <Drawer
-            anchor={'right'}
-            open={drawerState}
-            onClose={toggleDrawer}
-          >
-            <Box component='form' sx={{ p: 2, border: '1px dashed grey', width:200 }}>
- <p>Admin section</p>
-Edit ContactInfo
- <Typography component="h5" variant="h5" align="left" color="text.primary" gutterBottom>Admin Options</Typography>
-<Switch
-  checked={edit}
-  onChange={(event)=>setEditMode(event.target.checked)}
-  inputProps={{ 'aria-label': 'controlled' }}
-/>
-  <label>Edit</label>
-  <Button onClick={handleSave}>Save</Button>
-  <Button onClick={()=>{app.resetHomeData(); window.location.reload(true); }}>Reset</Button>
-</Box>
-          </Drawer>
-        </React.Fragment>
-  }
+
+{AdminDrawerMenu(toggleDrawer,handleSave, drawerState,editable,setEditMode, edit)}
 
       <Container sx={{marginTop:10}} maxWidth="md" component="main">
         <Grid container spacing={2} alignItems="flex-end">
