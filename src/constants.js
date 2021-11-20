@@ -1,4 +1,6 @@
 
+/******* HOME PAGE user modifiable text **********/
+
 const title = 'Service';
 const subtitle = 'Entertainment and Pleasure';
 const reservationButton = 'Make A Reservation';
@@ -47,10 +49,40 @@ export const TIERS = [
   },
 ]
 
-export function handleAuthenticationError(err, setError) {
+
+/*********************  fee structue used by Review screen to display to user  ******/
+export const FEE_FORMULA = [
+  {
+    name: 'Reservation Fee',
+    desc: 'Due by Pickup : Flat fee',
+    price: '$150.00',
+  },
+  {
+    name: 'Hourly adjustments',
+    desc: 'ex. $20 hour after 3 hours',
+    price: '$3.45',
+  },
+  {
+    name: 'Mileage adjustments',
+    desc: 'ex. $3/mi after 150 miles',
+    price: '$3.00/mi',
+  },
+  {
+    name: 'Security Deposit',
+    desc: '',
+    price: '$100.00',
+  },
+  { name: 'Shipping', desc: '', price: 'Free' },
+];
+
+/************************** DB **************************/
+
+/***************Authentication Specific *******************/
+export function handleAuthenticationError(err) {
   let returnMsg=null;
   const { status, message } = parseAuthenticationError(err);
   const errorType = message || status;
+  console.log(message,'', status);
   switch (errorType) {
     case "invalid username":
        returnMsg = "Invalid email address." ;
@@ -63,19 +95,15 @@ export function handleAuthenticationError(err, setError) {
       break;
     case "name already in use":
     case "409":
-      setError((err) => ({ ...err, errorMsg: "Email is already registered." }));
+//      setError((err) => ({ ...err, errorMsg: "Email is already registered." }));
       returnMsg = "Email is already registered." ;
       break;
     case "password must be between 6 and 128 characters":
     case "400":
-      setError((err) => ({
-        ...err,
-        errorMsg: "Password must be between 6 and 128 characters."
-      }));
+     // setError((err) => ({...err,  errorMsg: "Password must be between 6 and 128 characters."  }));
       returnMsg = "Password must be between 6 and 128 characters.";
       break;
     default:
-    returnMsg='See Logs';
       break;
   }
   return returnMsg ;
