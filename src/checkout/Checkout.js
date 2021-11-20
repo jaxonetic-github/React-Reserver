@@ -26,7 +26,6 @@ const steps = ['Itinerary', 'Agreements', 'Review'];
 const theme = createTheme();
 
 
-
 export default function Checkout() {
   const realmApp  = useRealmApp();
   const navigate = useNavigate();
@@ -49,7 +48,6 @@ export default function Checkout() {
   const [agreementChecked, setAgreementChecked] =React.useState(false);
 
   const [paymentSucceeded, setPaymentSucceeded] = React.useState(false);
-
 
   React.useEffect(() => {
    console.log( activeStep,lastName, firstName,error);
@@ -225,7 +223,7 @@ setError(null);
 
                   <Button
                   disabled={!itineraryValidated(activeStep)}
-                 
+                  aria-label='Next'
                     variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}

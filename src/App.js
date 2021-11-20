@@ -9,7 +9,6 @@ import SignIn from './signinup/Signin';
 import SignUp from './signinup/Signup';
 import RealmApolloProvider from "./graphql/RealmApolloProvider";
 import {RealmAppProvider}  from "./RealmApp";
-import envVars from './envVars.js';
 
 //import { useIdleTimer } from 'react-idle-timer';
 
@@ -26,7 +25,7 @@ import envVars from './envVars.js';
 function App() {
 
   return (<BrowserRouter>
-    <RealmAppProvider appId={envVars.MONGODB_REALM_APPID}> 
+    <RealmAppProvider > 
      <Routes>
           <Route exact path="/" element={<MainComponent />} >
              <Route index element={<GeneralInfo/>} /> 

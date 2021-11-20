@@ -1,4 +1,18 @@
 
+
+/******************    ARIA Labels   *************/
+export const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
+export const ErrorAriaLabel = { 'aria-label': 'Error' };
+export const submitAriaLabel = { 'aria-label': 'Submit' };
+export const FirstNameAriaLabel = { 'aria-label': 'FirstName' };
+export const LastNameAriaLabel = { 'aria-label': 'LastName' };
+export const PickUpDateAriaLabel = { 'aria-label': 'PickUpDate' };
+export const PickUpLocationAriaLabel = { 'aria-label': 'PickupLocation' };
+export const DropOffDateAriaLabel = { 'aria-label': 'DropOFfDate' };
+export const DropOffLocationAriaLabel = { 'aria-label': 'DropOffLocation' };
+export const PasswordAriaLabel = { 'aria-label': 'Password' };
+
+
 /******* HOME PAGE user modifiable text **********/
 
 const title = 'Service';

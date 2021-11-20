@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 
 import {HOME_PAGE_DEFAULT, TIERS, handleAuthenticationError, parseAuthenticationError} from './constants';
     import emailjs, { init } from 'emailjs-com';
-import envVars from './envVars.js';
 
 
 
@@ -29,12 +28,11 @@ export const useRealmApp = () => {
 
 
 export  const RealmAppProvider = ({ appId, children }) => {
-  const navigate = useNavigate();
-  const [app, setApp] = React.useState(new Realm.App(appId));
-  const stubbed = app.stubbed;
- console.log(app,'------', stubbed);
+  const [app, setApp] = React.useState(new Realm.App(appId||process.env.REACT_APP_MONGODB_REALM_APPID));
+  const stubbed = app.stubbed || !appId;
+ console.log(app,'------');
   React.useEffect(() => {
-    setApp(new Realm.App(appId)); 
+    setApp(new Realm.App(appId||process.env.REACT_APP_MONGODB_REALM_APPID)); 
    getSiteData();
    
     if(app?.currentUser?.customData?.firstName){
@@ -216,13 +214,13 @@ const [reservations, setReservations] = React.useState(null);
 
      const prof =   await currentUser?.functions.InsertReservation(reservation);
 
-init(envVars.EMAIL_USERID);
+init(process.env.REACT_APP_EMAILJS_USERID);
 const message = `Reservation requested from (${reservation.firstName} ${reservation.lastName}). Contact Info:${reservation.phone}, ${reservation.email}`;
  const emailTemplate  = 
  {to_name:'Awan', from_name:'8Angels Transportation Email Notifier',
   message:message};
 
-const emailResult = await emailjs.send(envVars.SERVICEID, envVars.EMAILJS_TEMPLATEID, emailTemplate, envVars.EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
+const emailResult = await emailjs.send(process.env.REACT_APP_SERVICEID, process.env.REACT_APP_EMAILJS_TEMPLATEID, emailTemplate, process.env.REACT_APP_EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
 console.log("Notification Result",emailResult);
 
 reservation.dateAdded = new Date();

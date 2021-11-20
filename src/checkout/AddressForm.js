@@ -6,6 +6,9 @@ import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import TextField from '@mui/material/TextField';
 
+import {EmailAriaLabel,PasswordAriaLabel, ErrorAriaLabel, submitAriaLabel, FirstNameAriaLabel, LastNameAriaLabel,
+  PickUpDateAriaLabel, PickUpLocationAriaLabel,DropOffLocationAriaLabel,DropOffDateAriaLabel }  from '../constants'
+
 
 export default function AddressForm(props) {
 const app = useRealmApp();
@@ -21,6 +24,7 @@ const isPasswdNeeded = (app.currentUser?.customData?.email==null);
                 <Grid item xs={12} sm={6}>
           <TextField
             onChange = {props.onChange}
+            inputProps={PickUpDateAriaLabel}
         name="pickupdate"
         id="pickupdate"
         label="Choose a pick up date"
@@ -34,6 +38,7 @@ const isPasswdNeeded = (app.currentUser?.customData?.email==null);
           <TextField
           onChange = {props.onChange}
             required
+            inputProps={PickUpLocationAriaLabel}
             id="pickup-location"
             name="pickupLocation"
             label="Pick Up Location"
@@ -43,6 +48,7 @@ const isPasswdNeeded = (app.currentUser?.customData?.email==null);
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
+          inputProps={DropOffDateAriaLabel}
           onChange = {props.onChange}
           name='dropoffDate'
         id="dropoffdate"
@@ -56,6 +62,7 @@ const isPasswdNeeded = (app.currentUser?.customData?.email==null);
 
         <Grid item xs={12} sm={6}>
           <TextField
+          inputProps={DropOffLocationAriaLabel}
           onChange = {props.onChange}
             id="dropoff-location"
             name="dropoffLocation"
@@ -71,6 +78,7 @@ const isPasswdNeeded = (app.currentUser?.customData?.email==null);
 onChange = {props.onChange}
                   fullWidth
                   id="firstName"
+                  inputProps={FirstNameAriaLabel}
                   label="First Name"
                   defaultValue={app?.currentUser?.customData?.firstname}
                 />
@@ -81,6 +89,7 @@ onChange = {props.onChange}
                   id="lastName"
                   label="Last Name"
                   name="lastName"
+                  inputProps={LastNameAriaLabel}
                   placeholder='Last Name'
                    defaultValue={app?.currentUser?.customData?.lastname}
 onChange = {props.onChange}
@@ -92,7 +101,7 @@ onChange = {props.onChange}
                   onChange = {props.onChange}
                  placeholder='email'
                   defaultValue={app?.currentUser?.customData?.email}
-
+                  inputProps={EmailAriaLabel}
                   fullWidth
                   id="email"
                   label="Email"
@@ -120,6 +129,7 @@ onChange = {props.onChange}
               onChange = {props.onChange}
               name="password"
               label="Password"
+              inputProps={PasswordAriaLabel}
               type="password"
               id="password"
               autoComplete="current-password"

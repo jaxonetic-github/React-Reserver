@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, fireEvent,createEvent ,waitFor,act } from '@testing-library/react';
-import envVars from '../envVars.js';
 
 import SignIn from '../signinup/Signin';
 import { Routes, Route} from 'react-router-dom';

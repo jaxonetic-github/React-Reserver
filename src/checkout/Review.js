@@ -13,8 +13,6 @@ import TextField from '@mui/material/TextField';
 
 import  {SquarePaymentsForm,  CreditCardInput} from 'react-square-web-payments-sdk';
 
-import envVars from '../envVars.js';
-
  
 /**
  * import  {SquarePaymentsForm,CreditCardInput,} from 'react-square-web-payments-sdk';
@@ -29,7 +27,7 @@ const MyPaymentForm = ({handleSuccess}) => (
      * Identifies the calling form with a verified application ID
      * generated from the Square Application Dashboard.
      */
-    applicationId={envVars.SQUARE_APPID}
+    applicationId={process.env.REACT_APP_SQUARE_APPID}
     /**
      * Invoked when payment form receives the result of a tokenize generation request.
      * The result will be a valid credit card or wallet token, or an error.
@@ -59,7 +57,7 @@ const MyPaymentForm = ({handleSuccess}) => (
      * Identifies the location of the merchant that is taking the payment.
      * Obtained from the Square Application Dashboard - Locations tab.
      */
-    locationId={envVars.SQUARE_LOCATIONID}
+    locationId={process.env.REACT_APP_SQUARE_LOCATIONID}
   >
     <CreditCardInput />
   </SquarePaymentsForm>

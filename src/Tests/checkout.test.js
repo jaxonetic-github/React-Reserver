@@ -1,18 +1,20 @@
 import React from 'react';
 import { render, screen, fireEvent,createEvent ,waitFor,act } from '@testing-library/react';
-import envVars from '../envVars.js';
 
-import Reservations from '../checkout/Reservations';
+import Checkout from '../checkout/Checkout';
 
 import { Routes, Route} from 'react-router-dom';
 import userEvent from '@testing-library/user-event'
 import {BrowserRouter} from 'react-router-dom';
 
+import {EmailAriaLabel, ErrorAriaLabel, submitAriaLabel, FirstNameAriaLabel, LastNameAriaLabel,
+  PickUpDateAriaLabel, PickUpLocationAriaLabel,DropOffLocationAriaLabel,DropOffDateAriaLabel }  from '../constants'
 
-  describe('Signin Test', () => {
+
+
+  describe('Checkout Test', () => {
 //  let signin = null;
   let app = null;
-  const signInObject = { email:'jaxonetic@gmail.com', password:'123456789',  };
  let signin = null;
 
 /*
@@ -33,13 +35,18 @@ import {BrowserRouter} from 'react-router-dom';
 */
 
 
-test('SignUp displays expected text', async () => {
+test('Checkout displays expected text', async () => {
 
-     render(<BrowserRouter><Reservations/></BrowserRouter>);
+     render(<BrowserRouter><Checkout/></BrowserRouter>);
 
  
-  const passwordField = screen.getByLabelText('createdColumn');
-
+  const title = screen.getByText('Checkout');
+  const dropOffLocation = screen.getByLabelText(DropOffLocationAriaLabel['aria-label']);
+  const dropOffDate = screen.getByLabelText(DropOffDateAriaLabel['aria-label']);
+  const pickUpLocation = screen.getByLabelText(PickUpLocationAriaLabel['aria-label']);
+  const pickUpDate = screen.getByLabelText(PickUpDateAriaLabel['aria-label']);
+  const firstName = screen.getByLabelText(FirstNameAriaLabel['aria-label']);
+  const next = screen.getByLabelText('Next');
 /** const emailField =  screen.getByLabelText('EmailAddress');
 
   const signInButton = screen.getByLabelText('Submit');
