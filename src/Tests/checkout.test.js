@@ -47,6 +47,9 @@ test('Checkout displays expected text', async () => {
   const pickUpDate = screen.getByLabelText(PickUpDateAriaLabel['aria-label']);
   const firstName = screen.getByLabelText(FirstNameAriaLabel['aria-label']);
   const next = screen.getByLabelText('Next');
+
+   userEvent.click(next);
+   
 /** const emailField =  screen.getByLabelText('EmailAddress');
 
   const signInButton = screen.getByLabelText('Submit');

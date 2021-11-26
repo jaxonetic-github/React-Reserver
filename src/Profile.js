@@ -1,5 +1,5 @@
-import React, { useState} from 'react';
-import { useRealmApp } from "./RealmApp";
+import React from 'react';
+import {  useSelector } from 'react-redux'
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,8 +12,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {handleAuthenticationError, parseAuthenticationError} from './constants'
+import {handleAuthenticationError} from './constants'
 import validator from 'validator';
+import { useNavigate} from "react-router-dom";
+import { useRealmApp } from "./RealmApp";
 
 
 
@@ -23,12 +25,23 @@ const theme = createTheme();
  * Profile : Displays User specific and saved info
  */
 export default function Profile(props) {
-  const app = useRealmApp();
- const [profile, setProfile] = React.useState(app?.currentUser?.customData);
- const [firstName, setFirstName] = React.useState(app.currentUser?.customData?.firstname);
-  const [lastName, setLastName] = React.useState(app.currentUser?.customData?.lastname);
-  const [email, setEmail] = React.useState(app?.currentUser?.customData?.email||'');
-  const [phone, setPhone] = React.useState(app?.currentUser?.customData?.phone||'');
+    const currentUser = useSelector((state)=>state?.user);
+    const navigate = useNavigate();
+    const profile = useSelector((state)=>state?.profile);
+
+  const  app = useRealmApp();
+
+  React.useEffect(() => {
+     if(!profile?.email) navigate("/");
+  });
+
+   
+
+ 
+ const [firstName] = React.useState(profile?.firstname);
+  const [lastName] = React.useState(profile?.lastname);
+  const [email] = React.useState(profile?.email||'');
+  const [phone, setPhone] = React.useState(profile?.phone||'');
 
   const [error, setErrorMsg] = React.useState('');
 
@@ -52,7 +65,7 @@ export default function Profile(props) {
     
       try {   
       
-        app.currentUser.functions.EditProfile({firstname:data.get('firstName'), lastname:data.get('lastName'), email:data.get('email'), phone:data.get('phone'), userid:app.currentUser.id}).then((userdata)=>{console.log(userdata)});
+        currentUser.functions.EditProfile({firstname:data.get('firstName'), lastname:data.get('lastName'), email:data.get('email'), phone:data.get('phone'), userid:app.currentUser.id}).then((userdata)=>{console.log(userdata)});
 
     } catch (err) {
       const errMsg = handleAuthenticationError(err, setErrorMsg);
@@ -77,7 +90,7 @@ export default function Profile(props) {
           <Typography component="h1" variant="h5">
             Profile
           </Typography>
-       
+       {error}
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>

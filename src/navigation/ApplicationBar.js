@@ -1,4 +1,7 @@
-import React  from 'react';
+import React , {useState} from 'react';
+import { useSelector } from 'react-redux'
+import { useRealmApp } from "../RealmApp";
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 
@@ -13,17 +16,20 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Menu from '@mui/material/Menu';
 
-import { useRealmApp } from "../RealmApp";
 import { useNavigate} from "react-router-dom";
+import {  isAdminSelector} from '../constants';
 
-
+const selectAuthedUserDataState = state => state?.profile;
+const selectProfile = state=>state?.profile;
 /**
  * Main Application Bar with menus
  */
 export default function MenuAppBar() {
   const app = useRealmApp();
   const navigate = useNavigate();
-   
+  const authedUserSelector = useSelector(selectAuthedUserDataState);
+  const hasProfileSelector = useSelector((state)=>state?.profile?.email);
+  const [authedUser, setAuthedUser] = useState(authedUserSelector?.email);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -34,8 +40,11 @@ export default function MenuAppBar() {
     setAnchorEl(null);
   };
 
+  React.useEffect(() => {
+     if(!hasProfileSelector) navigate("/");
+  },[hasProfileSelector]);
 
-
+   
   return (
     <Box sx={{ flexGrow: 1 }}>
  
@@ -43,7 +52,6 @@ export default function MenuAppBar() {
         <Toolbar >
         <Grid container spacing={3}>
   <Grid item xs={1}>
-     
           <IconButton
             size="large"
             edge="start"
@@ -52,8 +60,7 @@ export default function MenuAppBar() {
             onClick={handleMenu}
           >
             <MenuIcon />
-          </IconButton>
-          
+          </IconButton>       
   </Grid>
   <Grid item xs={10}>
     <Box align='center'  ><Typography component="div"
@@ -70,7 +77,7 @@ export default function MenuAppBar() {
   </Grid>
 
 </Grid>
-      { (app?.currentUser?.customData?.email) ?   <Menu
+      { hasProfileSelector  ?   <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
@@ -111,12 +118,8 @@ export default function MenuAppBar() {
                
               </Menu>
       }
-      
-         
-            
-         {app?.currentUser?.customData?.firstname ? `Hello,${app?.currentUser?.customData?.firstname}` : ''}
+         {hasProfileSelector? `Hello,${authedUserSelector?.firstname}` : ''}
         </Toolbar>
-
       </AppBar>
     </Box>
   );

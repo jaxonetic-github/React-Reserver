@@ -1,36 +1,101 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import './index.css';
 import './css/App.css';
 
 import App from './App';
+import { RealmAppProvider } from "./RealmApp";
 import reportWebVitals from './reportWebVitals';
+import RealmApolloProvider from "./graphql/RealmApolloProvider";
 
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 
-//import reducer from './reducers'
-import mySaga from './redux/sagas'
-
+import {reducer} from './redux/reducers/appReducer'
+import mySaga from './redux/sagas';
+import {logger} from 'redux-logger';
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware()
+
+const initialState={
+  auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
+            backEnd:{}
+       },
+       app:{},
+  reservations:[],
+  profile:{},
+  siteData:{},
+  error:''
+}
+
 // mount it on the Store
-const store = createStore(
-  (()=>{}),
-  applyMiddleware(sagaMiddleware)
-)
+const store = createStore(reducer, initialState,  applyMiddleware(sagaMiddleware, logger))
 
-// then run the saga
-sagaMiddleware.run(mySaga)
+ //  const app = new Realm.App(process.env.REACT_APP_MONGODB_REALM_APPID);
+   
+ //  const user = app.login(Realm.Credentials.anonymous());
+sagaMiddleware.run(mySaga);
 
+  /*
+    // then run the saga
+   if(app?.currentUser){
+    console.log()
+   }
+
+          const credentials = {
+          email: 'jaxonetic@gmail.com',
+          password: '123456789',
+        }
+    app.logIn(Realm.Credentials.emailPassword(credentials.email, credentials.password));
+  //  store.dispatch(refreshCustomData());
+            
+    sagaMiddleware.run(mySaga, app);
+    console.log('placibo app::',app);
+
+    if(!app.currentUser)
+    {
+console.log('no app cuser',app);
+
+    }
+    else{//there is aleadry a user 
+        console.log(app);
+
+        }*/
+        /*
+        try {
+        store.dispatch(loadBackEnd(app));
+        if(!app?.currentUser)
+        {
+          const user = app.login(Realm.Credentials.anonymous());
+          store.dispatch()
+        }
+        store.dispatch(fetchSiteData());
+       // console.log(store.getState());
+    
+   
+// load our back end access
+//console.log(app.login);
+
+
+}catch(err){
+  console.log('Unable to load Back End', err);
+}
+*/
+  
+console.log(store.getState());
 // render the application
 
 ReactDOM.render(
   <React.StrictMode>
   <Provider store={store}>
- <App />
-</Provider>
+     <RealmAppProvider demoAppId={process.env.REACT_APP_MONGODB_REALM_APPID}> 
+     <RealmApolloProvider>
+        <App />
+        </RealmApolloProvider>
+     </RealmAppProvider>
+  </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -1,4 +1,7 @@
-import React, {  useState, useEffect }from 'react';
+import React, {  useState }from 'react';
+import { useRealmApp } from "../RealmApp";
+import { useNavigate} from "react-router-dom";
+import { useSelector } from 'react-redux'
 
 import Container from '@mui/material/Container';
 import Table from '@mui/material/Table';
@@ -8,10 +11,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import { useRealmApp } from "../RealmApp";
-import { useNavigate} from "react-router-dom";
 import Toolbar from '@mui/material/Toolbar';
-import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
 
 
@@ -31,21 +31,20 @@ import Divider from '@mui/material/Divider';
  * phone:"555-555-5555"};
  *
  */
+ //const selectReservationsFromState = ;
+
 export default function Reservations() {
   const app = useRealmApp();
-  const [reservations, setReservations] = useState(app?.reservations);
+  const getReservations = useSelector(state=>state?.reservations);
+  const [reservations, setReservations] = useState(getReservations||[]);
   const navigate = useNavigate();
 
+   const loginSuccessful = useSelector((state)=>state.profile);
 
-  useEffect(()=>{
-    setReservations(app?.reservations);
+     React.useEffect(() => { if(!loginSuccessful) navigate('/');  });
 
-//         setReservations(JSON.parse(res));     
-  //setReservations(app.reservations );   
-  })
-  
-  const adjustDate = (someDate)=>
- (someDate && ((typeof someDate) === 'object' )? someDate.toDateString() : someDate);
+  //console.log(reservations);
+  //const adjustDate = (someDate)=>(someDate && ((typeof someDate) === 'object' )? someDate.toDateString() : someDate);
  
   return (
     <React.Fragment>
@@ -53,7 +52,7 @@ export default function Reservations() {
    <Toolbar>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-             {reservations?.length} Reservations 
+             { reservations?.length} Reservations 
           </Typography>
           <Button contained="true" color="success" onClick={()=>app?.getReservations()}>Refresh</Button>
         </Toolbar>
@@ -68,12 +67,12 @@ export default function Reservations() {
             </TableRow>
         </TableHead>
         <TableBody>
-          {app?.reservations?.map((reservation, index) => 
+          {reservations.map((reservation, index) => 
             (<TableRow key={index}>
-              <TableCell>{reservation.createdDate.toString()}</TableCell>
-              <TableCell>{reservation.firstName} {reservation.lastName}
-              <Divider/>{reservation.email}<p>{reservation.phone}</p></TableCell>
-              <TableCell>{reservation.pickupLocation}<p>{new Date( reservation.pickUpDate).toLocaleString()}</p>{reservation.dropOffLocation}<p>{new Date(reservation.dropOffDate).toLocaleString()}</p></TableCell>
+              <TableCell>{reservation?.createdDate?.toString()}</TableCell>
+              <TableCell>{reservation?.firstName} {reservation?.lastName}
+              <Divider/>{reservation?.email}<p>{reservation?.phone}</p></TableCell>
+              <TableCell>{reservation?.pickupLocation}<p>{new Date( reservation?.pickUpDate).toLocaleString()}</p>{reservation?.dropOffLocation}<p>{new Date(reservation?.dropOffDate).toLocaleString()}</p></TableCell>
             </TableRow>)
           )}
           <TableRow >

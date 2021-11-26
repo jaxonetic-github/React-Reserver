@@ -2,7 +2,6 @@ import React from 'react';
 import ApplicationBar from '../navigation/ApplicationBar.js'
 //import GeneralInfo from './GeneralInfo';
 //import Reservations from './checkout/Reservations';
-import { useRealmApp } from "../RealmApp";
 import { Outlet} from 'react-router-dom';
 import Footer from '../navigation/Footer'
 

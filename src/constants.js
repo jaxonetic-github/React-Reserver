@@ -1,4 +1,5 @@
 
+export  const isAdminSelector = state => (state?.app?.currentUser?.customData?.email==='kurawan@yahoo.com') 
 
 /******************    ARIA Labels   *************/
 export const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
@@ -11,7 +12,7 @@ export const PickUpLocationAriaLabel = { 'aria-label': 'PickupLocation' };
 export const DropOffDateAriaLabel = { 'aria-label': 'DropOFfDate' };
 export const DropOffLocationAriaLabel = { 'aria-label': 'DropOffLocation' };
 export const PasswordAriaLabel = { 'aria-label': 'Password' };
-
+ 
 
 /******* HOME PAGE user modifiable text **********/
 
@@ -96,7 +97,7 @@ export function handleAuthenticationError(err) {
   let returnMsg=null;
   const { status, message } = parseAuthenticationError(err);
   const errorType = message || status;
-  console.log(message,'', status);
+  console.log(err,'   ===',message,'---', status);
   switch (errorType) {
     case "invalid username":
        returnMsg = "Invalid email address." ;

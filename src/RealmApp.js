@@ -1,79 +1,111 @@
 import React from "react";
 import * as Realm from "realm-web";
-import {useNavigate} from "react-router-dom";
+//import {useNavigate} from "react-router-dom";
+import {  useDispatch } from 'react-redux'
+import {loadUser, loadProfile,loadBackEnd,login,loginSucceeded,loginError,logout,
+   fetchSiteData,fetchSiteDataError,fetchSiteDataSuccess,
+   fetchReservations ,fetchReservationsSuccess, register,registerSuccess, bubbleError} from './redux/reducers/appReducer';
+import { createAction } from '@reduxjs/toolkit'
 
-import {HOME_PAGE_DEFAULT, TIERS, handleAuthenticationError, parseAuthenticationError} from './constants';
+import { handleAuthenticationError, parseAuthenticationError} from './constants';
     import emailjs, { init } from 'emailjs-com';
 
 
+//const stub = {stubbed:true, logIn:(credentials)=>{console.log(credentials); return {demo:true}}, registerWithEmail:(credentials)=>{console.log(credentials); return (new Promise()).resolve('resolved registration') }, logOut:()=>{console.log('logout')}};
 
 const RealmAppContext = React.createContext();
 
 /**
  * Using the React Context to have one source of truth for the
  * backend reference, like a Singleton.
- * 
  */
+ 
 export const useRealmApp = () => {
   const app = React.useContext(RealmAppContext);
-  if (!app) {
-    const stub = {stubbed:true, logIn:(credentials)=>{console.log(credentials); return (new Promise()).resolve('success')}, registerWithEmail:(credentials)=>{console.log(credentials); return (new Promise()).resolve('resolved registration') }, logOut:()=>{console.log('logout')}};
-    console.log(`You must call useRealmApp() inside of a <RealmAppProvider />`);
-    console.log('Entering Debug/Independent mode with stub', stub);
-    return stub;
-  }
 
+  if (!app) { throw new Error(`You must call useRealmApp() inside of a <RealmAppProvider />`);}
+  
   return app;
 };
 
 
-export  const RealmAppProvider = ({ appId, children }) => {
-  const [app, setApp] = React.useState(new Realm.App(appId||process.env.REACT_APP_MONGODB_REALM_APPID));
-  const stubbed = app.stubbed || !appId;
- console.log(app,'------');
+export  const RealmAppProvider = ({ demoAppId, children }) => {
+   const dispatch = useDispatch();
+
+   //app.allUsers
+  const [app] = React.useState(new Realm.App(demoAppId||process.env.REACT_APP_MONGODB_REALM_APPID));
+ 
   React.useEffect(() => {
-    setApp(new Realm.App(appId||process.env.REACT_APP_MONGODB_REALM_APPID)); 
-   getSiteData();
-   
-    if(app?.currentUser?.customData?.firstName){
-     console.log(app?.currentUser?.customData?.email,"realm effect user reefresh?>>>",app?.currentUser?.customData);
-      app.currentUser.refreshCustomData();
-     getReservations();
+   // const newApp = new Realm.App(demoAppId||process.env.REACT_APP_MONGODB_REALM_APPID);
+   // setApp(newApp);
 
-      getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
-   }
-  }, [appId]);
+    console.log('Realm App',app)
+    try{
+      if(app?.currentUser?.accessToken ){
+        dispatch(loadUser(app?.currentUser));
+        dispatch(loadProfile(app?.currentUser?.customData));
+        getSiteData();
+        getReservations();
+      }else
+      {
+      getSiteDataAnonymously();
+      }
+    }catch(error)
+    {
+      dispatch(bubbleError('no access token for current user: Navigate to Ho,e or SignIn'));
+    }
+  }, [app]);
 
-async function refreshCustomData(){
- await app.currentUser.refreshCustomData();  
+
+// Wrap the Realm.App object's user state with React state
+  const [currentUser, setCurrentUser] = React.useState(app?.currentUser);
+ 
+async function reloadCustomData(){
+ await app?.currentUser?.refreshCustomData();  
+ //currentUser?.refreshCustomData();
 }
-  // Wrap the Realm.App object's user state with React state
-  const [currentUser, setCurrentUser] = React.useState(app.currentUser);
-  
+   
+
+  /**
+   *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
+   */
+  async function getSiteDataAnonymously() {
+      await app.logIn(Realm.Credentials.anonymous());
+      await getSiteData();
+
+      logOut();
+}
+
   /**
    *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
    */
   async function logIn(credentials) {
-try
-{
-  console.log(`login credentials ${credentials}`);
-   const newUser = await app.logIn(Realm.Credentials.emailPassword(credentials.email, credentials.password));
 
-    setCurrentUser(newUser); 
-    //This is a redundate with customData but docs mention customData sometimes being stale?
-    // The stale data issue may be fixed with the call to  refreshCustomData().
-    //
-    const prof = await newUser.functions.GetUserData(newUser.id);
-    setProfile(prof);
-     getReservations();
-     
-     //ensure fresh customData cache
-     newUser.refreshCustomData();
-    // If successful, app.currentUser is the user that just logged in
-    return newUser;   
-  }catch(error){return {error:handleAuthenticationError(error)};}
-  
-}
+    try
+    {
+    //tell store that a login is being attempted
+   dispatch(login('Attempting to login'));
+   const loginResult =  await app?.logIn(Realm.Credentials.emailPassword(credentials.email, credentials.password));
+
+   //It's nice to keep an internal store of the currentUser
+    setCurrentUser(loginResult)
+     //  const prof = await loginResult.functions.GetUserData(loginResult.id);
+    setProfile(app?.currentUser?.customData)
+
+   const reservations = getReservations();
+   reloadCustomData();
+
+   //dispatch results or succes or error
+    dispatch(loginSucceeded({user:loginResult, reservations:reservations, profile:app?.currentUser?.customData}));
+
+    } catch(err)
+    {
+      const msg = handleAuthenticationError(err);
+      console.log(msg);
+       dispatch(loginError(msg));
+    }
+  }
+ 
 
 /**
  *  Logout current user, by clearing the CurrentUSer, Profile, and Reservations
@@ -81,11 +113,13 @@ try
   async function logOut() {
 
     // Log out the currently active user
-     app?.currentUser?.logOut();
+    app?.currentUser?.logOut();
     setCurrentUser(null);
     setProfile(null);
     setReservations(null);
-    
+    dispatch(logout('User Logged Out'));
+
+
   }
 
 
@@ -98,21 +132,36 @@ try
  */
   async function registerWithEmail(email, password, firstName, lastName, phone) {
     try{
-    // Log out the currently active user
-   await app.emailPasswordAuth.registerUser(email, password);
-     const newUser = await app.logIn(Realm.Credentials.emailPassword(email, password));
-     setCurrentUser(newUser);
-     const userdata =  await newUser.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email,phone, userid:newUser.id});
-     await app.currentUser.refreshCustomData();
-    const prof = await newUser.functions.GetUserData(newUser.id);
-    setProfile(prof)
-      getReservations();
+      const args = {email,password,firstName, lastName, phone};
+       dispatch(register(args));
 
+
+     await app.emailPasswordAuth.registerUser(email, password);
+     const newUser =  await app?.logIn(Realm.Credentials.emailPassword(email, password));
+    setCurrentUser(newUser);
+    reloadCustomData();
+    //      dispatch(refreshCustomDataSuccess());
+    try {
+         //add CustomData
+         await app?.currentUser?.functions?.AddUserData({firstname:firstName, lastname:lastName,email:email,phone, userid:app?.currentUser?.id});
+    }catch(err1){console.log("errer adding userdata",err1)}
+       // const prof = await newUser.functions.GetUserData(newUser.id);
+    setProfile(app?.currentUser?.customData)
+
+    dispatch(registerSuccess({user:newUser, profile:app?.currentUser?.customData, reservations:reservations}))
+/*
+try {
+      await getReservations();
+}catch(err2){console.log('error gettinng reservation',err2)}
+*/
      return {success:true};
 }catch(error){
+  console.log(error);
+      dispatch({type: 'REGISTER_FAILED', payload:{error:handleAuthenticationError(error)} });
+
   return {error:handleAuthenticationError(error)};
 }
-return null;
+
   }
 
 const [profile, setProfile] = React.useState();
@@ -128,7 +177,7 @@ const [profile, setProfile] = React.useState();
      prof = await app?.currentUser?.functions?.GetUserData(app?.currentUser?.id);
     }catch(error){
        const { status, message } = parseAuthenticationError(error);
-       console.log(message);
+       console.log(status,'<---status message--->',message);
        return {error:message};
     }
 return prof;
@@ -144,26 +193,25 @@ const [siteData, setSiteData] = React.useState( /*{pageData, cardData:tiers}*/);
  *   to backend functions.
  *
  */
- async function getSiteData() {
-     let site = stubbed && {pageData:HOME_PAGE_DEFAULT, cardData:TIERS};
-try{
+ async function getSiteData(logoutAnonUser) {
+     dispatch(fetchSiteData());
 
-   site =   await app?.currentUser?.functions?.GetSiteData();
-//console.log("1st sitedata attempt",site);
-  if(!site)
-  {//console.log('No site innfo, attempting to log in ß');
-    const user = await app.logIn(Realm.Credentials.anonymous());
-  site = await user?.functions?.GetSiteData();
-  }
-  setSiteData(site);
+   //  let site =  {pageData:HOME_PAGE_DEFAULT, cardData:TIERS};
+    try{
+       const site =   await app?.currentUser?.functions?.GetSiteData();
 
-  return site;
-}catch(error){
- const { status, message } = parseAuthenticationError(error);
-      // console.log(message);
-       return {error:message};
-}
+      if(site){
+      setSiteData(site.screen);
+      dispatch(fetchSiteDataSuccess(site));
+      }
+      return site;
+    }catch(error){
+     const { status, message } = parseAuthenticationError(error);
+          // console.log(message);
+            dispatch(fetchSiteDataError(message));
 
+           return {error:message};
+    }
 }
 
 
@@ -172,9 +220,7 @@ try{
  * @param newPageData takes a HOME_PAGE_DEFAULT type object
  */
  async function editHomeData(newPageData) {
-   let sdata = null; 
-     let site = null;
-
+  
 try{
 if (newPageData){
 const obj ={screen:'home_general',pageData:newPageData.pageData, cardData:newPageData.cardData}
@@ -195,7 +241,7 @@ setSiteData({screen:'home_general',pageData:newPageData.pageData, contactData:ne
 }
 }catch(error){
   console.log("EditHomeData Error",error);
-  const { status, message } = parseAuthenticationError(error);
+  const {  message } = parseAuthenticationError(error);
        console.log(message);
        return {error:message};
 }
@@ -212,8 +258,14 @@ const [reservations, setReservations] = React.useState(null);
  */
  async function insertReservations(reservation) {
 
-     const prof =   await currentUser?.functions.InsertReservation(reservation);
+    const prof =   await currentUser?.functions.InsertReservation(reservation);
+    const newReservation = {...reservation, dateAdded :(new Date()) };
 
+
+   reservations? setReservations( reservations.push(newReservation)): setReservations([newReservation]);
+  dispatch({type: 'RESERVATION_INSERT_SUCCESS', payload:newReservation});
+
+dispatch(createAction('SENDING_EMAIL/SMS_NOTIFICATION')())
 init(process.env.REACT_APP_EMAILJS_USERID);
 const message = `Reservation requested from (${reservation.firstName} ${reservation.lastName}). Contact Info:${reservation.phone}, ${reservation.email}`;
  const emailTemplate  = 
@@ -223,9 +275,6 @@ const message = `Reservation requested from (${reservation.firstName} ${reservat
 const emailResult = await emailjs.send(process.env.REACT_APP_SERVICEID, process.env.REACT_APP_EMAILJS_TEMPLATEID, emailTemplate, process.env.REACT_APP_EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
 console.log("Notification Result",emailResult);
 
-reservation.dateAdded = new Date();
-   reservations? reservations.push(reservation): setReservations(reservation);
-        console.log( 'Insert Reservation Results',prof);
 }
 
 
@@ -233,9 +282,20 @@ reservation.dateAdded = new Date();
  *  Return all Reservations by query, for loggedIn and connected users
  */
 async function getReservations(){
-  const res = await app?.currentUser?.functions?.FindReservation();
+  try
+  {
+ dispatch(fetchReservations());
+  const res = await app.currentUser?.functions?.FindReservation();
+  if(!res) return [];
+
   setReservations(JSON.parse(res));
+  dispatch(fetchReservationsSuccess(JSON.parse(res)));
+
   return (JSON.parse(res));
+}catch(err){
+console.log('Get Reservation',err);
+dispatch(bubbleError(err.toString()))
+}
 }
 
 

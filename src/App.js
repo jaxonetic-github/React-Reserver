@@ -7,8 +7,6 @@ import Checkout from './checkout/Checkout';
 import Profile from './Profile';
 import SignIn from './signinup/Signin';
 import SignUp from './signinup/Signup';
-import RealmApolloProvider from "./graphql/RealmApolloProvider";
-import {RealmAppProvider}  from "./RealmApp";
 
 //import { useIdleTimer } from 'react-idle-timer';
 
@@ -25,7 +23,7 @@ import {RealmAppProvider}  from "./RealmApp";
 function App() {
 
   return (<BrowserRouter>
-    <RealmAppProvider > 
+   
      <Routes>
           <Route exact path="/" element={<MainComponent />} >
              <Route index element={<GeneralInfo/>} /> 
@@ -37,7 +35,7 @@ function App() {
              <Route path="*" element={<GeneralInfo />} />
           </Route>      
       </Routes>
-    </RealmAppProvider>
+   
        </BrowserRouter>
 
   );

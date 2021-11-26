@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {  useDispatch, useSelector } from 'react-redux'
+import { useRealmApp } from "../RealmApp";
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -13,12 +15,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AddressForm from './AddressForm';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
-import Reservations from './Reservations';
 import AgreementForm from './AgreementForm';
 import Review from './Review';
-import { useRealmApp } from "../RealmApp";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import validator from 'validator';
+import { creditPaymenError ,creditPaymentSuccess} from '../redux/reducers/appReducer';
 
 const steps = ['Itinerary', 'Agreements', 'Review'];
 
@@ -27,15 +28,18 @@ const theme = createTheme();
 
 
 export default function Checkout() {
+  const currentUser = useSelector((state)=>state?.user);
+//  const hasProfile = useSelector((state)=>state?.profile);
+  const dispatch = useDispatch();
   const realmApp  = useRealmApp();
   const navigate = useNavigate();
 
-  const [firstName, setFirstName] = React.useState(realmApp.currentUser?.customData?.firstname||'');
-  const [lastName, setLastName] = React.useState(realmApp.currentUser?.customData?.lastname||'');
-  const [email, setEmail] = React.useState(realmApp?.currentUser?.customData?.email||'');
+  const [firstName, setFirstName] = React.useState(currentUser?.customData?.firstname||'');
+  const [lastName, setLastName] = React.useState(currentUser?.customData?.lastname||'');
+  const [email, setEmail] = React.useState(currentUser?.customData?.email||'');
   const [password, setPassword] = React.useState();
   const [error, setError] = React.useState();
-  const [phone, setPhone] = React.useState(realmApp?.currentUser?.customData?.phone||'');
+  const [phone, setPhone] = React.useState(currentUser?.customData?.phone||'');
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [pickUpDate, setPickUpDate] = React.useState(new Date());
@@ -49,17 +53,6 @@ export default function Checkout() {
 
   const [paymentSucceeded, setPaymentSucceeded] = React.useState(false);
 
-  React.useEffect(() => {
-   console.log( activeStep,lastName, firstName,error);
-    /*setFirstName(realmApp?.currentUser?.customData?.firstname);
-    setLastName(realmApp?.currentUser?.customData?.lastname);
-    setEmail(realmApp?.currentUser?.customData?.email);
-    setPhone(realmApp?.currentUser?.customData?.phone);*/
-/*    if(app?.currentUser?.customData?.firstName){
-     
-      getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
-   }*/
-  });
 
    function itineraryValidated  (currentStep){
     let validated = false;
@@ -106,11 +99,13 @@ function getStepContent(step) {
     case 2:
       return <Review handleSuccess={(successEvent)=> 
                                         {
-                                          if(successEvent.status=='OK'){
+                                          if(successEvent.status==='OK'){
+                                            dispatch(creditPaymentSuccess())
                                           setPaymentSucceeded(true); 
                                         realmApp.insertReservations(tmpRes); 
                                          setActiveStep(activeStep + 1);
-                                       }else{console.log("Credit Error::=>",successEvent.errors)}
+                                       }else{console.log("Credit Error::=>",successEvent.errors);
+                                              dispatch(creditPaymenError('Payment Error',successEvent.toString()))}
                                       }}
                       reservation={tmpRes}
             />;
@@ -132,7 +127,7 @@ function getStepContent(step) {
 
   case 'firstName':setFirstName(event.target.value);break;
   case 'lastName':setLastName(event.target.value);break;
-  case 'pickupdate':console.log(event.target.value,'reservation pickupdate is type',typeof event.target.value);setPickUpDate(event.target.value);break;
+  case 'pickupdate':setPickUpDate(event.target.value);break;
   case 'dropoffDate': setDropoffDate(event.target.value); break;
   case 'dropoffLocation': setDropoffLocation(event.target.value); break;
   case 'pickupLocation': setPickupLocation(event.target.value); break;

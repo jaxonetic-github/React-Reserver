@@ -1,5 +1,4 @@
     import React from "react";
-import { useRealmApp } from "../RealmApp";
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
@@ -13,7 +12,7 @@ import Button from '@mui/material/Button';
  * Admin Drawer and Menu for the Admin panel
  */
 export default function AdminDrawerMenu(toggleDrawer,handleSave, drawerState,editable,setEditMode, edit) {
-  const app  = useRealmApp();
+  const app  =null;
 
   const menu = editable && (<React.Fragment key={'right'}>
 

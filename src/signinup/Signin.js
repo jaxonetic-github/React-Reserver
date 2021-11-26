@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
+import { shallowEqual, useSelector,useDispatch } from 'react-redux'
+import {login} from '../redux/reducers/appReducer';
 
 const theme = createTheme();
 const PasswordAriaLabel = { 'aria-label': 'Password' };
@@ -30,14 +32,31 @@ const ErrorAriaLabel = { 'aria-label': 'Error' };
  * 
  * @param event: the submit event
  */
-export default function SignIn({dispatch}) {
- 
+export default function SignIn() {
+
+   const dispatch = useDispatch()
+   const stateError = useSelector((state)=>state.error);
+   const loginSuccessful = useSelector((state)=>state?.profile?.email);
  const  app = useRealmApp();
 const navigate = useNavigate();
   const [error, setErrorMsg] = React.useState('');
    
+
+     React.useEffect(() => {
+if(loginSuccessful) navigate('/');
+
+    /*setFirstName(realmApp?.currentUser?.customData?.firstname);
+    setLastName(realmApp?.currentUser?.customData?.lastname);
+    setEmail(realmApp?.currentUser?.customData?.email);
+    setPhone(realmApp?.currentUser?.customData?.phone);*/
+/*    if(app?.currentUser?.customData?.firstName){
+     
+      getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
+   }*/
+  });
+
 /**
- * Performs the registration when user Submits form
+ * Performs the Signin when user Submits form
  * 
  */
   const handleSubmit = async (event) => {
@@ -50,19 +69,7 @@ const navigate = useNavigate();
       email: data.get('email'),
       password: data.get('password'),
     }
-    try {
-     const result = await app.logIn(credentials);
-     if(result.error){
-      setErrorMsg(result.error);
-     }else
-       if(result.success) navigate('/');
-     dispatch && dispatch({type: 'USER_LOGIN_REQUESTED', payload: credentials});
-    
-    } catch (err) {
-      console.log('signin handle submit error',err)
-      setErrorMsg(err.toString());
-    }
-  };
+try{ app.logIn(credentials); }catch{ setErrorMsg('We are having difficulties logging you in.')} };
 
   return (
     <ThemeProvider theme={theme}>
@@ -83,13 +90,14 @@ const navigate = useNavigate();
             Sign in
           </Typography>
               <Typography component="span" aria-label='Error'  align="center" sx={{color:'red'}}>
-    {error}
+    {error}{stateError}
           </Typography>
           <Box component="form" onSubmit={(event)=>handleSubmit(event)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
+              label='Enter Your Email Address'
               id="email"
               inputProps={EmailAriaLabel}
               name="email"
@@ -100,7 +108,7 @@ const navigate = useNavigate();
               margin="normal"
               required
               fullWidth
-
+              label="Password"
               inputProps={PasswordAriaLabel}
               name="password"
               type="password"

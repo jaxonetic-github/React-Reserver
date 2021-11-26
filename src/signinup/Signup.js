@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import { useRealmApp } from "../RealmApp";
 import {useNavigate} from "react-router-dom";
+import {  useDispatch,useSelector } from 'react-redux'
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -26,16 +27,25 @@ const ErrorAriaLabel = { 'aria-label': 'Error' };
 const FirstNameAriaLabel = { 'aria-label': 'FirstName' };
 const LastNameAriaLabel = { 'aria-label': 'LastName' };
 
+
+
 /**
  * SignUp: take basic info and use it to register a user and log in 
  * 
  * 
  */
-export default function SignUp(props) {
-  const [error, setErrorMsg] = React.useState('');
-  const app = useRealmApp();
-  const navigate = useNavigate();
+export default function SignUp() {
+   const stateError = useSelector((state)=>state.error);
+   const loginSuccessful = useSelector((state)=>state?.profile?.email);
 
+  const [error, setErrorMsg] = React.useState('');
+  const  app = useRealmApp();
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+
+     React.useEffect(() => {
+if(loginSuccessful) navigate('/');
+})
 /**
  * Performs the registration when user Submits form by 
  * 1. reads the form data 
@@ -51,19 +61,18 @@ export default function SignUp(props) {
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
    
+    const submissionInfo = {email:data.get('email'), password:data.get('password'), firstName:data.get('firstName'), lastName:data.get('lastName')};
 
       try {
-           const regResult = await app.registerWithEmail(data.get('email'),data.get('password'),data.get('firstName'),data.get('lastName'))
-           if(regResult.error) {
-            setErrorMsg(regResult.error);
-           }
-            else 
-              if(regResult.success) navigate('/');
+          console.log(submissionInfo);
+           const regResult =  app.registerWithEmail(data.get('email'),data.get('password'),data.get('firstName'),data.get('lastName'))
+          
           } catch (err) {
             //display any caught errors in error field
             setErrorMsg(err.toString());
           }
         //  console.log("if error,don't navigate",error);
+    
   };
 
   return (
@@ -84,7 +93,7 @@ export default function SignUp(props) {
             Sign up
           </Typography>
            <Typography component="span"  align="center" sx={{color:'red'}}>
-       {error}
+       {error}{stateError}
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>

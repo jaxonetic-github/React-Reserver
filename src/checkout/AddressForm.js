@@ -1,19 +1,20 @@
-import  React, {useEffect} from 'react';
-import { useRealmApp } from "../RealmApp";
+import  React from 'react';
+import { useSelector } from 'react-redux'
 
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Input from '@mui/material/Input';
 import TextField from '@mui/material/TextField';
 
-import {EmailAriaLabel,PasswordAriaLabel, ErrorAriaLabel, submitAriaLabel, FirstNameAriaLabel, LastNameAriaLabel,
+import {EmailAriaLabel,PasswordAriaLabel, FirstNameAriaLabel, LastNameAriaLabel,
   PickUpDateAriaLabel, PickUpLocationAriaLabel,DropOffLocationAriaLabel,DropOffDateAriaLabel }  from '../constants'
 
 
 export default function AddressForm(props) {
-const app = useRealmApp();
 
-const isPasswdNeeded = (app.currentUser?.customData?.email==null);
+  const currentUser = useSelector((state)=>state?.profile);
+
+const isPasswdNeeded = (currentUser?.email==null);
 
   return (
     <React.Fragment>
@@ -80,7 +81,7 @@ onChange = {props.onChange}
                   id="firstName"
                   inputProps={FirstNameAriaLabel}
                   label="First Name"
-                  defaultValue={app?.currentUser?.customData?.firstname}
+                  defaultValue={currentUser?.firstname}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -91,7 +92,7 @@ onChange = {props.onChange}
                   name="lastName"
                   inputProps={LastNameAriaLabel}
                   placeholder='Last Name'
-                   defaultValue={app?.currentUser?.customData?.lastname}
+                   defaultValue={currentUser?.lastname}
 onChange = {props.onChange}
                 />
               </Grid>
@@ -100,7 +101,7 @@ onChange = {props.onChange}
                   name="email"
                   onChange = {props.onChange}
                  placeholder='email'
-                  defaultValue={app?.currentUser?.customData?.email}
+                  defaultValue={currentUser?.email}
                   inputProps={EmailAriaLabel}
                   fullWidth
                   id="email"
@@ -114,7 +115,7 @@ onChange = {props.onChange}
                   id="phone"
                   label="Phone"
                   name="phone"
-               defaultValue={app?.currentUser?.customData?.phone}
+               defaultValue={currentUser?.phone}
 
                   placeholder='Contact #'
                 />

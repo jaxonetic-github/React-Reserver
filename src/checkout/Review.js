@@ -7,7 +7,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
-import PaymentForm from './PaymentForm';
 import { FEE_FORMULA } from '../constants';
 import TextField from '@mui/material/TextField';
 

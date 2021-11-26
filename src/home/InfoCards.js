@@ -1,11 +1,11 @@
 import  React , {useState} from 'react';
+import { useSelector } from 'react-redux'
+
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import Input from '@mui/material/Input';
-import Box from '@mui/material/Box';
-import Switch from '@mui/material/Switch';
-import Drawer from '@mui/material/Drawer';
+
 
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -17,12 +17,13 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 //import {Link as ReactLink} from "react-router-dom";
 import { useNavigate} from "react-router-dom";
-import { useRealmApp } from "../RealmApp";
 
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import AdminDrawerMenu from './AdminMenu';
+import {  isAdminSelector} from '../constants';
 
+const selectState = state => state;
+
+const selectCardsData = state => state?.siteData?.cardData;
 
 /**
  * InfoCards, is a an editable fragment of the  home page.  If User is Admin then 
@@ -30,18 +31,13 @@ import AdminDrawerMenu from './AdminMenu';
  */
 export default function InfoCards(props) {
   const navigate = useNavigate();
-    const app = useRealmApp();
-const [displayData, setDisplayData] = useState(app?.siteData?.cardData);
-   const [edit, setEditMode] = useState(false);
-  const [editable, setEditableMode] = useState(app?.currentUser?.customData?.email);
+  const getCardData = useSelector(selectCardsData);
+  const isAdmin = useSelector(isAdminSelector);
+    const app = null;
+const [displayData, setDisplayData] = useState(getCardData);
+   const [edit, setEditMode] = useState(isAdminSelector);
+  const [editable, setEditableMode] = useState();
  const [drawerState, setDrawerState] = React.useState(false);
-
-   React.useEffect(() => {
-setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
- if(!displayData){
-  setDisplayData(app?.siteData?.cardData);
-}
-  });  
 
 
   const toggleDrawer = (event) => {
@@ -76,7 +72,7 @@ setEditableMode(app?.currentUser?.customData?.email && (app?.currentUser?.custom
 
       <Container sx={{marginTop:10}} maxWidth="md" component="main">
         <Grid container spacing={2} alignItems="flex-end">
-          { displayData && displayData?.map((tier, index) => (
+          { getCardData?.map((tier, index) => (
             <Grid item key={tier.title} xs={12} sm={12} md={6}>
               <Card><img src={tier.imageURL}  className="driver1-image" alt="logo" />
                 <CardHeader

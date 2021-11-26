@@ -1,10 +1,10 @@
 import  React , {useState} from 'react';
+
+import { useSelector } from 'react-redux'
 //import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Switch from '@mui/material/Switch';
 import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
-import Drawer from '@mui/material/Drawer';
 
 //import CardContent from '@mui/material/CardContent';
 //import CardHeader from '@mui/material/CardHeader';
@@ -19,22 +19,26 @@ import Container from '@mui/material/Container';
 import { useNavigate} from "react-router-dom";
 import InfoCards from './InfoCards'
 import ContactCard from './ContactCard'
-import { useRealmApp } from "../RealmApp";
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+//import { useRealmApp } from "../RealmApp";
+
+import {  isAdminSelector} from '../constants';
+
+const selectSiteData = state => state.siteData;
+//const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
 
 /**
  * General Info, is the home page.  If User is Admin then 
  *      a special "admin" menu is available allowing the user to change text
  */
-export default function GeneralInfo() {
-  const app  = useRealmApp();
+export default function GeneralInfo({siteData}) {
 
-  const [card, setCard] = useState();         
+const getSiteData = useSelector(selectSiteData)
+const getIsAdmin = useSelector(isAdminSelector)
+  const app  = {};
+  app.siteData = getSiteData;
   const navigate = useNavigate();
-  const [appSite, setAppSite] = useState(app?.siteData);
   const [edit, setEditMode] = useState(false);
-  const [editable, setEditableMode] = useState(false);
+  const [editable, setEditableMode] = useState(getIsAdmin);
 
   const [error, setError] = useState();
   const [title, setTitle] = useState(app?.siteData?.pageData?.title);
@@ -43,20 +47,21 @@ export default function GeneralInfo() {
   const [paragraph1, setParagraph1] = useState();
   const [paragraph2, setParagraph2] = useState();
   const [drawerState, setDrawerState] = React.useState(false);
-   
+ //   const authedUserSelector = useSelector(selectAuthedUserDataState);
+ // const [authedUser, setAuthedUser] = useState(authedUserSelector?.email!==undefined);
+
 
    React.useEffect(() => {
 
-    !title && setTitle(app?.siteData?.pageData?.title );
-    !reservationButton && setReservationButton(app?.siteData?.pageData?.reservationButton);
-    !subtitle && setSubTitle(app?.siteData?.pageData?.subtitle);
-    !paragraph1 && app?.siteData?.pageData?.paragraphs&&  setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
-    !paragraph2 && app?.siteData?.pageData?.paragraphs && setParagraph2(app?.siteData?.pageData?.paragraphs[1]);
+     setTitle(app?.siteData?.pageData?.title );
+    setReservationButton(app?.siteData?.pageData?.reservationButton);
+    setSubTitle(app?.siteData?.pageData?.subtitle);
+    setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
+    setParagraph2(app?.siteData?.pageData?.paragraphs[1]);
 
-
-    setEditableMode(app?.currentUser?.customData.email && (app?.currentUser?.customData?.email==='kurawan@yahoo.com'));
-
-  });  
+    setEditableMode(getIsAdmin);
+  },[app?.siteData?.pageData?.title,app?.siteData?.pageData?.reservationButton,app?.siteData?.pageData?.subtitle,
+    app?.siteData?.pageData?.paragraphs[0],app?.siteData?.pageData?.paragraphs[1]]);  
   
 
   const toggleDrawer = (event) => {
