@@ -4,7 +4,7 @@
  import React from 'react';
  import * as ReactRedux from 'react-redux';
 
-import { render, screen, fireEvent,createEvent ,waitFor,act } from './test-utils';
+import { render, screen, fireEvent,createEvent ,waitFor,act } from '@testing-library/react';
 
 import Reservations from '../checkout/Reservations';
 
