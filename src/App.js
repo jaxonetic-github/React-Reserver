@@ -22,7 +22,7 @@ import SignUp from './signinup/Signup';
  */
 function App() {
 
-  return (<BrowserRouter>
+  return (<BrowserRouter  basename={process.env.REACT_APP_WEBPATH}>
      <Routes>
           <Route exact path="/" element={<MainComponent />} >
              <Route index element={<GeneralInfo/>} /> 
