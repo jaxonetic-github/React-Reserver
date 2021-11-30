@@ -23,7 +23,7 @@ import SignUp from './signinup/Signup';
 
  */
 function App() {
-
+console.log(process.env.REACT_APP_WEBPATH)
   return (<BrowserRouter  basename={process.env.REACT_APP_WEBPATH}>
      <Routes>
           <Route  path="/" element={<MainComponent />} >
