@@ -1,11 +1,12 @@
 import React from "react";
-import { useRealmApp } from "../RealmApp";
+//import { useRealmApp } from "../RealmApp";
 import {
   ApolloClient,
   HttpLink,
   InMemoryCache,
   ApolloProvider,
 } from "@apollo/client";
+import { useSelector } from 'react-redux'
 
 // Create an ApolloClient that connects to the provided Realm.App's GraphQL API
 const createRealmApolloClient = (app) => {
@@ -31,7 +32,8 @@ const createRealmApolloClient = (app) => {
 };
 
 export default function RealmApolloProvider({ children }) {
- const app = useRealmApp();
+ const app = useSelector((state)=>state?.app?.app);
+
   const [client, setClient] = React.useState(createRealmApolloClient(app));
   React.useEffect(() => {
     setClient(createRealmApolloClient(app));
