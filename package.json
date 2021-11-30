@@ -2,7 +2,7 @@
   "name": "carrental",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "React-Reserver/",
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@date-io/moment": "^2.11.0",
