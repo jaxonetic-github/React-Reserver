@@ -36,8 +36,8 @@ function SignUp() {
   const dispatch = useDispatch();
 
      React.useEffect(() => {
-if(!profile) navigate('/');
-},[profile]);
+if(profile) navigate('/');
+},[]);
 /**
  * Performs the registration when user Submits form by 
  * 1. reads the form data 
