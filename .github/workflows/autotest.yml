@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: CI - Build, Test, Deploy to gh-pages 
 
 # Controls when the workflow will run
 on:
@@ -52,4 +52,10 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
       - run: echo "🍏 This job's status is ${{ job.status }}."
+      
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: build # The folder the action should deploy.
 
