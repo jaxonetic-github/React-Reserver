@@ -12,7 +12,7 @@ import { handleAuthenticationError, parseAuthenticationError} from './constants'
 export class RealmDAO  {
 
   constructor( demoAppId){
-this.app = new Realm.App(demoAppId||process.env.REACT_APP_MONGODB_REALM_APPID);
+this.app = new Realm.App(demoAppId);
   
   }
 

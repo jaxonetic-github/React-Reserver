@@ -18,20 +18,21 @@ import SignUp from './signinup/Signup';
 
 
 /**
- *  the Main Component containing the app routes 
+ *  the Main Component containing the app routes          
+ *      <Route path="*" element={<GeneralInfo />} />
+
  */
 function App() {
 
   return (<BrowserRouter  basename={process.env.REACT_APP_WEBPATH}>
      <Routes>
-          <Route exact path="/" element={<MainComponent />} >
+          <Route  path="/" element={<MainComponent />} >
              <Route index element={<GeneralInfo/>} /> 
              <Route path="/profile" element={<Profile/>} />
              <Route path="/signin" element={<SignIn />} />
              <Route path="/signup" element={<SignUp />} />
              <Route path="/checkout" element={<Checkout />} />
              <Route path="/reservations" element={<Reservations />} />
-             <Route path="*" element={<GeneralInfo />} />
           </Route>      
       </Routes>
        </BrowserRouter>
