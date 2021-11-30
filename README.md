@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/jaxonetic-github/React-Reserver/branch/main/graph/badge.svg?token=50hHSCbMPG)](https://codecov.io/gh/jaxonetic-github/React-Reserver)
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
