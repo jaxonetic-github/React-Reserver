@@ -66,7 +66,7 @@ function ReviewFragment(props) {
           />
         </Grid>
 
-   
+   <SquarePaymentForm  handleSuccess={props.handleSuccess}/>
     </React.Fragment>
   );
 }

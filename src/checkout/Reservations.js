@@ -35,14 +35,13 @@ import {fetchReservations} from '../redux/reducers/appReducer'
 function Reservations() {
   const dispatch = useDispatch();
   const getReservations = useSelector(state=>state?.reservations);
-  const [reservations, setReservations] = useState(getReservations||[]);
+  const [reservations] = useState(getReservations||[]);
   const navigate = useNavigate();
 
    const loginSuccessful = useSelector((state)=>state.profile);
 
      React.useEffect(() => {
-      console.log(getReservations,'--1--', this);
-      if(!loginSuccessful) navigate('/');  },[loginSuccessful]);
+      if(!loginSuccessful) navigate('/');  },[loginSuccessful, navigate]);
 
   console.log(getReservations.reservations,'--2--', Object.keys( reservations) );
   //const adjustDate = (someDate)=>(someDate && ((typeof someDate) === 'object' )? someDate.toDateString() : someDate);

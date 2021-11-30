@@ -47,7 +47,7 @@ const theme = createTheme();
   const [dropOffDate, setDropoffDate] = React.useState(new Date());
   const [dropOffLocation, setDropoffLocation] = React.useState('');
   const [pickupLocation, setPickupLocation] = React.useState('');
-  const [itineraryValid, setItineraryValid] = React.useState(false);
+  //const [itineraryValid, setItineraryValid] = React.useState(false);
 
   const [agreementSignature, setAgreementSignature] = React.useState('');
   const [agreementChecked, setAgreementChecked] =React.useState(false);
