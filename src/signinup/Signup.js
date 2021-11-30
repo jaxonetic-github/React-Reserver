@@ -37,7 +37,7 @@ function SignUp() {
 
      React.useEffect(() => {
 if(profile) navigate('/');
-},[]);
+},[profile,navigate]);
 /**
  * Performs the registration when user Submits form by 
  * 1. reads the form data 
