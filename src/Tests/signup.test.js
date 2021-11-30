@@ -1,39 +1,49 @@
-import React from 'react';
+/**
+ * @jest-environment jsdom
+ */
+ import React from 'react';
 import { render, screen, fireEvent,createEvent ,waitFor,act } from '@testing-library/react';
-
+import * as ReactRedux from 'react-redux';
 import SignUp from '../signinup/Signup';
-import { Routes, Route} from 'react-router-dom';
-import userEvent from '@testing-library/user-event'
-import {BrowserRouter} from 'react-router-dom';
-
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import {appReducer} from '../redux/reducers/appReducer'
+import createSagaMiddleware from 'redux-saga';
+import INITIAL_STATE from '../constants.js';
+import { configureStore } from '@reduxjs/toolkit'
 
   describe('Signup Component Test', () => {
-//  let signin = null;
+let sagaMiddleware;
+let store;
   let app = null;
   const signUpObject = { email:'jaxonetic@gmail.com', password:'123456789',  };
  let signup = null;
+  const useSelectorMock = jest.spyOn(ReactRedux, 'useSelector')
+  const useDispatchMock = jest.spyOn(ReactRedux, 'useDispatch')
 
-/*
  beforeAll(() => {
-    RealmAppProvider.mockImplementation(() => {
-      return {
-        login: () => {
-          throw new Error('login Test error');
-        },
-        app:{}
-      };
-    });
+     store = configureStore({ reducer: { user: appReducer }, INITIAL_STATE })
+
   });
-*/
+beforeEach(() => {
+  useSelectorMock.mockClear();
+  useDispatchMock.mockClear();
+})
 
 /**
 *
 */
 
 
-test('SignUp displays expected text', async () => {
 
-     render(<BrowserRouter><SignUp/></BrowserRouter>);
+test('SignUp displays expected text', async () => {
+  useSelectorMock.mockReturnValue(INITIAL_STATE);
+
+     render( <ReactRedux.Provider store={store}><BrowserRouter>
+        <Routes>
+        <Route path="/" element={<SignUp/>} />
+        </Routes>
+        </BrowserRouter> </ReactRedux.Provider>);
 
  
   const passwordField = screen.getByLabelText('Password');
@@ -55,8 +65,14 @@ test('SignUp displays expected text', async () => {
 
 
 test('user get error when credentials don\'t match', async () => {
-  
-     render(<BrowserRouter><SignUp /></BrowserRouter>);
+    useSelectorMock.mockReturnValue(INITIAL_STATE)
+
+     render(<ReactRedux.Provider store={store}>
+        <BrowserRouter>
+        <Routes>
+        <Route path="/" element={<SignUp/>} />
+        </Routes>
+        </BrowserRouter></ReactRedux.Provider>);
 
   const passwordField = screen.getByLabelText('Password');
   fireEvent.change(passwordField, {target: {value: '123456789'}})

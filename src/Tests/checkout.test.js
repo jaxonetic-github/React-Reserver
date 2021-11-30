@@ -1,11 +1,17 @@
-import React from 'react';
+/**
+ * @jest-environment jsdom
+ */
+ import React from 'react';
 import { render, screen, fireEvent,createEvent ,waitFor,act } from '@testing-library/react';
 
 import Checkout from '../checkout/Checkout';
+import { configureStore } from '@reduxjs/toolkit'
 
-import { Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import userEvent from '@testing-library/user-event'
-import {BrowserRouter} from 'react-router-dom';
+import * as ReactRedux from 'react-redux';
+import {appReducer} from '../redux/reducers/appReducer'
+import INITIAL_STATE from '../constants.js';
 
 import {EmailAriaLabel, ErrorAriaLabel, submitAriaLabel, FirstNameAriaLabel, LastNameAriaLabel,
   PickUpDateAriaLabel, PickUpLocationAriaLabel,DropOffLocationAriaLabel,DropOffDateAriaLabel }  from '../constants'
@@ -16,28 +22,27 @@ import {EmailAriaLabel, ErrorAriaLabel, submitAriaLabel, FirstNameAriaLabel, Las
 //  let signin = null;
   let app = null;
  let signin = null;
+ let store;
+  const useSelectorMock = jest.spyOn(ReactRedux, 'useSelector');
+  const useDispatchMock = jest.spyOn(ReactRedux, 'useDispatch');
 
-/*
  beforeAll(() => {
-    RealmAppProvider.mockImplementation(() => {
-      return {
-        login: () => {
-          throw new Error('login Test error');
-        },
-        app:{}
-      };
-    });
-  });
-*/
+     store = configureStore({ reducer: { user: appReducer }, INITIAL_STATE })
+   });
+
 
 /**
 *
 */
+beforeEach(() => {
+  useSelectorMock.mockClear();
+  useDispatchMock.mockClear();
+})
 
 
 test('Checkout displays expected text', async () => {
 
-     render(<BrowserRouter><Checkout/></BrowserRouter>);
+     render( <ReactRedux.Provider store={store}><BrowserRouter><Checkout/></BrowserRouter>  </ReactRedux.Provider>);
 
  
   const title = screen.getByText('Checkout');

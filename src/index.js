@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as Realm from "realm-web";
 
 import './index.css';
 import './css/App.css';
 
 import App from './App';
-import { RealmAppProvider } from "./RealmApp";
+import { RealmDAO } from "./RealmDAO.js";
 import reportWebVitals from './reportWebVitals';
 import RealmApolloProvider from "./graphql/RealmApolloProvider";
 
@@ -13,7 +14,7 @@ import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 
-import {reducer} from './redux/reducers/appReducer'
+import {appReducer,refreshCustomData,fetchReservations, login,loginAnonymously,loadBackEnd,logout,fetchSiteData} from './redux/reducers/appReducer'
 import mySaga from './redux/sagas';
 import {logger} from 'redux-logger';
 // create the saga middleware
@@ -31,19 +32,34 @@ const initialState={
 }
 
 // mount it on the Store
-const store = createStore(reducer, initialState,  applyMiddleware(sagaMiddleware, logger))
+   const store = createStore(appReducer, initialState,  applyMiddleware(sagaMiddleware, logger))
+   sagaMiddleware.run(mySaga);
 
- //  const app = new Realm.App(process.env.REACT_APP_MONGODB_REALM_APPID);
-   
- //  const user = app.login(Realm.Credentials.anonymous());
-sagaMiddleware.run(mySaga);
+   const app = new RealmDAO(process.env.REACT_APP_MONGODB_REALM_APPID);
+   store.dispatch(loadBackEnd(app));
 
-  /*
+   //const user = app.logIn(Realm.Credentials.anonymous());
+
     // then run the saga
-   if(app?.currentUser){
-    console.log()
+   if(!app.app.currentUser){
+    console.log('no currentUser');
+      store.dispatch(loginAnonymously());
+   
+  }
+   else{
+    console.log('current user ound route');
+    //app.app.currentUser.refreshCustomData();
+    store.dispatch(refreshCustomData());
+console.log('1');
+    store.dispatch(fetchSiteData());
+    console.log('2');
+
+    store.dispatch(fetchReservations());
+    console.log('3');
+
    }
 
+  /*
           const credentials = {
           email: 'jaxonetic@gmail.com',
           password: '123456789',
@@ -90,11 +106,9 @@ console.log(store.getState());
 ReactDOM.render(
   <React.StrictMode>
   <Provider store={store}>
-     <RealmAppProvider demoAppId={process.env.REACT_APP_MONGODB_REALM_APPID}> 
-     <RealmApolloProvider>
+
         <App />
-        </RealmApolloProvider>
-     </RealmAppProvider>
+
   </Provider>
   </React.StrictMode>,
   document.getElementById('root')

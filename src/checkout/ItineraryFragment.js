@@ -9,8 +9,10 @@ import TextField from '@mui/material/TextField';
 import {EmailAriaLabel,PasswordAriaLabel, FirstNameAriaLabel, LastNameAriaLabel,
   PickUpDateAriaLabel, PickUpLocationAriaLabel,DropOffLocationAriaLabel,DropOffDateAriaLabel }  from '../constants'
 
-
-export default function AddressForm(props) {
+/**
+ *  Display itinerary specific field for user input
+ */
+ function ItineraryFragment(props) {
 
   const currentUser = useSelector((state)=>state?.profile);
 
@@ -81,7 +83,7 @@ onChange = {props.onChange}
                   id="firstName"
                   inputProps={FirstNameAriaLabel}
                   label="First Name"
-                  defaultValue={currentUser?.firstname}
+                  defaultValue={currentUser?.firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -92,7 +94,7 @@ onChange = {props.onChange}
                   name="lastName"
                   inputProps={LastNameAriaLabel}
                   placeholder='Last Name'
-                   defaultValue={currentUser?.lastname}
+                   defaultValue={currentUser?.lastName}
 onChange = {props.onChange}
                 />
               </Grid>
@@ -142,3 +144,5 @@ onChange = {props.onChange}
     </React.Fragment>
   );
 }
+
+export default ItineraryFragment;

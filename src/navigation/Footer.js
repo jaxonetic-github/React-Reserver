@@ -2,13 +2,13 @@ import * as React from 'react';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import StarIcon from '@mui/icons-material/StarBorder';
+//import StarIcon from '@mui/icons-material/StarBorder';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
-import {Link as ReactLink} from "react-router-dom";
-import { useNavigate} from "react-router-dom";
+//import {Link as ReactLink} from "react-router-dom";
+//import { useNavigate} from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -45,7 +45,7 @@ const footers = [
 
 
 export default function Footer() {
-  const navigate = useNavigate();
+//  const navigate = useNavigate();
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />

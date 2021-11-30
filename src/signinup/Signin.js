@@ -1,13 +1,9 @@
-import React, { useState, useEffect }from 'react';
+import React from 'react';
 
-import * as Realm from "realm-web";
-import { useRealmApp } from "../RealmApp";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Input from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -15,32 +11,30 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
-import { shallowEqual, useSelector,useDispatch } from 'react-redux'
-import {login} from '../redux/reducers/appReducer';
+import {  useSelector,useDispatch } from 'react-redux'
+import { bubbleError,login} from '../redux/reducers/appReducer';
+
 
 const theme = createTheme();
 const PasswordAriaLabel = { 'aria-label': 'Password' };
 const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
-const ErrorAriaLabel = { 'aria-label': 'Error' };
- const submitAriaLabel = { 'aria-label': 'Submit' };
 
 /**
- * Perform Sign-in when user Submits form by 
+ * @description Perform Sign-in when user Submits form by 
  * 1. Reads the form data 
  * 2. Attempts to signin with credentials{email, password}.
  * 3. Navigates home on success or displays any errors
  * 
- * @param event: the submit event
+ * 
  */
-export default function SignIn() {
-
-   const dispatch = useDispatch()
+function SignIn() {
    const stateError = useSelector((state)=>state.error);
    const loginSuccessful = useSelector((state)=>state?.profile?.email);
- const  app = useRealmApp();
+ //const  app = useRealmApp();
 const navigate = useNavigate();
   const [error, setErrorMsg] = React.useState('');
-   
+      const dispatch = useDispatch(); //(action)=>(console.log(action));
+ 
 
      React.useEffect(() => {
 if(loginSuccessful) navigate('/');
@@ -69,7 +63,8 @@ if(loginSuccessful) navigate('/');
       email: data.get('email'),
       password: data.get('password'),
     }
-try{ app.logIn(credentials); }catch{ setErrorMsg('We are having difficulties logging you in.')} };
+try{     dispatch(login(credentials)); 
+/*app.logIn(credentials);*/ }catch{ setErrorMsg('We are having difficulties logging you in.')} };
 
   return (
     <ThemeProvider theme={theme}>
@@ -142,3 +137,5 @@ try{ app.logIn(credentials); }catch{ setErrorMsg('We are having difficulties log
     </ThemeProvider>
   );
 }
+
+export default SignIn;

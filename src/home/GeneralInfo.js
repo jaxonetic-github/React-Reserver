@@ -27,10 +27,10 @@ const selectSiteData = state => state.siteData;
 //const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
 
 /**
- * General Info, is the home page.  If User is Admin then 
+ * @description General Info, is the home page.  If User is Admin then 
  *      a special "admin" menu is available allowing the user to change text
  */
-export default function GeneralInfo({siteData}) {
+function GeneralInfo({siteData}) {
 
 const getSiteData = useSelector(selectSiteData)
 const getIsAdmin = useSelector(isAdminSelector)
@@ -147,3 +147,4 @@ const getIsAdmin = useSelector(isAdminSelector)
   );
 }
 
+export default GeneralInfo;

@@ -1,5 +1,11 @@
-import { createAction, createReducer } from '@reduxjs/toolkit'
 
+/** @module reducer 
+ * 
+ * @desccription Uses reduxjs/tookit for Redux reducer and action creation 
+ */
+
+import { createAction, createReducer } from '@reduxjs/toolkit'
+import {INITIAL_STATE } from '../../constants.js';
 export const FETCH_SITEDATA ='FETCH_SITEDATA';
 export const FETCH_SITEDATA_SUCCESS ='FETCH_SITEDATA_SUCCESS';
 export const FETCH_SITEDATA_ERROR ='FETCH_SITEDATA_FAILED';
@@ -28,6 +34,10 @@ export const LOAD_PROFILE = "LOAD_PROFILE";
 
 export const CREDIT_PAYMENT_SUCCESS = 'CREDIT_PAYMENT_SUCCESS';
 export const CREDIT_PAYMENT_ERROR = 'CREDIT_PAYMENT_ERROR';
+export const LOGIN_ANONYMOUSLY = 'LOGIN_ANONYMOUSLY';
+
+
+
 
 export const fetchSiteData = createAction(FETCH_SITEDATA);
 export const fetchSiteDataError = createAction(FETCH_SITEDATA_ERROR);
@@ -41,40 +51,142 @@ export const loadBackEndSuccess = createAction(FETCH_BACKEND_SUCCESS);
 export const bubbleError = createAction(BUBBLE_ERROR);
 
 export const loginError = createAction(LOGIN_ERROR);
+export const loginAnonymously = createAction(LOGIN_ANONYMOUSLY);
+
+/** 
+ * 
+ *  @description loginSucceeded()   plain text Action
+
+ *  @constant
+ *   @type {function}
+ *   @default
+ * @returns {string}  the login string action
+ */
 export const login = createAction(LOGIN);
+
+/** 
+ * @description loginSucceeded()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const loginSucceeded = createAction(LOGIN_SUCCEEDED);
+/** 
+ * @description logout()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const logout = createAction(LOGOUT);
+/** 
+ * @description register()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const register = createAction(REGISTER)
-export const registerSuccess = createAction(REGISTER_SUCCESS)
+/** 
+ * @description registerSuccess()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
+export const registerSuccess = createAction(REGISTER_SUCCESS);
+/** 
+ * @description registerError()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const registerError = createAction(REGISTER_ERROR)
 
+/** 
+ * @description fetchReservations()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const fetchReservations = createAction(FETCH_RESERVATION);
+/** 
+ * @description fetchReservationsSuccess()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const fetchReservationsSuccess = createAction(FETCH_RESERVATION_SUCCESS);
+/** 
+ * @description fetchReservationsError()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const fetchReservationsError = createAction(FETCH_RESERVATION_ERROR);
-
+/** 
+ * @description insertReservation()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const insertReservation = createAction(RESERVATION_INSERT);
+/** 
+ * @description insertReservationSuccess()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const insertReservationSuccess = createAction(RESERVATION_INSERT_SUCCESS);
-export const insertReservationError = createAction(RESERVATION_INSERT_ERROR);
+/** 
+ * @description insertReservationError()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
+ export const insertReservationError = createAction(RESERVATION_INSERT_ERROR);
 
-export const refreshCustomData = createAction(USERDATA_FETCH);
+/** 
+ * @description refreshCustomData()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
+ export const refreshCustomData = createAction(USERDATA_FETCH);
+/** 
+ * @description refreshCustomDataSuccess()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const refreshCustomDataSuccess = createAction(USERDATA_FETCH_SUCCESS);
-export const refreshCustomDataError = createAction(USERDATA_FETCH_ERROR);
-
+/** 
+ * @description refreshCustomDataError()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
+ export const refreshCustomDataError = createAction(USERDATA_FETCH_ERROR);
+/** 
+ * @description creditPaymentSuccess()   plain text Action
+ *  @constant
+ *   @type {function}
+ *   @default
+ */
 export const creditPaymentSuccess = createAction(CREDIT_PAYMENT_SUCCESS);
-export const creditPaymenError = createAction(CREDIT_PAYMENT_ERROR);
 
-const initialState={
-  auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
-            backEnd:{}
-       },
-       app:{},
-  reservations:[],
-  profile:{},
-  siteData:{},
-  error:''
-};
+/** 
+ * @description creditPaymenError()   plain text Action
+ *  @constant
+ *   @type {function}
+ */export const creditPaymenError = createAction(CREDIT_PAYMENT_ERROR);
 
-export const reducer = createReducer(initialState, (builder) => {
+
+
+/**
+ * @description Main/Initial App Redux Reducer
+ *   @default
+
+ * @returns The new state
+ */
+export const appReducer = createReducer(INITIAL_STATE, (builder) => {
 
   builder
   .addCase(creditPaymentSuccess, (state, action) => {
@@ -175,7 +287,6 @@ return state;
     })
     .addCase(logout, (state, action) => {
       state.trace = action.type;
-      state.app = null;
       state.profile=null;
       state.user = null;
       state.reservations = [];

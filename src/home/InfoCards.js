@@ -21,22 +21,21 @@ import { useNavigate} from "react-router-dom";
 import AdminDrawerMenu from './AdminMenu';
 import {  isAdminSelector} from '../constants';
 
-const selectState = state => state;
 
 const selectCardsData = state => state?.siteData?.cardData;
 
 /**
- * InfoCards, is a an editable fragment of the  home page.  If User is Admin then 
+ * @description  InfoCards, is a an editable fragment of the  home page.  If User is Admin then 
  *      a special "admin" menu is available allowing the user to change text
  */
-export default function InfoCards(props) {
+function InfoCards(props) {
   const navigate = useNavigate();
   const getCardData = useSelector(selectCardsData);
-  const isAdmin = useSelector(isAdminSelector);
+//  const isAdmin = useSelector(isAdminSelector);
     const app = null;
 const [displayData, setDisplayData] = useState(getCardData);
    const [edit, setEditMode] = useState(isAdminSelector);
-  const [editable, setEditableMode] = useState();
+  const [editable] = useState();
  const [drawerState, setDrawerState] = React.useState(false);
 
 
@@ -57,7 +56,7 @@ const [displayData, setDisplayData] = useState(getCardData);
     
       try {   
       const obj = {cardData:displayData,pageData:app?.siteData?.pageData };
-      const editResults= await app?.editHomeData({cardData:displayData,pageData:app?.siteData?.pageData })
+      await app?.editHomeData(obj)
 
     } catch (err) {
      console.log('Infocards err',err);
@@ -130,3 +129,5 @@ const [displayData, setDisplayData] = useState(getCardData);
   );
 }
 
+
+export default InfoCards;

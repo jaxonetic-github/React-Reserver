@@ -1,6 +1,5 @@
-import React , {useState} from 'react';
-import { useSelector } from 'react-redux'
-import { useRealmApp } from "../RealmApp";
+import React  from 'react';
+import { useSelector,useDispatch } from 'react-redux'
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -15,21 +14,22 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Menu from '@mui/material/Menu';
+import {logout} from '../redux/reducers/appReducer'
 
 import { useNavigate} from "react-router-dom";
-import {  isAdminSelector} from '../constants';
+//import {  isAdminSelector} from '../constants';
 
 const selectAuthedUserDataState = state => state?.profile;
-const selectProfile = state=>state?.profile;
+//const selectProfile = state=>state?.profile;
 /**
- * Main Application Bar with menus
+ * @description Main Application Bar with menus
  */
-export default function MenuAppBar() {
-  const app = useRealmApp();
+function ApplicationBar() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const authedUserSelector = useSelector(selectAuthedUserDataState);
   const hasProfileSelector = useSelector((state)=>state?.profile?.email);
-  const [authedUser, setAuthedUser] = useState(authedUserSelector?.email);
+  //const [authedUser, setAuthedUser] = useState(authedUserSelector?.email);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -96,7 +96,7 @@ export default function MenuAppBar() {
           
                 <MenuItem onClick={()=>{handleClose(); navigate('profile');}}><AccountCircle />Profile</MenuItem>
                 <MenuItem onClick={()=>{handleClose(); navigate('/reservations');}}><AssignmentIcon />Reservations</MenuItem>
-                <MenuItem onClick={()=>{handleClose(); app.logOut();  navigate('/');}}>Logout</MenuItem>
+                <MenuItem onClick={()=>{handleClose(); dispatch(logout()); navigate('/');}}>Logout</MenuItem>
               </Menu>
                :<Menu
                 id="menu-appbar"
@@ -118,9 +118,11 @@ export default function MenuAppBar() {
                
               </Menu>
       }
-         {hasProfileSelector? `Hello,${authedUserSelector?.firstname}` : ''}
+         {hasProfileSelector? `Hello,${authedUserSelector?.firstName}` : ''}
         </Toolbar>
       </AppBar>
     </Box>
   );
 }
+
+export default ApplicationBar;

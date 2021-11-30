@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
-import { useRealmApp } from "../RealmApp";
+import React from 'react';
 import {useNavigate} from "react-router-dom";
-import {  useDispatch,useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -9,43 +8,36 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import validator from 'validator'
-
+//import validator from 'validator'
+import {FirstNameAriaLabel, LastNameAriaLabel, EmailAriaLabel, PasswordAriaLabel} from '../constants'
+import {register} from '../redux/reducers/appReducer';
 
 const theme = createTheme();
-const PasswordAriaLabel = { 'aria-label': 'Password' };
-const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
-const ErrorAriaLabel = { 'aria-label': 'Error' };
- const submitAriaLabel = { 'aria-label': 'Submit' };
-const FirstNameAriaLabel = { 'aria-label': 'FirstName' };
-const LastNameAriaLabel = { 'aria-label': 'LastName' };
-
 
 
 /**
- * SignUp: take basic info and use it to register a user and log in 
+ * @description SignUp: take basic info and use it to register a user and log in 
  * 
  * 
  */
-export default function SignUp() {
+function SignUp() {
    const stateError = useSelector((state)=>state.error);
    const loginSuccessful = useSelector((state)=>state?.profile?.email);
+    const profile = useSelector((state)=>state?.profile);
 
   const [error, setErrorMsg] = React.useState('');
-  const  app = useRealmApp();
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
      React.useEffect(() => {
-if(loginSuccessful) navigate('/');
-})
+if(!profile) navigate('/');
+},[profile]);
 /**
  * Performs the registration when user Submits form by 
  * 1. reads the form data 
@@ -63,16 +55,8 @@ if(loginSuccessful) navigate('/');
    
     const submissionInfo = {email:data.get('email'), password:data.get('password'), firstName:data.get('firstName'), lastName:data.get('lastName')};
 
-      try {
-          console.log(submissionInfo);
-           const regResult =  app.registerWithEmail(data.get('email'),data.get('password'),data.get('firstName'),data.get('lastName'))
+     dispatch(register(submissionInfo));          
           
-          } catch (err) {
-            //display any caught errors in error field
-            setErrorMsg(err.toString());
-          }
-        //  console.log("if error,don't navigate",error);
-    
   };
 
   return (
@@ -173,3 +157,5 @@ if(loginSuccessful) navigate('/');
     </ThemeProvider>
   );
 }
+
+export default SignUp;

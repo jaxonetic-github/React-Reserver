@@ -1,81 +1,70 @@
-import React from 'react';
-import { render, screen, fireEvent,createEvent ,waitFor,act } from '@testing-library/react';
+/**
+ * @jest-environment jsdom
+ */
+ import React from 'react';
+ import * as ReactRedux from 'react-redux';
+
+import { render, screen, fireEvent,createEvent ,waitFor,act } from './test-utils';
 
 import Reservations from '../checkout/Reservations';
 
-import { Routes, Route} from 'react-router-dom';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import userEvent from '@testing-library/user-event'
-import {BrowserRouter} from 'react-router-dom';
+import { configureStore } from '@reduxjs/toolkit'
+import {appReducer} from '../redux/reducers/appReducer';
+import {logger} from 'redux-logger';
+import {INITIAL_STATE} from '../constants';
+
 
 
   describe('Reservations Test', () => {
-//  let signin = null;
+  
+
   let app = null;
  let signin = null;
 
-/*
- beforeAll(() => {
-    RealmAppProvider.mockImplementation(() => {
-      return {
-        login: () => {
-          throw new Error('login Test error');
-        },
-        app:{}
-      };
-    });
-  });
-*/
+  const useSelectorMock = jest.spyOn(ReactRedux, 'useSelector');
+  const useDispatchMock = jest.spyOn(ReactRedux, 'useDispatch');
+   let  store = configureStore({ reducer: { user: appReducer }, INITIAL_STATE })
+
+//beforeAll(() => {  });
+
 
 /**
 *
 */
+beforeEach(() => {
+  useSelectorMock.mockClear();
+  useDispatchMock.mockClear();
+})
 
-
-test('Reservation displays expected text', async () => {
-
-     render(<BrowserRouter><Reservations/></BrowserRouter>);
+/**
+*
+*/
+test('Reservation displays expected text',  () => {
+    useSelectorMock.mockReturnValue(INITIAL_STATE.reservations);
+   const reservation = INITIAL_STATE.reservations[0];
+console.log(store.getState().reservations);
+     render(
+        <ReactRedux.Provider store={store}><BrowserRouter>
+        <Routes>
+        <Route path="/" element={<Reservations/>} />
+        </Routes>
+        </BrowserRouter></ReactRedux.Provider>);
 
  
-  const passwordField = screen.getByLabelText('createdColumn');
+  const headerColumn = screen.getByLabelText('createdColumn');
+  const wholename = screen.getByLabelText('wholename');
+ screen.debug(wholename);
+  screen.getByText(reservation.email);
+  screen.getByText(reservation.phone);
+  screen.getByText(reservation.dropOffLocation);
+  screen.getByText(reservation.pickupLocation);
 
-/** const emailField =  screen.getByLabelText('EmailAddress');
+  //expect(true).toBe(true);
 
-  const signInButton = screen.getByLabelText('Submit');
- const forgotPwdLink = screen.getByText(/forgot password?/i);
- 
- const signUpLink = screen.getByText(`Don't have an account? Sign Up`);
-*/
+
 });
 
 
-/*
-
-
-test('user get error when credentials don\'t match', async () => {
-  
-     render(<BrowserRouter><Reservations /></BrowserRouter>);
-
-  const passwordField = screen.getByLabelText('Password');
-  fireEvent.change(passwordField, {target: {value: '123456789'}})
-
-  const emailField =  screen.getByLabelText('EmailAddress');
-  await act(async () =>fireEvent.change(emailField, {target: {value: 'jaxonetic@gmail.com'}}));
-
-  const signInButton = screen.getByLabelText('Submit');
- const forgotPwdLink = screen.getByText(/forgot password?/i); 
- const signUpLink = screen.getByText(`Don't have an account? Sign Up`);
-
-  userEvent.click(signInButton);
-  userEvent.click(forgotPwdLink);
-  userEvent.click(signUpLink);
-
-});
-
-*/
-
-/**afterAll(() => {
-  app.logout();
-  expect(app.currentUser ).ToBeNull();
-});
-*/
 });

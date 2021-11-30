@@ -1,5 +1,5 @@
 import React from 'react';
-import {  useSelector } from 'react-redux'
+import {  useSelector, useDispatch } from 'react-redux'
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,10 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {handleAuthenticationError} from './constants'
+import {PhoneAriaLabel, FirstNameAriaLabel, LastNameAriaLabel, EmailAriaLabel, PasswordAriaLabel} from './constants'
 import validator from 'validator';
 import { useNavigate} from "react-router-dom";
-import { useRealmApp } from "./RealmApp";
 
 
 
@@ -24,22 +23,22 @@ const theme = createTheme();
 /**
  * Profile : Displays User specific and saved info
  */
-export default function Profile(props) {
-    const currentUser = useSelector((state)=>state?.user);
+function Profile(props) {
     const navigate = useNavigate();
     const profile = useSelector((state)=>state?.profile);
+   const loginSuccessful = useSelector((state)=>state?.profile?.email);
 
-  const  app = useRealmApp();
+  const  dispatch = useDispatch();
 
   React.useEffect(() => {
-     if(!profile?.email) navigate("/");
-  });
+     if(!profile) navigate("/");
+  },[profile]);
 
    
 
  
- const [firstName] = React.useState(profile?.firstname);
-  const [lastName] = React.useState(profile?.lastname);
+ const [firstName] = React.useState(profile?.firstName);
+  const [lastName] = React.useState(profile?.lastName);
   const [email] = React.useState(profile?.email||'');
   const [phone, setPhone] = React.useState(profile?.phone||'');
 
@@ -62,15 +61,8 @@ export default function Profile(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    
-      try {   
-      
-        currentUser.functions.EditProfile({firstname:data.get('firstName'), lastname:data.get('lastName'), email:data.get('email'), phone:data.get('phone'), userid:app.currentUser.id}).then((userdata)=>{console.log(userdata)});
+    dispatch({firstname:data.get('firstName'), lastname:data.get('lastName'), email:data.get('email'), phone:data.get('phone')});
 
-    } catch (err) {
-      const errMsg = handleAuthenticationError(err, setErrorMsg);
-      setErrorMsg(errMsg);
-    }
   };
   return (
     <ThemeProvider theme={theme}>
@@ -100,6 +92,7 @@ export default function Profile(props) {
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  inputProps={FirstNameAriaLabel}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -109,7 +102,7 @@ export default function Profile(props) {
                   label="Last Name"
                   name="lastName"
               defaultValue={lastName}
-
+                  inputProps={LastNameAriaLabel}
                   placeholder='Last Name'
                 />
               </Grid>
@@ -121,6 +114,7 @@ export default function Profile(props) {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  inputProps={EmailAriaLabel}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -129,6 +123,7 @@ export default function Profile(props) {
                   fullWidth
                   name="phone"
                   label="phone"
+                  inputProps={PhoneAriaLabel}
                   type="phone"
                   id="phone"
                   onChange={(event)=>setPhone(event.target.value)}
@@ -152,3 +147,5 @@ export default function Profile(props) {
     </ThemeProvider>
   );
 }
+
+export default Profile;

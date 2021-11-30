@@ -1,7 +1,10 @@
  module.exports = {
     transform: {
-    '\\.(js|jsx)?$': 'babel-jest',
-  },
+    '\\.(js|jsx)?$': 'babel-jest',},
+    watchman:false,
+    transformIgnorePatterns: [
+     '/node_modules/(?!@square|react-square-web-payments-sdk)',
+   ],
 /*  transform: {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
   },*/

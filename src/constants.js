@@ -1,8 +1,41 @@
+/** module constants */
 
+/** isAdmin state selector */
 export  const isAdminSelector = state => (state?.app?.currentUser?.customData?.email==='kurawan@yahoo.com') 
+
+export const RESERVATION = {
+  userid:"6182198ee43796e8d32aff28",
+  pickUpDate:"12:12:10",
+  pickUpTime:"02:03:04",
+  dropOffLocation:"dropoffdestinationf",
+  pickupLocation:"pickupdestinationf",
+  firstName:"A",
+  lastName:"Z",
+  email:"az@email",
+  createdDated:'2011:11:12',
+  phone:"555-555-5555"};
+
+
+/** 
+ *   @description Initial Reducer State @constant
+ *   @type {string}
+ *   @default
+ */
+export const INITIAL_STATE={
+  auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
+            backEnd:{}
+       },
+       app:{},
+  reservations:[RESERVATION],
+  profile:{ firstName:"A", lastName:"Z",  email:"az@email"},
+  siteData:{},
+  error:''
+};
+
 
 /******************    ARIA Labels   *************/
 export const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
+export const PhoneAriaLabel = { 'aria-label': 'Phone' };
 export const ErrorAriaLabel = { 'aria-label': 'Error' };
 export const submitAriaLabel = { 'aria-label': 'Submit' };
 export const FirstNameAriaLabel = { 'aria-label': 'FirstName' };

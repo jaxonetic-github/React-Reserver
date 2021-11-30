@@ -1,7 +1,6 @@
 import React, {  useState }from 'react';
-import { useRealmApp } from "../RealmApp";
 import { useNavigate} from "react-router-dom";
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
 
 import Container from '@mui/material/Container';
 import Table from '@mui/material/Table';
@@ -13,6 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
+import {fetchReservations} from '../redux/reducers/appReducer'
 
 
 
@@ -31,19 +31,20 @@ import Divider from '@mui/material/Divider';
  * phone:"555-555-5555"};
  *
  */
- //const selectReservationsFromState = ;
 
-export default function Reservations() {
-  const app = useRealmApp();
+function Reservations() {
+  const dispatch = useDispatch();
   const getReservations = useSelector(state=>state?.reservations);
   const [reservations, setReservations] = useState(getReservations||[]);
   const navigate = useNavigate();
 
    const loginSuccessful = useSelector((state)=>state.profile);
 
-     React.useEffect(() => { if(!loginSuccessful) navigate('/');  });
+     React.useEffect(() => {
+      console.log(getReservations,'--1--', this);
+      if(!loginSuccessful) navigate('/');  },[loginSuccessful]);
 
-  //console.log(reservations);
+  console.log(getReservations.reservations,'--2--', Object.keys( reservations) );
   //const adjustDate = (someDate)=>(someDate && ((typeof someDate) === 'object' )? someDate.toDateString() : someDate);
  
   return (
@@ -54,7 +55,7 @@ export default function Reservations() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
              { reservations?.length} Reservations 
           </Typography>
-          <Button contained="true" color="success" onClick={()=>app?.getReservations()}>Refresh</Button>
+          <Button contained="true" color="success" onClick={()=>dispatch(fetchReservations())}>Refresh</Button>
         </Toolbar>
    
   
@@ -70,9 +71,9 @@ export default function Reservations() {
           {reservations.map((reservation, index) => 
             (<TableRow key={index}>
               <TableCell>{reservation?.createdDate?.toString()}</TableCell>
-              <TableCell>{reservation?.firstName} {reservation?.lastName}
-              <Divider/>{reservation?.email}<p>{reservation?.phone}</p></TableCell>
-              <TableCell>{reservation?.pickupLocation}<p>{new Date( reservation?.pickUpDate).toLocaleString()}</p>{reservation?.dropOffLocation}<p>{new Date(reservation?.dropOffDate).toLocaleString()}</p></TableCell>
+              <TableCell><span aria-label='wholename'>{reservation?.firstName}{' '}{reservation?.lastName}</span>
+              <Divider/><span aria-label='email'>{reservation?.email}</span><p aria-label='phone'>{reservation?.phone}</p></TableCell>
+              <TableCell><span aria-label='pickupLocation'>{reservation?.pickupLocation}</span><p >{new Date( reservation?.pickUpDate).toLocaleString()}</p><span aria-label='dropOffLocation'>{reservation?.dropOffLocation}</span><p>{new Date(reservation?.dropOffDate).toLocaleString()}</p></TableCell>
             </TableRow>)
           )}
           <TableRow >
@@ -91,3 +92,5 @@ export default function Reservations() {
     </React.Fragment>
   );
 }
+
+export default Reservations;

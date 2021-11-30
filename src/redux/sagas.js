@@ -1,21 +1,31 @@
-import { call, put, takeEvery, takeLatest,select } from 'redux-saga/effects'
+import {  put,call, takeEvery, takeLatest, select } from 'redux-saga/effects'
+
 import * as Realm  from "realm-web";
-import {logout, login, register,fetchSiteDataSuccess,
- refreshCustomData,fetchReservations,fetchReservationsError,fetchReservationsSuccess,loginError,fetchSiteData,
-  loginSucceeded} from './reducers/appReducer';
+
+import {logout,loginError, login,loginSucceeded, register,registerError,registerSuccess,
+  fetchSiteData,fetchSiteDataSuccess,fetchSiteDataError,loginAnonymously,
+ refreshCustomData,fetchReservations,fetchReservationsError,fetchReservationsSuccess,
+  loadProfile, insertReservationSuccess,insertReservation} from './reducers/appReducer';
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
+
+
+
+/**
+ * @description Register user
+ * @param action : action.payload.credentials={email, password, firstName, lastName, phone}
+ * 
+ */
 function* registerSaga(action) {
-   try {
-    console.log(action);
-    //  const user = yield call(Api.fetchUser, action.payload.userId);
-      //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
-   } catch (e) {
-      yield put({type: "USER_FETCH_FAILED", message: e.message});
-   }
+  const app = yield select(state=>state.app);
+  const customData = yield call(app.registerWithEmail,action.payload );    
+  yield put(loadProfile( customData));
 }
 
 
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
+
+/**
+ *  worker Saga: will be fired on USER_FETCH_REQUESTED actions
+
 function* signInSaga(action) {
    try {
     console.log(action);
@@ -24,24 +34,26 @@ function* signInSaga(action) {
    } catch (e) {
       yield put({type: "USER_FETCH_FAILED", message: e.message});
    }
-}
+}*/
 
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* signOutSaga(action) {
     const app = yield select(state=>state.app);
-   //  console.log('log out called',app?.currentUser);
-   // app?.currentUser?.logOut();
-    //console.log('log out called');
-
-    //  const user = yield call(Api.fetchUser, action.payload.userId);
-      //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
+     yield call(app.logOut );
   
 }
 
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
+/**
+ * worker Saga: will be fired on USER_FETCH_REQUESTED actions
+ *
+ */
+
 function* getReservationsSaga(action) {
+
+       const app = yield select(state=>state.app);
+
    try {
-      const reservationsResult = yield call(action.payload.app.reservations );
+      const reservationsResult = yield call(app.getReservations );
     yield put(fetchReservationsSuccess(reservationsResult) );
     //  const user = yield call(Api.fetchUser, action.payload.userId);
       //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
@@ -50,46 +62,80 @@ function* getReservationsSaga(action) {
    }
 }
 
-/*
-  Starts fetchUser on each dispatched `USER_FETCH_REQUESTED` action.
-  Allows concurrent fetches of user.
-  @param action.payload : {app:app, navigator:navigate,credentials:{email, password}}
-*/
+/**
+ * worker Saga: will be fired on USER_FETCH_REQUESTED actions
+ *
+ */
+
+function* insertReservationSaga(action) {
+
+       const app = yield select(state=>state.app);
+
+   try {
+      const reservationsResult = yield call(app.insertReservations,action.payload );
+    yield put(fetchReservations() );
+    //  const user = yield call(Api.fetchUser, action.payload.userId);
+      //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
+   } catch (e) {
+      yield put(fetchReservationsError( e.message));
+   }
+}
 
 
-function* loginSaga(action,app) {
-  // const app = yield select(state=>state.app);
- //console.log(app?.login,'loginSaga action:',action.payload.credentials);
-//const loginFunction = yield app.logIn();
-//console.log(loginFunction);
-//{
-// return  app.login(credentials)
-//}
-console.log(action);
-const email = action.payload.credentials.email;
-const password = action.payload.credentials.password;
-const cred = Realm.Credentials.emailPassword(email, password) ;
-const loginResult = yield app.logIn(cred );
+/**
+ *  worker Saga: to be fired when unauthed user needs SiteData
+ *
+ */
+function* loginAnonymouslySaga(action) {
+     const app = yield select(state=>state.app);
 
- // const logOutResult = yield call( app.logout );
-//  const loginResult = yield call( app.login, Credentials.emailPassword(action.payload.credentials.email, action.payload.credentials.password)  );//call(app.logIn,Credentials.emailPassword(action.payload.credentials.email, action.payload.credentials.password)); //app.login(Credentials.emailPassword(action.payload.email, action.payload.password)); //yield call(app.logIn,Credentials.emailPassword(action.payload.credentials.email, action.payload.credentials.password));
-  console.log('loginResult', loginResult);
+
+  const loginResult = yield call(app.loginAnonymously );
+console.log('anonymouse result in saga',loginResult);
+     
+ const site = yield call(app.getSiteData);
+if(site.screen) 
+  yield put(fetchSiteDataSuccess(site))
+ yield call(app.logOut);
+
+}
+
+/**
+ * @description Attempt to Log in. If successful,fetch reservations, profile 
+ * 
+ */
+function* loginSaga(action) {
+   const app = yield select(state=>state.app);
+
+const email = action.payload.email;
+const password = action.payload.password;
+const loginResult = yield call(app.login,{email,password} );
+
   if( loginResult)
   { 
-    yield put(loginSucceeded,loginResult);
-    const reservations = yield put(fetchReservations);
-    //yield put(fetchReservationsSuccess(reservations));
-   yield put(refreshCustomData);
-  //  yield call(action.payload.app.currentUser.refreshCustomData)
-  //  call(action.payload.navigator.navigate,'/');
+    yield put(loginSucceeded(loginResult));
+    const reservations = yield put(fetchReservations());
+    yield put(fetchReservationsSuccess(reservations));
+    yield put(refreshCustomData());
   }
   else 
-   put(loginError, loginResult.error);
+   put(loginError(loginResult.error));
 
 }
 
 
-/*
+/**
+ * @description ensure the customData object is uptoData 
+ * 
+ */
+function* customDataRefreshSaga(action) {
+  const app = yield select(state=>state.app);
+  const customData = yield call(app.reloadCustomData );    
+  yield put(loadProfile( customData));
+}
+
+
+/**
   Starts fetchUser on each dispatched `USER_FETCH_REQUESTED` action.
   Allows concurrent fetches of user.
 */
@@ -97,53 +143,26 @@ function* UnhandledSaga(action) {
   console.log('UnhandledSaga',action);
 }
 
-/*
-  Starts fetchUser on each dispatched `USER_FETCH_REQUESTED` action.
-  Allows concurrent fetches of user.
-*/
-function* customDataRefreshSaga(action) {
-  console.log('UnhandledSaga',action);
-}
 
 
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
+/**
+ *  worker Saga: will be fired on USER_FETCH_REQUESTED actions
+ */ 
 function* fetchSiteDataSaga(action) {
      const app = yield select(state=>state.app);
-console.log(app,"------------******-----------",app?.currentUser);
-   if(!app?.currentUser)
-   {//not logged In
-    console.log('need to login anonymously',app);
-      const loginResult = yield app.logIn(Realm.Credentials.anonymous()); //app.login(Credentials.emailPassword(action.payload.email, action.payload.password)); //yield call(app.logIn,Credentials.emailPassword(action.payload.credentials.email, action.payload.credentials.password));
-  console.log('emergency loginresult');
- if( loginResult)
-  { 
-    yield put(loginSucceeded,loginResult);
-   // const reservations = yi eld put(fetchReservations);
-    //yield put(fetchReservationsSuccess(reservations));
-   //yield put(refreshCustomData);
-  //  yield call(action.payload.app.currentUser.refreshCustomData)
-  //  call(action.payload.navigator.navigate,'/');
-  }
-//console.log('No site innfo, attempting to log in ß');
-   // const user = await app.logIn(Realm.Credentials.anonymous());
- const site =   yield call(loginResult.functions.GetSiteData);
-  //site = await loginResult?.functions?.GetSiteData();
- console.log('sitedata?',site);
-   }
-else{
-   try {
-       const siteData =   yield call(app?.currentUser?.functions?.GetSiteData);
 
-      console.log(siteData);
+   try {
+       const siteData =   yield call(app.getSiteData);
+console.log('siteData retrieved', siteData)
     yield put( fetchSiteDataSuccess(siteData) );
     //  const user = yield call(Api.fetchUser, action.payload.userId);
       //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
    } catch (e) {
     console.log(e);
-      yield put({type: "FETCH_RESERVATION_FAILED", payload: e.message});
+      yield put(fetchSiteDataError( e.message));
    }
  }
-}
+
 
 
 /*
@@ -154,13 +173,15 @@ else{
   and only the latest one will be run.
 */
 function* mySaga(app) {
- // yield takeEvery(login, loginSaga, app);
- // yield takeEvery(logout, signOutSaga);
- // yield takeEvery(refreshCustomData,customDataRefreshSaga);
-//  yield takeLatest("LOGIN_FAILED",UnhandledSaga);
-  //yield takeLatest(register);
-  //yield takeLatest(fetchReservations);
+  yield takeLatest(loginAnonymously, loginAnonymouslySaga);
 
+  yield takeLatest(login, loginSaga);
+  yield takeEvery(logout, signOutSaga);
+  yield takeEvery(refreshCustomData,customDataRefreshSaga);
+  yield takeLatest(insertReservation,insertReservationSaga);
+  yield takeLatest(register,registerSaga);
+  yield takeLatest(fetchReservations,getReservationsSaga);
+yield takeLatest('FETCH_SITEDATA',fetchSiteDataSaga);
 }
 
 export default mySaga;

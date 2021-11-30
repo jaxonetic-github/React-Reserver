@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {  useDispatch, useSelector } from 'react-redux'
-import { useRealmApp } from "../RealmApp";
+//import { useRealmApp } from "../RealmApp";
 
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -12,34 +12,35 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import AddressForm from './AddressForm';
+import ItineraryFragment from './ItineraryFragment';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import AgreementForm from './AgreementForm';
-import Review from './Review';
+import ReviewFragment from './Review';
 import {useNavigate} from "react-router-dom";
 import validator from 'validator';
-import { creditPaymenError ,creditPaymentSuccess} from '../redux/reducers/appReducer';
+import { insertReservation,creditPaymenError ,creditPaymentSuccess} from '../redux/reducers/appReducer';
 
 const steps = ['Itinerary', 'Agreements', 'Review'];
 
 
 const theme = createTheme();
 
-
-export default function Checkout() {
-  const currentUser = useSelector((state)=>state?.user);
+/**
+ *  Module to take reservations from user. 
+ */
+ function Checkout() {
+  const currentUser = useSelector((state)=>state?.profile);
 //  const hasProfile = useSelector((state)=>state?.profile);
   const dispatch = useDispatch();
-  const realmApp  = useRealmApp();
   const navigate = useNavigate();
 
-  const [firstName, setFirstName] = React.useState(currentUser?.customData?.firstname||'');
-  const [lastName, setLastName] = React.useState(currentUser?.customData?.lastname||'');
-  const [email, setEmail] = React.useState(currentUser?.customData?.email||'');
+  const [firstName, setFirstName] = React.useState(currentUser?.firstName||'');
+  const [lastName, setLastName] = React.useState(currentUser?.lastName||'');
+  const [email, setEmail] = React.useState(currentUser?.email||'');
   const [password, setPassword] = React.useState();
   const [error, setError] = React.useState();
-  const [phone, setPhone] = React.useState(currentUser?.customData?.phone||'');
+  const [phone, setPhone] = React.useState(currentUser?.phone||'');
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [pickUpDate, setPickUpDate] = React.useState(new Date());
@@ -57,13 +58,14 @@ export default function Checkout() {
    function itineraryValidated  (currentStep){
     let validated = false;
     if(currentStep===0){
-         const phoneValidated = phone && validator.isMobilePhone(phone);
-         const emailValidated = email && validator.isEmail(email);
-         const pickupLocationValidated = pickupLocation && !validator.isEmpty(pickupLocation);
-         const dropOffLocationValidated = dropOffLocation && !validator.isEmpty(dropOffLocation);
-         const firstNameValidated = firstName && !validator.isEmpty(firstName);
-         const lastNameValidated = lastName && !validator.isEmpty(lastName);
+         const phoneValidated =validator.isMobilePhone(phone);
+         const emailValidated =  validator.isEmail(email);
+         const pickupLocationValidated =  !validator.isEmpty(pickupLocation);
+         const dropOffLocationValidated = !validator.isEmpty(dropOffLocation);
+         const firstNameValidated = !validator.isEmpty(firstName);
+         const lastNameValidated =  !validator.isEmpty(lastName);
            validated = (phoneValidated && emailValidated && pickupLocationValidated && dropOffLocationValidated && firstNameValidated && lastNameValidated);
+          console.log(phone,email, firstNameValidated, pickupLocationValidated,dropOffLocationValidated, firstNameValidated, lastNameValidated);
       }else
          if(currentStep===1){
           const agreementSignatureValidated = !validator.isEmpty(agreementSignature);
@@ -80,7 +82,7 @@ export default function Checkout() {
 
 function getStepContent(step) {
   const tmpRes = {
-                    userid:realmApp?.currentUser?.id,
+                    userid:'realmApp?.currentUser?.id',
                    pickUpDate:pickUpDate,
                     dropOffDate:dropOffDate,
                    dropOffLocation:dropOffLocation,
@@ -93,16 +95,16 @@ function getStepContent(step) {
 
   switch (step) {
     case 0:
-      return <AddressForm onChange={onChange}/>;
+      return <ItineraryFragment onChange={onChange}/>;
     case 1:
       return <AgreementForm onChange={onChange} />;
     case 2:
-      return <Review handleSuccess={(successEvent)=> 
+      return <ReviewFragment handleSuccess={(successEvent)=> 
                                         {
                                           if(successEvent.status==='OK'){
                                             dispatch(creditPaymentSuccess())
                                           setPaymentSucceeded(true); 
-                                        realmApp.insertReservations(tmpRes); 
+                                        dispatch(insertReservation(tmpRes)); 
                                          setActiveStep(activeStep + 1);
                                        }else{console.log("Credit Error::=>",successEvent.errors);
                                               dispatch(creditPaymenError('Payment Error',successEvent.toString()))}
@@ -149,7 +151,7 @@ function getStepContent(step) {
           if(password ){
           //register with the email and password
               try{
-             const {error} =  await realmApp.registerWithEmail(email, password, firstName,lastName, phone) ;
+             const {error} =  dispatch.register({email, password, firstName,lastName, phone}) ;
              console.log('result....',error);
              //canContinue = success  ;
              if(error)
@@ -237,3 +239,9 @@ setError(null);
     </ThemeProvider>
   );
 }
+
+/** 
+ *  @module Checkout 
+ *  @description Autonomous reserve and checkout w/payment modulue
+ */
+export default Checkout;

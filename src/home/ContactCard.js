@@ -23,7 +23,10 @@ import {  isAdminSelector} from '../constants';
 
 const selectContactData = state => state?.siteData?.contactData;
 
-export default function ContactCard(props) {
+/**
+ * @description  Display Contact Info
+ */
+function ContactCard(props) {
   const navigate = useNavigate();
     const app = null;
     const componentData = useSelector(selectContactData);
@@ -126,3 +129,5 @@ const [displayData, setDisplayData] = useState(componentData);
   );
 }
 
+/**  @module ContactCard */
+export default ContactCard;
