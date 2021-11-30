@@ -81,7 +81,7 @@ console.log(credentials)
 
 
      await this.app.emailPasswordAuth.registerUser(registerData.email, registerData.password);
-     const newUser =  await this.app?.logIn(Realm.Credentials.emailPassword(registerData.email, registerData.password));
+      await this.app?.logIn(Realm.Credentials.emailPassword(registerData.email, registerData.password));
     //      dispatch(refreshCustomDataSuccess());
     try {
          //add CustomData
@@ -121,8 +121,7 @@ try {
      prof = await this.app?.currentUser?.functions?.GetUserData(this.app?.currentUser?.id);
     }catch(error){
        const { status, message } = parseAuthenticationError(error);
-       console.log(status,'<---status message--->',message);
-       return {error:message};
+       return {error:status+message};
     }
 return prof;
 }
@@ -144,7 +143,7 @@ return prof;
       console.log('returning,',site);
       return site;
     }catch(error){
-     const { status, message } = parseAuthenticationError(error);
+     const {  message } = parseAuthenticationError(error);
 
            return {error:message};
     }
@@ -194,17 +193,17 @@ this.setSiteData({screen:'home_general',pageData:newPageData.pageData, contactDa
  insertReservations = async  (reservation)=> {
 
     const newReservation = {...reservation, dateAdded :(new Date()), userid:this.app.currentUser?.id };
-   const result = await this.app.currentUser?.functions.InsertReservation(reservation);
+   const result = await this.app.currentUser?.functions.InsertReservation(newReservation);
 
 //dispatch(createAction('SENDING_EMAIL/SMS_NOTIFICATION')())
 init(process.env.REACT_APP_EMAILJS_USERID);
-const message = `Reservation requested from (${reservation.firstName} ${reservation.lastName}). Contact Info:${reservation.phone}, ${reservation.email}`;
+const message = `Reservation requested from (${newReservation.firstName} ${newReservation.lastName}). Contact Info:${newReservation.phone}, ${newReservation.email}`;
  const emailTemplate  = 
  {to_name:'Awan', from_name:'8Angels Transportation Email Notifier',
   message:message};
 
 const emailResult = await emailjs.send(process.env.REACT_APP_SERVICEID, process.env.REACT_APP_EMAILJS_TEMPLATEID, emailTemplate, process.env.REACT_APP_EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
-//console.log("Notification Result",emailResult);
+console.log("Notification Result",emailResult);
  return result;
 }
 

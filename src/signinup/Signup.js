@@ -28,7 +28,6 @@ const theme = createTheme();
  */
 function SignUp() {
    const stateError = useSelector((state)=>state.error);
-   const loginSuccessful = useSelector((state)=>state?.profile?.email);
     const profile = useSelector((state)=>state?.profile);
 
   const [error, setErrorMsg] = React.useState('');

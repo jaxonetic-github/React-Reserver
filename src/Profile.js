@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {PhoneAriaLabel, FirstNameAriaLabel, LastNameAriaLabel, EmailAriaLabel, PasswordAriaLabel} from './constants'
+import {PhoneAriaLabel, FirstNameAriaLabel, LastNameAriaLabel, EmailAriaLabel} from './constants'
 import validator from 'validator';
 import { useNavigate} from "react-router-dom";
 
@@ -26,13 +26,12 @@ const theme = createTheme();
 function Profile(props) {
     const navigate = useNavigate();
     const profile = useSelector((state)=>state?.profile);
-   const loginSuccessful = useSelector((state)=>state?.profile?.email);
 
   const  dispatch = useDispatch();
 
   React.useEffect(() => {
      if(!profile) navigate("/");
-  },[profile]);
+  },[profile,navigate]);
 
    
 
@@ -42,7 +41,7 @@ function Profile(props) {
   const [email] = React.useState(profile?.email||'');
   const [phone, setPhone] = React.useState(profile?.phone||'');
 
-  const [error, setErrorMsg] = React.useState('');
+  const [error] = React.useState('');
 
 
 

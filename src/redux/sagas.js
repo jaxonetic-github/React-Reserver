@@ -1,11 +1,10 @@
 import {  put,call, takeEvery, takeLatest, select } from 'redux-saga/effects'
 
-import * as Realm  from "realm-web";
 
-import {logout,loginError, login,loginSucceeded, register,registerError,registerSuccess,
-  fetchSiteData,fetchSiteDataSuccess,fetchSiteDataError,loginAnonymously,
+import {logout,loginError, login,loginSucceeded, register,
+fetchSiteDataSuccess,fetchSiteDataError,loginAnonymously,
  refreshCustomData,fetchReservations,fetchReservationsError,fetchReservationsSuccess,
-  loadProfile, insertReservationSuccess,insertReservation} from './reducers/appReducer';
+  loadProfile,insertReservation} from './reducers/appReducer';
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 
 
@@ -72,7 +71,7 @@ function* insertReservationSaga(action) {
        const app = yield select(state=>state.app);
 
    try {
-      const reservationsResult = yield call(app.insertReservations,action.payload );
+       yield call(app.insertReservations,action.payload );
     yield put(fetchReservations() );
     //  const user = yield call(Api.fetchUser, action.payload.userId);
       //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
@@ -138,11 +137,11 @@ function* customDataRefreshSaga(action) {
 /**
   Starts fetchUser on each dispatched `USER_FETCH_REQUESTED` action.
   Allows concurrent fetches of user.
-*/
+
 function* UnhandledSaga(action) {
   console.log('UnhandledSaga',action);
 }
-
+*/
 
 
 /**

@@ -42,7 +42,7 @@ function ApplicationBar() {
 
   React.useEffect(() => {
      if(!hasProfileSelector) navigate("/");
-  },[hasProfileSelector]);
+  },[hasProfileSelector, navigate]);
 
    
   return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as Realm from "realm-web";
 
 import './index.css';
 import './css/App.css';
@@ -8,13 +7,13 @@ import './css/App.css';
 import App from './App';
 import { RealmDAO } from "./RealmDAO.js";
 import reportWebVitals from './reportWebVitals';
-import RealmApolloProvider from "./graphql/RealmApolloProvider";
+//import RealmApolloProvider from "./graphql/RealmApolloProvider";
 
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { Provider } from 'react-redux'
 
-import {appReducer,refreshCustomData,fetchReservations, login,loginAnonymously,loadBackEnd,logout,fetchSiteData} from './redux/reducers/appReducer'
+import {appReducer,refreshCustomData,fetchReservations,loginAnonymously,loadBackEnd,fetchSiteData} from './redux/reducers/appReducer'
 import mySaga from './redux/sagas';
 import {logger} from 'redux-logger';
 // create the saga middleware

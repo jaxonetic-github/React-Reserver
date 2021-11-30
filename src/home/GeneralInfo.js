@@ -23,7 +23,7 @@ import ContactCard from './ContactCard'
 
 import {  isAdminSelector} from '../constants';
 
-const selectSiteData = state => state.siteData;
+const selectSiteData = state => state.siteData.pageData;
 //const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
 
 /**
@@ -40,28 +40,27 @@ const getIsAdmin = useSelector(isAdminSelector)
   const [edit, setEditMode] = useState(false);
   const [editable, setEditableMode] = useState(getIsAdmin);
 
-  const [error, setError] = useState();
+  //const [error, setError] = useState();
   const [title, setTitle] = useState(app?.siteData?.pageData?.title);
   const [reservationButton, setReservationButton] = useState(app?.siteData?.pageData?.reservationButton);
   const [subtitle, setSubTitle] = useState(app?.siteData?.pageData?.subtitle);
-  const [paragraph1, setParagraph1] = useState();
-  const [paragraph2, setParagraph2] = useState();
+  const [paragraph1, setParagraph1] = useState(getSiteData.paragraphs[0]);
+  const [paragraph2, setParagraph2] = useState(getSiteData.paragraphs[1]);
   const [drawerState, setDrawerState] = React.useState(false);
  //   const authedUserSelector = useSelector(selectAuthedUserDataState);
  // const [authedUser, setAuthedUser] = useState(authedUserSelector?.email!==undefined);
 
 
    React.useEffect(() => {
-
+/*
      setTitle(app?.siteData?.pageData?.title );
     setReservationButton(app?.siteData?.pageData?.reservationButton);
     setSubTitle(app?.siteData?.pageData?.subtitle);
     setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
-    setParagraph2(app?.siteData?.pageData?.paragraphs[1]);
+    setParagraph2(app?.siteData?.pageData?.paragraphs[1]);*/
 
     setEditableMode(getIsAdmin);
-  },[app?.siteData?.pageData?.title,app?.siteData?.pageData?.reservationButton,app?.siteData?.pageData?.subtitle,
-    app?.siteData?.pageData?.paragraphs[0],app?.siteData?.pageData?.paragraphs[1]]);  
+  },[getIsAdmin]);  
   
 
   const toggleDrawer = (event) => {
