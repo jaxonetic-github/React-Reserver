@@ -1,4 +1,7 @@
-import {appReducer,fetchReservationsSuccess,fetchSiteDataSuccess,loadProfile,loginSucceeded,LOGIN_SUCCEEDED} from '../redux/reducers/appReducer';
+import {appReducer,registerSuccess,REGISTER_SUCCESS,
+  fetchReservationsSuccess,fetchSiteDataSuccess,
+  loadUser,LOAD_USER, loadProfile,loginSucceeded,LOGIN_SUCCEEDED,
+logout, LOGOUT} from '../redux/reducers/appReducer';
 import {INITIAL_STATE, RESERVATION} from '../constants';
 
 
@@ -49,10 +52,44 @@ altState
   )
 })
 
-
-test('loginSucceeded', () => {
-  const altState = {...INITIAL_STATE, profile:{email:'test@email.com'},trace: LOGIN_SUCCEEDED};
-  expect(appReducer (INITIAL_STATE, loginSucceeded({email:'test@email.com'}))).toEqual(
+test('loadUser', () => {
+  const altState = {...INITIAL_STATE,trace: LOAD_USER, user:{id:'testid'}};
+  expect(appReducer (INITIAL_STATE, loadUser({id:'testid'}))).toEqual(
 altState   
   )
 })
+
+
+test('loginSucceeded', () => {
+  const altState = {...INITIAL_STATE, trace: LOGIN_SUCCEEDED,
+    reservations:[RESERVATION],
+    profile:{email:'test@email.com'},
+    user:{id:'testid'},
+    authState : {status :'Logged In successfully'}
+  };
+  expect(appReducer (INITIAL_STATE, loginSucceeded( {profile:{email:'test@email.com'}, reservations:[RESERVATION], user:{id:'testid'} } ))).toEqual(
+altState   
+  )
+})
+
+
+test('registerSuccess', () => {
+  const altState = {...INITIAL_STATE, trace: REGISTER_SUCCESS,
+    reservations:[RESERVATION],
+    profile:{email:'test@email.com'},
+    user:{id:'testid'},
+  };
+  expect(appReducer (INITIAL_STATE, registerSuccess( {profile:{email:'test@email.com'}, reservations:[RESERVATION], user:{id:'testid'} } ))).toEqual(
+altState   
+  )
+})
+
+
+test('logout', () => {
+  const altState = {...INITIAL_STATE,trace: LOGOUT, user:null, profile:null,reservations:[],authState:null};
+  expect(appReducer (INITIAL_STATE, logout())).toEqual(
+altState   
+  )
+})
+
+
