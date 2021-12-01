@@ -20,12 +20,11 @@ import SignUp from './signinup/Signup';
 /**
  *  the Main Component containing the app routes          
  *      <Route path="*" element={<GeneralInfo />} />
-
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH)
-  return (<BrowserRouter  basename={process.env.REACT_APP_WEBPATH}>
-     <Routes>
+  return (<BrowserRouter  >
+     <Routes basename={process.env.REACT_APP_WEBPATH}>
           <Route  path="/" element={<MainComponent />} >
              <Route index element={<GeneralInfo/>} /> 
              <Route path="/profile" element={<Profile/>} />
