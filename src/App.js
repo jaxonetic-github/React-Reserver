@@ -29,9 +29,9 @@ console.log(process.env.REACT_APP_WEBPATH)
     <Route index element={<GeneralInfo />} />
              <Route path="profile" element={<Profile/>} />
              <Route path="signin" element={<SignIn />} />
-             <Route path=`${basename}/signup` element={<SignUp />} />
+             <Route path={`${basename}/signup`} element={<SignUp />} />
              <Route path="checkout" element={<Checkout />} />
-             <Route path=`${basepath}/reservations` element={<Reservations />} />
+             <Route path={`${basepath}/reservations`} element={<Reservations />} />
           </Route>      
       </Routes>
        </BrowserRouter>
