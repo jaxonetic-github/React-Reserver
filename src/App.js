@@ -25,7 +25,7 @@ function App() {
 console.log(process.env.REACT_APP_WEBPATH)
   return (<BrowserRouter  >
      <Routes >
-          <Route exact path="/" element={<MainComponent />} >
+          <Route exact path="React-Reserver" element={<MainComponent />} >
     <Route index element={<GeneralInfo />} />
              <Route path="profile" element={<Profile/>} />
              <Route path="/React-Reserver/signin" element={<SignIn />} />
