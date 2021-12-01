@@ -25,7 +25,7 @@ function App() {
 console.log(process.env.REACT_APP_WEBPATH)
   return (<BrowserRouter  >
      <Routes basename={process.env.REACT_APP_WEBPATH}>
-          <Route  path="/" element={<MainComponent />} >
+          <Route exact path="/" element={<MainComponent />} >
     <Route index element={<GeneralInfo />} />
              <Route path="profile" element={<Profile/>} />
              <Route path="signin" element={<SignIn />} />
