@@ -28,7 +28,7 @@ console.log(process.env.REACT_APP_WEBPATH)
           <Route exact path="/" element={<MainComponent />} >
     <Route index element={<GeneralInfo />} />
              <Route path="profile" element={<Profile/>} />
-             <Route path="/signin" element={<SignIn />} />
+             <Route path="/React-Reserver/signin" element={<SignIn />} />
              <Route path="/signup" element={<SignUp />} />
              <Route path="React-Reserver/checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
