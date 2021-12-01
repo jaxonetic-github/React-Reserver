@@ -22,13 +22,13 @@ import SignUp from './signinup/Signup';
  *      <Route path="*" element={<GeneralInfo />} />
  */
 function App() {
-console.log(process.env.REACT_APP_WEBPATH)
-  return (<BrowserRouter  >
+console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
+  return (<BrowserRouter basename={`/${process.env.PUBLIC_URL}`} >
      <Routes >
-          <Route exact path="React-Reserver" element={<MainComponent />} >
+          <Route exact path="" element={<MainComponent />} >
     <Route index element={<GeneralInfo />} />
              <Route path="profile" element={<Profile/>} />
-             <Route path="/React-Reserver/signin" element={<SignIn />} />
+             <Route path="signin" element={<SignIn />} />
              <Route path="/signup" element={<SignUp />} />
              <Route path="React-Reserver/checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
