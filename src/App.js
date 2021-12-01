@@ -25,13 +25,12 @@ function App() {
 console.log(process.env.REACT_APP_WEBPATH)
   return (<BrowserRouter  >
      <Routes basename={process.env.REACT_APP_WEBPATH}>
-          <Route  path="/" element={<MainComponent />} >
-             <Route index element={<GeneralInfo/>} /> 
-             <Route path="/profile" element={<Profile/>} />
+          <Route  path="${basename}" element={<MainComponent />} >
+             <Route path="${basepath}/profile" element={<Profile/>} />
              <Route path="/signin" element={<SignIn />} />
-             <Route path="/signup" element={<SignUp />} />
-             <Route path="/checkout" element={<Checkout />} />
-             <Route path="/reservations" element={<Reservations />} />
+             <Route path="${basename}/signup" element={<SignUp />} />
+             <Route path="checkout" element={<Checkout />} />
+             <Route path="${basepath}/reservations" element={<Reservations />} />
           </Route>      
       </Routes>
        </BrowserRouter>
