@@ -30,7 +30,7 @@ console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
              <Route path="profile" element={<Profile/>} />
              <Route path="signin" element={<SignIn />} />
              <Route path="/signup" element={<SignUp />} />
-             <Route path="React-Reserver/checkout" element={<Checkout />} />
+             <Route path="/React-Reserver/checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
           </Route>      
       </Routes>
