@@ -1,4 +1,4 @@
-import {appReducer,fetchReservationsSuccess} from '../redux/reducers/appReducer';
+import {appReducer,fetchReservationsSuccess,fetchSiteDataSuccess,loadProfile} from '../redux/reducers/appReducer';
 import {INITIAL_STATE, RESERVATION} from '../constants';
 
 
@@ -16,7 +16,7 @@ const reservation = {
 
 
 
-test('should return the initial state', () => {
+test('fetchReservationsSuccess', () => {
   expect(appReducer (undefined, fetchReservationsSuccess([RESERVATION]))).toEqual(
 
   {
@@ -31,5 +31,20 @@ test('should return the initial state', () => {
   error:''
 }
    
+  )
+})
+
+
+test('fetchSiteDataSuccess', () => {
+  const altState = {...INITIAL_STATE, siteData:{screen:'test'},trace: "FETCH_SITEDATA_SUCCESS"};
+  expect(appReducer (INITIAL_STATE, fetchSiteDataSuccess({screen:'test'}))).toEqual(
+altState   
+  )
+})
+
+test('loadProfile', () => {
+  const altState = {...INITIAL_STATE, profile:{email:'test@email.com'},trace: "LOAD_PROFILE"};
+  expect(appReducer (INITIAL_STATE, loadProfile({email:'test@email.com'}))).toEqual(
+altState   
   )
 })
