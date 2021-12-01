@@ -1,7 +1,7 @@
 import {appReducer,registerSuccess,REGISTER_SUCCESS,
   fetchReservationsSuccess,fetchSiteDataSuccess,
-  loadUser,LOAD_USER, loadProfile,loginSucceeded,LOGIN_SUCCEEDED,
-logout, LOGOUT} from '../redux/reducers/appReducer';
+  loadUser,LOAD_USER, loadProfile,loginError,LOGIN_ERROR,loginSucceeded,LOGIN_SUCCEEDED,
+logout, LOGOUT,bubbleError,BUBBLE_ERROR,loadBackEnd,FETCH_BACKEND} from '../redux/reducers/appReducer';
 import {INITIAL_STATE, RESERVATION} from '../constants';
 
 
@@ -91,5 +91,32 @@ test('logout', () => {
 altState   
   )
 })
+
+
+test('BUBBLE_ERROR', () => {
+  const altState = {...INITIAL_STATE,trace: BUBBLE_ERROR, error:'unexpected error'};
+  expect(appReducer (INITIAL_STATE, bubbleError('unexpected error'))).toEqual(
+altState   
+  )
+})
+
+
+
+test('loginError action', () => {
+  const altState = {...INITIAL_STATE,trace: LOGIN_ERROR, error:'unexpected error',authState: {status :'Error while Logging In'}};
+  expect(appReducer (INITIAL_STATE, loginError('unexpected error'))).toEqual(
+altState   
+  )
+})
+
+
+test('Load  BackEnd', () => {
+  const altState = {...INITIAL_STATE,trace: FETCH_BACKEND, app:{}};
+  expect(appReducer (INITIAL_STATE, loadBackEnd({}))).toEqual(
+altState   
+  )
+})
+
+
 
 
