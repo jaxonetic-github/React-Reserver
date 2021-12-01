@@ -28,10 +28,11 @@ console.log(process.env.REACT_APP_WEBPATH)
           <Route exact path="/" element={<MainComponent />} >
     <Route index element={<GeneralInfo />} />
              <Route path="profile" element={<Profile/>} />
-             <Route path="signin" element={<SignIn />} />
-             <Route path="signup" element={<SignUp />} />
+             <Route path="/signin" element={<SignIn />} />
+             <Route path="/signup" element={<SignUp />} />
              <Route path="checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
+             <Route path="*" element={<GeneralInfo />} />
           </Route>      
       </Routes>
        </BrowserRouter>

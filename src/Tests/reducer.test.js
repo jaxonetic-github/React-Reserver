@@ -1,4 +1,4 @@
-import {appReducer,fetchReservationsSuccess,fetchSiteDataSuccess,loadProfile} from '../redux/reducers/appReducer';
+import {appReducer,fetchReservationsSuccess,fetchSiteDataSuccess,loadProfile,loginSucceeded,LOGIN_SUCCEEDED} from '../redux/reducers/appReducer';
 import {INITIAL_STATE, RESERVATION} from '../constants';
 
 
@@ -45,6 +45,14 @@ altState
 test('loadProfile', () => {
   const altState = {...INITIAL_STATE, profile:{email:'test@email.com'},trace: "LOAD_PROFILE"};
   expect(appReducer (INITIAL_STATE, loadProfile({email:'test@email.com'}))).toEqual(
+altState   
+  )
+})
+
+
+test('loginSucceeded', () => {
+  const altState = {...INITIAL_STATE, profile:{email:'test@email.com'},trace: LOGIN_SUCCEEDED};
+  expect(appReducer (INITIAL_STATE, loginSucceeded({email:'test@email.com'}))).toEqual(
 altState   
   )
 })
