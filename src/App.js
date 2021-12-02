@@ -1,6 +1,6 @@
 import React from "react";
 import MainComponent from "./home/MainComponent.js";
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 import GeneralInfo from './home/GeneralInfo';
 import Reservations from './checkout/Reservations';
 import Checkout from './checkout/Checkout';
@@ -23,18 +23,18 @@ import SignUp from './signinup/Signup';
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
-  return (<BrowserRouter >
-     <Routes basename={`${process.env.PUBLIC_URL}`} >
-          <Route exact path="/" element={<MainComponent />} >
-    <Route index element={<GeneralInfo />} />
-             <Route path="profile" element={<Profile/>} />
-             <Route path="signin" element={<SignIn />} />
+  return (<Router >
+     <Routes >
+          <Route exact path={`/${process.env.PUBLIC_URL}`} element={<MainComponent />} >
+    <Route path={`/${process.env.PUBLIC_URL}`}  element={<GeneralInfo />} />
+             <Route path="/profile" element={<Profile/>} />
+             <Route path={`/${process.env.PUBLIC_URL}`} element={<SignIn />} />
              <Route path="/signup" element={<SignUp />} />
              <Route path="/React-Reserver/checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
           </Route>      
       </Routes>
-       </BrowserRouter>
+       </Router>
   );
 
 }
