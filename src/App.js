@@ -25,10 +25,10 @@ function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
   return (<Router basename='/React-Reserver'>
      <Routes  >
-          <Route exact path={'/React-Reserver'} element={<MainComponent />} >
-    <Route path={'/React-Reserver'} element={<GeneralInfo />} />
+          <Route  path={'/React-Reserver/'} element={<MainComponent />} >
+    <Route exact path={'/React-Reserver/'} element={<GeneralInfo />} />
              <Route path="/profile" element={<Profile/>} />
-             <Route exact path={`/signin`} element={<SignIn />} />
+             <Route exact path={`/React-Reserver/signin`} element={<SignIn />} />
              <Route exact path="/signup" element={<SignUp />} />
              <Route exact path="/React-Reserver/checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
