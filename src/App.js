@@ -23,7 +23,7 @@ import SignUp from './signinup/Signup';
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
-  return (<BrowserRouter basename={`/${process.env.PUBLIC_URL}`} >
+  return (<BrowserRouter basename={`${process.env.PUBLIC_URL}`} >
      <Routes >
           <Route exact path="" element={<MainComponent />} >
     <Route index element={<GeneralInfo />} />
