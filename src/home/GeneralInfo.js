@@ -22,7 +22,7 @@ import ContactCard from './ContactCard'
 //import { useRealmApp } from "../RealmApp";
 
 import {  isAdminSelector} from '../constants';
-
+import { createBrowserHistory } from 'history';
 const selectSiteData = state => state.siteData.pageData;
 //const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
 
@@ -31,6 +31,7 @@ const selectSiteData = state => state.siteData.pageData;
  *      a special "admin" menu is available allowing the user to change text
  */
 function GeneralInfo({siteData}) {
+
 
 const getSiteData = useSelector(selectSiteData)
 const getIsAdmin = useSelector(isAdminSelector)
@@ -52,15 +53,16 @@ const getIsAdmin = useSelector(isAdminSelector)
 
 
    React.useEffect(() => {
+    let history = createBrowserHistory();
 /*
      setTitle(app?.siteData?.pageData?.title );
     setReservationButton(app?.siteData?.pageData?.reservationButton);
     setSubTitle(app?.siteData?.pageData?.subtitle);
     setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
     setParagraph2(app?.siteData?.pageData?.paragraphs[1]);*/
-
+console.log('history',history)
     setEditableMode(getIsAdmin);
-  },[getIsAdmin]);  
+  },[getIsAdmin, history]);  
   
 
   const toggleDrawer = (event) => {
