@@ -1,6 +1,6 @@
 import React from "react";
 import MainComponent from "./home/MainComponent.js";
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 import GeneralInfo from './home/GeneralInfo';
 import Reservations from './checkout/Reservations';
 import Checkout from './checkout/Checkout';
@@ -25,12 +25,12 @@ function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
   return (<Router basename='/React-Reserver'>
      <Routes  >
-          <Route  path={'/React-Reserver/'} element={<MainComponent />} >
-    <Route exact path={'/React-Reserver/'} element={<GeneralInfo />} />
+          <Route  path={'/'} element={<MainComponent />} >
+    <Route index element={<GeneralInfo />} />
              <Route path="/profile" element={<Profile/>} />
-             <Route exact path={`/React-Reserver/signin`} element={<SignIn />} />
+             <Route exact path={`/signin`} element={<SignIn />} />
              <Route exact path="/signup" element={<SignUp />} />
-             <Route exact path="/React-Reserver/checkout" element={<Checkout />} />
+             <Route exact path="/checkout" element={<Checkout />} />
              <Route path="reservations" element={<Reservations />} />
              <Route path="*" element={<GeneralInfo />} />
           </Route>      

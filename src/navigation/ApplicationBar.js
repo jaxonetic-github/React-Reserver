@@ -113,8 +113,8 @@ function ApplicationBar() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={()=>{handleClose(); navigate('/signin');}}><HomeIcon/>Home</MenuItem>
-                  <MenuItem onClick={()=>{handleClose();  navigate('/React-Reserver/signin');}}>SignIn</MenuItem>
+                <MenuItem onClick={()=>{handleClose(); navigate('/');}}><HomeIcon/>Home</MenuItem>
+                  <MenuItem onClick={()=>{handleClose();  navigate('signin');}}>SignIn</MenuItem>
                
               </Menu>
       }
