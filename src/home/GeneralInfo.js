@@ -20,12 +20,12 @@ import { useNavigate} from "react-router-dom";
 import InfoCards from './InfoCards'
 import ContactCard from './ContactCard'
 //import { useRealmApp } from "../RealmApp";
+import { useLocation } from 'react-router-dom';
 
 import {  isAdminSelector} from '../constants';
 //import { createBrowserHistory } from 'history';
 const selectSiteData = state => state.siteData.pageData;
 //const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
-import { useLocation } from 'react-router-dom';
 /**
  * @description General Info, is the home page.  If User is Admin then 
  *      a special "admin" menu is available allowing the user to change text
