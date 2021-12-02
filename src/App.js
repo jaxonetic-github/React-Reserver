@@ -25,7 +25,7 @@ function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
   return (<Router >
      <Routes >
-          <Route exact path={ process.env.PUBLIC_URL} element={<MainComponent />} >
+          <Route exact path={'/'} element={<MainComponent />} >
     <Route path='/'  element={<GeneralInfo />} />
              <Route path="/profile" element={<Profile/>} />
              <Route exact path={`${process.env.PUBLIC_URL}/signin`} element={<SignIn />} />
