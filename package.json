@@ -2,7 +2,7 @@
   "name": "carrental",
   "version": "0.1.0",
   "private": true,
-  "homepage":".",
+  "homepage": "React-Reserver",
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@date-io/moment": "^2.11.0",
@@ -20,6 +20,7 @@
     "aws4": "^1.11.0",
     "babel-cli": "^6.26.0",
     "emailjs-com": "^3.2.0",
+   // "express": "^4.17.1",
     "graphql": "^16.0.1",
     "history": "^5.1.0",
     "install": "^0.13.0",
