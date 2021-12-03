@@ -23,7 +23,7 @@ import SignUp from './signinup/Signup';
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
-  return (<Router basename={'/React-Reserver'}>
+  return (<Router basename={'/React-Reserver/'}>
           <Route exact path={'/'} element={<MainComponent />} />
              <Route path={'/React-Reserver/'} element={<GeneralInfo />} />
              <Route path={"/profile"} element={<Profile/>} />
