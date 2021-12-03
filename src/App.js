@@ -23,9 +23,9 @@ import SignUp from './signinup/Signup';
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
-  return (<Router basename='/'>
-     <Routes  >
-          <Route  path={'/'} element={<MainComponent />} >
+  return (<Router >
+     <Routes basename='/' >
+          <Route exact path={'/'} element={<MainComponent />} >
              <Route index element={<GeneralInfo />} />
              <Route path="/profile" element={<Profile/>} />
              <Route exact path={`/signin`} element={<SignIn />} />
