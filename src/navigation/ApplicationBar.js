@@ -42,7 +42,7 @@ const location = useLocation();
   };
 
   React.useEffect(() => {
-    console.log('history',location)
+    console.log('Applicatin Bar location change? ',location)
 
      if(!hasProfileSelector) navigate("/");
   },[hasProfileSelector, navigate, location]);
