@@ -37,7 +37,7 @@ const navigate = useNavigate();
  
 
      React.useEffect(() => {
-if(loginSuccessful) navigate('/');
+if(loginSuccessful) {console.log('Already logged in; so, forcing home redirect.'); navigate('/'); }
 
     /*setFirstName(realmApp?.currentUser?.customData?.firstname);
     setLastName(realmApp?.currentUser?.customData?.lastname);

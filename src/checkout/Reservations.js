@@ -41,7 +41,7 @@ function Reservations() {
    const loginSuccessful = useSelector((state)=>state.profile);
 
      React.useEffect(() => {
-      if(!loginSuccessful) navigate('/');  },[loginSuccessful, navigate]);
+      if(!loginSuccessful){console.log('An attempt to view Reservations from an Unauthorized User has been flagged; so, forcing home redirect.');  navigate('/');}  },[loginSuccessful, navigate]);
 
   console.log(getReservations.reservations,'--2--', Object.keys( reservations) );
   //const adjustDate = (someDate)=>(someDate && ((typeof someDate) === 'object' )? someDate.toDateString() : someDate);

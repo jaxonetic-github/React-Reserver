@@ -30,7 +30,7 @@ function Profile(props) {
   const  dispatch = useDispatch();
 
   React.useEffect(() => {
-     if(!profile) navigate("/");
+     if(!profile) {console.log('User with no Profile logged in; so, forcing home redirect.'); navigate("/");}
   },[profile,navigate]);
 
    

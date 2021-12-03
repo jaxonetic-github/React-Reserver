@@ -35,7 +35,7 @@ function SignUp() {
   const dispatch = useDispatch();
 
      React.useEffect(() => {
-if(profile) navigate('/');
+if(profile) {console.log('Already logged in; so, forcing home redirect.');  navigate('/');}
 },[profile,navigate]);
 /**
  * Performs the registration when user Submits form by 
