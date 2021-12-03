@@ -114,7 +114,7 @@ function ApplicationBar() {
                 onClose={handleClose}
               >
                 <MenuItem onClick={()=>{handleClose(); navigate('/');}}><HomeIcon/>Home</MenuItem>
-                  <MenuItem onClick={()=>{handleClose();  navigate('signin');}}>SignIn</MenuItem>
+                  <MenuItem onClick={()=>{handleClose();  navigate('/signin');}}>SignIn</MenuItem>
                
               </Menu>
       }
