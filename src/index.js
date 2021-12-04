@@ -36,6 +36,7 @@ const initialState={
 
    const app = new RealmDAO(process.env.REACT_APP_MONGODB_REALM_APPID);
    store.dispatch(loadBackEnd(app));
+    console.log('app ',app);
 
    //const user = app.logIn(Realm.Credentials.anonymous());
 
