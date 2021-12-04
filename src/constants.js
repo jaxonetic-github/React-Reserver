@@ -25,7 +25,7 @@ export const INITIAL_STATE={
   auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
             backEnd:{}
        },
-       app:{},
+       app:{app:{currentUser:{customData:{email:'test@email.com', firstname:'tester', lastname:'one'}}}},
   reservations:[RESERVATION],
   profile:{ firstName:"A", lastName:"Z",  email:"az@email"},
   siteData:{},
