@@ -5,7 +5,8 @@ import './index.css';
 import './css/App.css';
 
 import App from './App';
-import { RealmDAO } from "./RealmDAO.js";
+//import { RealmDAO } from "./RealmDAO.js";
+import { INITIAL_STATE,INITIAL_STATE_EMPTY } from "./constants.js";
 import reportWebVitals from './reportWebVitals';
 //import RealmApolloProvider from "./graphql/RealmApolloProvider";
 
@@ -16,25 +17,19 @@ import { Provider } from 'react-redux'
 import {appReducer,refreshCustomData,fetchReservations,loginAnonymously,loadBackEnd,fetchSiteData} from './redux/reducers/appReducer'
 import mySaga from './redux/sagas';
 import {logger} from 'redux-logger';
+
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware()
 
-const initialState={
-  auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
-            backEnd:{}
-       },
-       app:{},
-  reservations:[],
-  profile:{},
-  siteData:{},
-  error:''
-}
+const mock  = process.env.NODE_ENV!=='production';
+const initialState=mock?INITIAL_STATE : INITIAL_STATE_EMPTY;
 
 // mount it on the Store
    const store = createStore(appReducer, initialState,  applyMiddleware(sagaMiddleware, logger))
    sagaMiddleware.run(mySaga);
 
-   const app = new RealmDAO(process.env.REACT_APP_MONGODB_REALM_APPID);
+   const app =  INITIAL_STATE.app; /* mock ? new RealmDAO(process.env.REACT_APP_MONGODB_REALM_APPID);
+   */
    store.dispatch(loadBackEnd(app));
     console.log('app ',app);
 

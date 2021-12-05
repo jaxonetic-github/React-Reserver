@@ -20,7 +20,7 @@ import { useNavigate} from "react-router-dom";
 import InfoCards from './InfoCards'
 import ContactCard from './ContactCard'
 //import { useRealmApp } from "../RealmApp";
-import { useLocation } from 'react-router-dom';
+//import { useLocation } from 'react-router-dom';
 
 import {  isAdminSelector} from '../constants';
 //import { createBrowserHistory } from 'history';
@@ -32,7 +32,7 @@ const selectSiteData = state => state.siteData.pageData;
  */
 function GeneralInfo({siteData}) {
 
-const location = useLocation();
+//const location = useLocation();
 const getSiteData = useSelector(selectSiteData)
 const getIsAdmin = useSelector(isAdminSelector)
   const app  = {};
@@ -59,9 +59,9 @@ const getIsAdmin = useSelector(isAdminSelector)
     setSubTitle(app?.siteData?.pageData?.subtitle);
     setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
     setParagraph2(app?.siteData?.pageData?.paragraphs[1]);*/
-console.log('history',location)
+console.log('history',getSiteData)
     setEditableMode(getIsAdmin);
-  },[getIsAdmin, location]);  
+  },[getIsAdmin, getSiteData]);  
   
 
   const toggleDrawer = (event) => {

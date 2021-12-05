@@ -1,4 +1,4 @@
-import {  put,call, takeEvery, takeLatest, select } from 'redux-saga/effects'
+import {  put,call, takeEvery, select } from 'redux-saga/effects'
 
 
 import {logout,loginError, login,loginSucceeded, register,
@@ -50,7 +50,7 @@ function* signOutSaga(action) {
 function* getReservationsSaga(action) {
 
        const app = yield select(state=>state.app);
-
+console.log('state.app in getreservationssaga:', app);
    try {
       const reservationsResult = yield call(app.getReservations );
     yield put(fetchReservationsSuccess(reservationsResult) );
@@ -129,7 +129,8 @@ const loginResult = yield call(app.login,{email,password} );
  */
 function* customDataRefreshSaga(action) {
   const app = yield select(state=>state.app);
-  const customData = yield call(app.reloadCustomData );    
+  console.log('state',app);
+  const customData = yield call(app.refreshCustomData );    
   yield put(loadProfile( customData));
 }
 
@@ -172,15 +173,15 @@ console.log('siteData retrieved', siteData)
   and only the latest one will be run.
 */
 function* mySaga(app) {
-  yield takeLatest(loginAnonymously, loginAnonymouslySaga);
+  yield takeEvery(loginAnonymously, loginAnonymouslySaga);
 
-  yield takeLatest(login, loginSaga);
+  yield takeEvery(login, loginSaga);
   yield takeEvery(logout, signOutSaga);
   yield takeEvery(refreshCustomData,customDataRefreshSaga);
-  yield takeLatest(insertReservation,insertReservationSaga);
-  yield takeLatest(register,registerSaga);
-  yield takeLatest(fetchReservations,getReservationsSaga);
-yield takeLatest('FETCH_SITEDATA',fetchSiteDataSaga);
+  yield takeEvery(insertReservation,insertReservationSaga);
+  yield takeEvery(register,registerSaga);
+  yield takeEvery(fetchReservations,getReservationsSaga);
+yield takeEvery('FETCH_SITEDATA',fetchSiteDataSaga);
 }
 
 export default mySaga;

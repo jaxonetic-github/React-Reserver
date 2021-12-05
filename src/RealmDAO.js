@@ -18,9 +18,11 @@ this.app = new Realm.App(demoAppId);
 
 /**
  * @desc ensure customData object is not stale
+ * 
+ * @returns profile info as object
  *
 */
- reloadCustomData = async ()=>{
+ refreshCustomData = async ()=>{
  await this.app?.currentUser?.refreshCustomData(); 
  return this.app?.currentUser?.customData;
 }

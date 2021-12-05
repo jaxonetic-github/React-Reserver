@@ -15,6 +15,31 @@ export const RESERVATION = {
   createdDated:'2011:11:12',
   phone:"555-555-5555"};
 
+const app={
+  currentUser:{ 
+      customData:{firstname:'first',
+            email:'first@test.com',
+            lastname:'test'
+            },
+      refreshCustomData:(()=>true),
+      logIn:(()=>true),
+      loginAnonymously:(()=>true),
+      fetchSiteData:(()=>true),
+      fetchReservations:(()=>true),
+  }
+}
+
+const appDAO={
+      
+      refreshCustomData:(()=>({firstName:'first', email:'first@test.com', lastName:'test'  })),
+      logIn:(()=>true),
+      app:app,
+      loginAnonymously:(()=>true),
+      getSiteData:(()=>({pageData:HOME_PAGE_DEFAULT, cardData:TIERS, contactData:CONTACTINFO,screen:''})),
+      getReservations:(()=>[{...RESERVATION}]),
+      insertReservations:(()=>true),
+  };
+
 
 /** 
  *   @description Initial Reducer State @constant
@@ -25,12 +50,28 @@ export const INITIAL_STATE={
   auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
             backEnd:{}
        },
-       app:{app:{currentUser:{customData:{email:'test@email.com', firstname:'tester', lastname:'one'}}}},
+       app:{...appDAO},
   reservations:[RESERVATION],
   profile:{ firstName:"A", lastName:"Z",  email:"az@email"},
   siteData:{},
   error:''
 };
+/** 
+ *   @description Initial Reducer State @constant
+ *   @type {string}
+ *   @default
+ */
+export const INITIAL_STATE_EMPTY={
+  auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
+            backEnd:{}
+       },
+       app:{},
+  reservations:[],
+  profile:{},
+  siteData:{},
+  error:'Initial Empty State'
+};
+
 
 
 /******************    ARIA Labels   *************/
