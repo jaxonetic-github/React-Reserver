@@ -20,36 +20,20 @@ const reservation = {
 
 
 test('fetchReservationsSuccess', () => {
-  expect(appReducer (undefined, fetchReservationsSuccess([RESERVATION]))).toEqual(
+    const altState = {...INITIAL_STATE, reservations:[RESERVATION],trace: "FETCH_RESERVATION_SUCCESS"};
 
-  {
-  auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
-            backEnd:{}
-       },
-       app:{},
-  reservations:[RESERVATION],
-  profile:{ firstName:"A", lastName:"Z",  email:"az@email"},
-  siteData:{},
-  trace:"FETCH_RESERVATION_SUCCESS",
-  error:''
-}
-   
-  )
+  expect(appReducer (undefined, fetchReservationsSuccess([RESERVATION]))).toEqual( altState  )
 })
 
 
 test('fetchSiteDataSuccess', () => {
   const altState = {...INITIAL_STATE, siteData:{screen:'test'},trace: "FETCH_SITEDATA_SUCCESS"};
-  expect(appReducer (INITIAL_STATE, fetchSiteDataSuccess({screen:'test'}))).toEqual(
-altState   
-  )
+  expect(appReducer (INITIAL_STATE, fetchSiteDataSuccess({screen:'test'}))).toEqual( altState )
 })
 
 test('loadProfile', () => {
   const altState = {...INITIAL_STATE, profile:{email:'test@email.com'},trace: "LOAD_PROFILE"};
-  expect(appReducer (INITIAL_STATE, loadProfile({email:'test@email.com'}))).toEqual(
-altState   
-  )
+  expect(appReducer (INITIAL_STATE, loadProfile({email:'test@email.com'}))).toEqual( altState )
 })
 
 test('loadUser', () => {
