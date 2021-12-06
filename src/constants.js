@@ -1,7 +1,7 @@
 /** module constants */
 
 /** isAdmin state selector */
-export  const isAdminSelector = state => (state?.app?.currentUser?.customData?.email==='kurawan@yahoo.com') 
+export  const isAdminSelector = state => (state?.app?.app?.currentUser?.customData?.email==='kurawan@yahoo.com') 
 
 export const RESERVATION = {
   userid:"6182198ee43796e8d32aff28",
@@ -33,6 +33,7 @@ const appDAO={
       
       refreshCustomData:(()=>({firstName:'first', email:'first@test.com', lastName:'test'  })),
       logIn:(()=>true),
+      logOut:(()=>true),
       app:app,
       loginAnonymously:(()=>true),
       getSiteData:(()=>({pageData:HOME_PAGE_DEFAULT, cardData:TIERS, contactData:CONTACTINFO,screen:''})),

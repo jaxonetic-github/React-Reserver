@@ -38,8 +38,7 @@ function* signInSaga(action) {
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 function* signOutSaga(action) {
     const app = yield select(state=>state.app);
-     yield call(app.logOut );
-  
+    call(app.logOut ); 
 }
 
 /**

@@ -5,7 +5,7 @@ import './index.css';
 import './css/App.css';
 
 import App from './App';
-//import { RealmDAO } from "./RealmDAO.js";
+import { RealmDAO } from "./RealmDAO.js";
 import { INITIAL_STATE,INITIAL_STATE_EMPTY } from "./constants.js";
 import reportWebVitals from './reportWebVitals';
 //import RealmApolloProvider from "./graphql/RealmApolloProvider";
@@ -28,7 +28,7 @@ const initialState=mock?INITIAL_STATE : INITIAL_STATE_EMPTY;
    const store = createStore(appReducer, initialState,  applyMiddleware(sagaMiddleware, logger))
    sagaMiddleware.run(mySaga);
 
-   const app =  INITIAL_STATE.app; /* mock ? new RealmDAO(process.env.REACT_APP_MONGODB_REALM_APPID);
+   const app =  new RealmDAO(process.env.REACT_APP_MONGODB_REALM_APPID); /* mock ? INITIAL_STATE.app;
    */
    store.dispatch(loadBackEnd(app));
     console.log('app ',app);

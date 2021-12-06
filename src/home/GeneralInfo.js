@@ -42,9 +42,9 @@ const getIsAdmin = useSelector(isAdminSelector)
   const [editable, setEditableMode] = useState(getIsAdmin);
 
   //const [error, setError] = useState();
-  const [title, setTitle] = useState(app?.siteData?.pageData?.title);
+  const [title, setTitle] = useState(getSiteData?.title);
   const [reservationButton, setReservationButton] = useState(app?.siteData?.pageData?.reservationButton);
-  const [subtitle, setSubTitle] = useState(app?.siteData?.pageData?.subtitle);
+  const [subtitle, setSubTitle] = useState(getSiteData?.subtitle);
   const [paragraph1, setParagraph1] = useState(getSiteData?.paragraphs[0]);
   const [paragraph2, setParagraph2] = useState(getSiteData?.paragraphs[1]);
   const [drawerState, setDrawerState] = React.useState(false);
@@ -87,7 +87,6 @@ console.log('history',getSiteData)
     } catch (err) {
      console.log(err)
   }
-  //window.location.reload(true);
 }
 
 

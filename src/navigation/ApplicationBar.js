@@ -22,7 +22,7 @@ import { useNavigate,useLocation} from "react-router-dom";
 const selectAuthedUserDataState = state => state?.profile;
 //const selectProfile = state=>state?.profile;
 /**
- * @description Main Application Bar with menus
+ * @description Main Application Bar with menus, title and  greeting tologged in users
  */
 function ApplicationBar() {
   const dispatch = useDispatch();
@@ -44,7 +44,6 @@ const location = useLocation();
   React.useEffect(() => {
     console.log('Applicatin Bar location change? ',location)
 
-     if(!hasProfileSelector) navigate("/");
   },[hasProfileSelector, navigate, location]);
 
    
@@ -121,7 +120,7 @@ const location = useLocation();
                
               </Menu>
       }
-         {hasProfileSelector? `Hello,${authedUserSelector?.firstName}` : ''}
+         {hasProfileSelector? `Hello,${authedUserSelector?.firstname}` : ''}
         </Toolbar>
       </AppBar>
     </Box>

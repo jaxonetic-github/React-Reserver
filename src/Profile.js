@@ -36,8 +36,8 @@ function Profile(props) {
    
 
  
- const [firstName] = React.useState(profile?.firstName);
-  const [lastName] = React.useState(profile?.lastName);
+ const [firstName] = React.useState(profile?.firstname);
+  const [lastName] = React.useState(profile?.lastname);
   const [email] = React.useState(profile?.email||'');
   const [phone, setPhone] = React.useState(profile?.phone||'');
 
