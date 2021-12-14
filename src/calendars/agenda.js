@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { ReactAgenda , ReactAgendaCtrl, guid ,/* getUnique , getLast , getFirst , */Modal } from 'react-agenda';
-
+import { connect } from 'react-redux';
+import {addScheduledItem} from '../redux/reducers/appReducer'
 
 
 import '../css/styles.css';
@@ -17,14 +18,14 @@ var colors= {
 var items = [
   {
    _id            :guid(),
-    name          : 'Meeting , dev staff!',
+    name          : 'Massage',
     startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0),
-    classes       : 'color-1 color-4'
+    classes       : 'color-3'
   },
   {
    _id            :guid(),
-    name          : 'Working lunch , Holly',
+    name          : 'Massage',
     startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 11, 0),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 13, 0),
     classes       : 'color-2'
@@ -34,7 +35,7 @@ var items = [
     name          : 'Conference , plaza',
     startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 11 , 0),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 14 ,30),
-    classes       : 'color-4'
+    classes       : 'color-1'
   },
   {
    _id            :'event-4',
@@ -49,20 +50,14 @@ var items = [
     name          : 'Group activity',
     startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+3, 10, 0),
     endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+3, 16, 30),
-    classes       : 'color-4'
+    classes       : 'color-1'
   },
-  {
-    _id           :'event-6',
-    name          : 'Fun Day !',
-    startDateTime : new Date(now.getFullYear(), now.getMonth(), now.getDate()+7, 9, 14),
-    endDateTime   : new Date(now.getFullYear(), now.getMonth(), now.getDate()+7, 17),
-    classes       : 'color-3'
-  }
 ];
 
-export default class Agenda extends Component {
+class Agenda extends Component {
   constructor(props){
   super(props);
+  console.log(props)
 
 
 
@@ -249,3 +244,13 @@ this.setState({numberOfDays:days})
     );
   }
 }
+
+
+
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        addNewScheduledReservation: (reservation) => dispatch(addScheduledItem(reservation))
+    }
+};
+export default connect(null, mapDispatchToProps)(Agenda)

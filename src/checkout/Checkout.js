@@ -12,15 +12,14 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import ItineraryFragment from './ItineraryFragment';
+import SetAppointmentFragment from './setAppointmentFragment';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import AgreementForm from './AgreementForm';
 import ReviewFragment from './Review';
 import {useNavigate} from "react-router-dom";
 import validator from 'validator';
-import { insertReservation,creditPaymenError ,creditPaymentSuccess} from '../redux/reducers/appReducer';
-
+import { register,addScheduledItem, insertReservation,creditPaymenError ,creditPaymentSuccess} from '../redux/reducers/appReducer';
 const steps = ['Itinerary', 'Agreements', 'Review'];
 
 
@@ -35,8 +34,8 @@ const theme = createTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [firstName, setFirstName] = React.useState(currentUser?.firstName||'');
-  const [lastName, setLastName] = React.useState(currentUser?.lastName||'');
+  const [firstName, setFirstName] = React.useState(currentUser?.firstname||'');
+  const [lastName, setLastName] = React.useState(currentUser?.lastname||'');
   const [email, setEmail] = React.useState(currentUser?.email||'');
   const [password, setPassword] = React.useState();
   const [error, setError] = React.useState();
@@ -53,19 +52,25 @@ const theme = createTheme();
   const [agreementChecked, setAgreementChecked] =React.useState(false);
 
   const [paymentSucceeded, setPaymentSucceeded] = React.useState(false);
+  const [ScheduledItem,setScheduledItem] = React.useState();
+
+  React.useEffect(() => {
+ //console.log(`firstNameState = ${firstName}--,`,currentUser);
+    setFirstName(currentUser?.firstname);
+  },[currentUser/*,lastName,email,phone*/]);
 
 
    function itineraryValidated  (currentStep){
     let validated = false;
     if(currentStep===0){
-         const phoneValidated =validator.isMobilePhone(phone);
-         const emailValidated =  validator.isEmail(email);
+         const phoneValidated = phone && validator.isMobilePhone(phone);
+         const emailValidated = email && validator.isEmail(email);
          const pickupLocationValidated =  !validator.isEmpty(pickupLocation);
-         const dropOffLocationValidated = !validator.isEmpty(dropOffLocation);
-         const firstNameValidated = !validator.isEmpty(firstName);
-         const lastNameValidated =  !validator.isEmpty(lastName);
+         const dropOffLocationValidated = true;// !validator.isEmpty(dropOffLocation);
+         const firstNameValidated = firstName && !validator.isEmpty(firstName) ;
+         const lastNameValidated =  lastName && !validator.isEmpty(lastName);
            validated = (phoneValidated && emailValidated && pickupLocationValidated && dropOffLocationValidated && firstNameValidated && lastNameValidated);
-          console.log(phone,email, firstNameValidated, pickupLocationValidated,dropOffLocationValidated, firstNameValidated, lastNameValidated);
+          console.log(`phone=${phone}, email(${email}),  pickupDate(${pickUpDate}),pickupLocation(${pickupLocation}),dropOffLocationValidated, firstNameValidated(${firstNameValidated}), firstName(${firstName}), lastNameValidated(${lastNameValidated}/ ${lastName})`);
       }else
          if(currentStep===1){
           const agreementSignatureValidated = !validator.isEmpty(agreementSignature);
@@ -93,9 +98,11 @@ function getStepContent(step) {
                       createdDate:new Date(),
                       phone:phone}; 
 
+console.log(tmpRes);
   switch (step) {
     case 0:
-      return <ItineraryFragment onChange={onChange}/>;
+    console.log("checkout.getStepContent before ItineraryFragment-->",firstName,lastName,email,phone);
+      return <SetAppointmentFragment  onChange={(event)=>onChange(event)}/>;
     case 1:
       return <AgreementForm onChange={onChange} />;
     case 2:
@@ -118,9 +125,13 @@ function getStepContent(step) {
 
 
  const onChange = (event) =>{
-    
+  console.log(event)
+    console.log(event.target.name,'---',event.target.value);
      
     switch (event.target.name) {
+  case 'appointmentDateTime':setScheduledItem(event.target.value);
+                            setPickUpDate(event.target.value.start); break;
+  case 'locationSelect':setPickupLocation(event.target.value); break;
   case 'agreementSignature':setAgreementSignature(event.target.value); break;
   case 'agreementChecked' : setAgreementChecked(event.target.checked); break;
   case 'email':setEmail(event.target.value);break;
@@ -137,7 +148,20 @@ function getStepContent(step) {
     console.log(`Sorry, we are out of ${event.target.name}.`);
 
   }
-
+}
+  const handleConfirm = async (event, action) => {
+    const stampedEvent = { ...event,
+          event_id: event.event_id || Math.random()
+        }
+    console.log(event, action);
+    if (action === "edit") {
+      /** PUT event to remote DB */
+      console.log('edit');
+    } else if (action === "create") {
+      /**POST event to remote DB */
+     // dispatch(addScheduledItem(stampedEvent))
+      console.log(stampedEvent.start,'create', typeof stampedEvent.start)
+    }
 }
 
   const handleNext = async (event) => {
@@ -151,7 +175,7 @@ function getStepContent(step) {
           if(password ){
           //register with the email and password
               try{
-             const {error} =  dispatch.register({email, password, firstName,lastName, phone}) ;
+             const {error} =  dispatch(register({email, password, firstName,lastName, phone})) ;
              console.log('result....',error);
              //canContinue = success  ;
              if(error)

@@ -26,7 +26,7 @@ const theme = createTheme();
  * 
  * 
  */
-function SignUp() {
+function SignUp({bgColor}) {
    const stateError = useSelector((state)=>state.error);
     const profile = useSelector((state)=>state?.profile);
 
@@ -60,11 +60,12 @@ if(profile) {console.log('Already logged in; so, forcing home redirect.');  navi
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container  sx={{backgroundColor: bgColor}} component="main" maxWidth="xs">
         <CssBaseline />
         <Box  sx={{
             marginTop: 8,
             display: 'flex',
+
             flexDirection: 'column',
             alignItems: 'center',
           }}

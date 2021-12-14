@@ -6,8 +6,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import { FEE_FORMULA } from '../constants';
+import { FEE_FORMULA, NameOnCardAriaLabel } from '../constants';
 import TextField from '@mui/material/TextField';
 import SquarePaymentForm from './squarePayComponent.js';
 /**
@@ -40,23 +41,30 @@ function ReviewFragment(props) {
           </Typography>
         </ListItem>
       </List>
+
       <Grid container spacing={1}>
         <Grid item xs={12} sm={10}>
-          <Typography variant="h6" gutterBottom >
+          <Box sx={{
+    paddingBottom: 2,
+    paddingTop: 2,
+    marginInline: 'auto',
+    borderBlock: 'groove'}} >
+          <Typography variant="h5" gutterBottom >
             Itinerary
           </Typography>
           <Typography gutterBottom>{'Contact : '}{props.reservation.firstName} {props.reservation.lastName}</Typography>
           <Typography gutterBottom>{'Pick-up : '}{props.reservation.pickupLocation}{new Date(props.reservation.pickupDate).toLocaleString()}</Typography>
           <Typography gutterBottom>{'Drop-off : '}{props.reservation.dropOffLocation}{new Date(props.reservation.dropOffDate).toLocaleString()}</Typography>                    
+          </Box>
         </Grid>
       </Grid>
 
-       <Typography variant="h6" gutterBottom>
+       <Typography variant="h5" gutterBottom sx={{marginTop:3}}>
         Secure Payment
       </Typography>
-      <Divider />
        <Grid item xs={12} md={6}>
           <TextField
+          inputProps={NameOnCardAriaLabel}
             required
             id="cardName"
             label="Name on card"
@@ -66,7 +74,7 @@ function ReviewFragment(props) {
           />
         </Grid>
 
-   <SquarePaymentForm  handleSuccess={props.handleSuccess}/>
+   <SquarePaymentForm data-testid="SquarePay" handleSuccess={props.handleSuccess}/>
     </React.Fragment>
   );
 }

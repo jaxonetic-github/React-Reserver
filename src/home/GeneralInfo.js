@@ -24,7 +24,7 @@ import ContactCard from './ContactCard'
 
 import {  isAdminSelector} from '../constants';
 //import { createBrowserHistory } from 'history';
-const selectSiteData = state => state.siteData.pageData;
+const selectSiteData = state => state?.siteData?.pageData;
 //const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
 /**
  * @description General Info, is the home page.  If User is Admin then 
@@ -53,13 +53,6 @@ const getIsAdmin = useSelector(isAdminSelector)
 
 
    React.useEffect(() => {
-/*
-     setTitle(app?.siteData?.pageData?.title );
-    setReservationButton(app?.siteData?.pageData?.reservationButton);
-    setSubTitle(app?.siteData?.pageData?.subtitle);
-    setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
-    setParagraph2(app?.siteData?.pageData?.paragraphs[1]);*/
-console.log('history',getSiteData)
     setEditableMode(getIsAdmin);
   },[getIsAdmin, getSiteData]);  
   

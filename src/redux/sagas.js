@@ -2,16 +2,17 @@ import {  put,call, takeEvery, select } from 'redux-saga/effects'
 
 
 import {logout,loginError, login,loginSucceeded, register,
-fetchSiteDataSuccess,fetchSiteDataError,loginAnonymously,
+fetchSiteDataSuccess,fetchSiteData,fetchSiteDataError,loginAnonymously,
  refreshCustomData,fetchReservations,fetchReservationsError,fetchReservationsSuccess,
-  loadProfile,insertReservation} from './reducers/appReducer';
+  loadProfile,insertReservation,editProfile,editProfileSuccess,editProfileError,
+addScheduledItem,addScheduledItemSuccess,addScheduledItemError,fetchScheduledItems,fetchScheduledItemsSuccess,fetchScheduledItemsError,} from './reducers/appReducer';
 // worker Saga: will be fired on USER_FETCH_REQUESTED actions
 
 
 
 /**
  * @description Register user
- * @param action : action.payload.credentials={email, password, firstName, lastName, phone}
+ * @param {object} action - action.payload.credentials={email, password, firstName, lastName, phone}
  * 
  */
 function* registerSaga(action) {
@@ -21,28 +22,16 @@ function* registerSaga(action) {
 }
 
 
-
 /**
- *  worker Saga: will be fired on USER_FETCH_REQUESTED actions
-
-function* signInSaga(action) {
-   try {
-    console.log(action);
-    //  const user = yield call(Api.fetchUser, action.payload.userId);
-      //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
-   } catch (e) {
-      yield put({type: "USER_FETCH_FAILED", message: e.message});
-   }
-}*/
-
-// worker Saga: will be fired on USER_FETCH_REQUESTED actions
+ *  logout Saga:
+ */
 function* signOutSaga(action) {
     const app = yield select(state=>state.app);
     call(app.logOut ); 
 }
 
 /**
- * worker Saga: will be fired on USER_FETCH_REQUESTED actions
+ *  getReservation Saga: will be fired on getReservation actions
  *
  */
 
@@ -92,8 +81,10 @@ function* loginAnonymouslySaga(action) {
 console.log('anonymouse result in saga',loginResult);
      
  const site = yield call(app.getSiteData);
-if(site.screen) 
+if(site.screen) {
   yield put(fetchSiteDataSuccess(site))
+ yield put(fetchScheduledItems())
+}
  yield call(app.logOut);
 
 }
@@ -112,14 +103,43 @@ const loginResult = yield call(app.login,{email,password} );
   if( loginResult)
   { 
     yield put(loginSucceeded(loginResult));
-    const reservations = yield put(fetchReservations());
-    yield put(fetchReservationsSuccess(reservations));
+   yield put(fetchReservations());
     yield put(refreshCustomData());
+     yield put(fetchScheduledItems())
+
   }
   else 
    put(loginError(loginResult.error));
 
 }
+
+
+/**
+ * @description Attempt to Log in. If successful,fetch reservations, profile 
+ * @param {object }action - action.payload={first, last, email, phone}
+ */
+function* editProfileSaga(action) {
+    console.log('editProfileSaga', action);
+   const app = yield select(state=>state.app);
+
+const email = action.payload.email;
+const lastname = action.payload.lastname;
+const firstname = action.payload.firstname;
+const phone = action.payload.phone;
+console.log('---------->',email, lastname, firstname, phone);
+const {modifiedCount, profile} = yield call(app.editProfile,action.payload );
+
+  if( modifiedCount>0)
+  { 
+    yield put(editProfileSuccess(profile));
+    yield put(refreshCustomData());
+  }
+  else 
+   put(editProfileError('Profile was not modified'));
+
+}
+
+
 
 
 /**
@@ -129,7 +149,8 @@ const loginResult = yield call(app.login,{email,password} );
 function* customDataRefreshSaga(action) {
   const app = yield select(state=>state.app);
   console.log('state',app);
-  const customData = yield call(app.refreshCustomData );    
+  const customData = yield call(app.refreshCustomData );
+      
   yield put(loadProfile( customData));
 }
 
@@ -162,25 +183,57 @@ console.log('siteData retrieved', siteData)
    }
  }
 
+/**
+ * @description ensure the customData object is uptoData 
+ * 
+ */
+function* addScheduledItemSaga(action) {
+  const app = yield select(state=>state.app);
+  const newItemResult = yield call(app.addScheduledItem, action.payload );
+  console.log('new item result',newItemResult.insertedId)
+  yield put(addScheduledItemSuccess(action.payload))
+  // yield put(fetchScheduledItems())
+
+  //yield put(loadProfile( customData));
+}
+
+/**
+ *  worker Saga: will be fired on FETCH_AVAILABILITY actions
+ */ 
+function* fetchScheduleItemsSaga(action) {
+     const app = yield select(state=>state.app);
+
+   try {
+       const scheduledItems =   yield call(app.getScheduleItems);
+console.log('ScheduleItem retrieved', scheduledItems)
+    yield put( fetchScheduledItemsSuccess(scheduledItems) );
+    //  const user = yield call(Api.fetchUser, action.payload.userId);
+      //yield put({type: "USER_FETCH_SUCCEEDED", user: user});
+   } catch (e) {
+    console.log(e);
+      yield put(fetchScheduledItemsError( e.message));
+   }
+ }
 
 
-/*
-  Alternatively you may use takeLatest.
+/**
 
   Does not allow concurrent fetches of user. If "USER_FETCH_REQUESTED" gets
   dispatched while a fetch is already pending, that pending fetch is cancelled
   and only the latest one will be run.
 */
-function* mySaga(app) {
+function* appSaga(app) {
   yield takeEvery(loginAnonymously, loginAnonymouslySaga);
-
+   yield takeEvery(addScheduledItem, addScheduledItemSaga);
+   yield takeEvery(fetchScheduledItems, fetchScheduleItemsSaga);
+  yield takeEvery(editProfile, editProfileSaga);
   yield takeEvery(login, loginSaga);
   yield takeEvery(logout, signOutSaga);
   yield takeEvery(refreshCustomData,customDataRefreshSaga);
   yield takeEvery(insertReservation,insertReservationSaga);
   yield takeEvery(register,registerSaga);
   yield takeEvery(fetchReservations,getReservationsSaga);
-yield takeEvery('FETCH_SITEDATA',fetchSiteDataSaga);
+yield takeEvery(fetchSiteData,fetchSiteDataSaga);
 }
 
-export default mySaga;
+export default appSaga;

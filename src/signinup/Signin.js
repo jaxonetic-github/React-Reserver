@@ -27,7 +27,7 @@ const EmailAriaLabel = { 'aria-label': 'EmailAddress' };
  * 
  * 
  */
-function SignIn() {
+function SignIn({bgColor}) {
    const stateError = useSelector((state)=>state.error);
    const loginSuccessful = useSelector((state)=>state?.profile?.email);
  //const  app = useRealmApp();
@@ -39,14 +39,6 @@ const navigate = useNavigate();
      React.useEffect(() => {
 if(loginSuccessful) {console.log('Already logged in; so, forcing home redirect.'); navigate('/'); }
 
-    /*setFirstName(realmApp?.currentUser?.customData?.firstname);
-    setLastName(realmApp?.currentUser?.customData?.lastname);
-    setEmail(realmApp?.currentUser?.customData?.email);
-    setPhone(realmApp?.currentUser?.customData?.phone);*/
-/*    if(app?.currentUser?.customData?.firstName){
-     
-      getProfile().then((pr)=>{console.log('profile result',pr); setProfile(pr)});      
-   }*/
   });
 
 /**
@@ -68,10 +60,11 @@ try{     dispatch(login(credentials));
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container  sx={{backgroundColor: bgColor}} component="main" maxWidth="xs" >
         <CssBaseline />
         <Box
           sx={{
+           backgroundColor: bgColor,
             marginTop: 8,
             display: 'flex',
             flexDirection: 'column',

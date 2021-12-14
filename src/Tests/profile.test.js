@@ -8,88 +8,101 @@ import * as ReactRedux from 'react-redux';
 
 import { configureStore } from '@reduxjs/toolkit'
 
-import Profile from '../Profile.js';
+import Profile from '../profile/Profile.js';
 import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import userEvent from '@testing-library/user-event'
-import {appReducer} from '../redux/reducers/appReducer';
+import {appReducer, editProfile} from '../redux/reducers/appReducer';
 
 import INITIAL_STATE from '../constants.js';
 
-  describe('Signin Test', () => {
-let store;
-  let app = null;
-  const signInObject = { email:'jaxonetic@gmail.com', password:'123456789',  };
- let signin = null;
-  const useSelectorMock = jest.spyOn(ReactRedux, 'useSelector');
-  const useDispatchMock = jest.spyOn(ReactRedux, 'useDispatch');
+describe('Profile Test', () => {
 
- beforeAll(() => {
-     store = configureStore({ reducer: { user: appReducer }, INITIAL_STATE })
-   });
-beforeEach(() => {
-  useSelectorMock.mockClear();
-  useDispatchMock.mockClear();
-})
+    const store = configureStore({ reducer: appReducer, INITIAL_STATE })
 
-/**
-*
-*/
+    let app = null;
+    let signin = null;
+     // const useSelectorMock = jest.spyOn(ReactRedux, 'useSelector');
+
+    const mockDispatch = jest.fn();
+    const useDispatchMock = jest.spyOn(store, 'dispatch');
+     // beforeAll(() => {});
+
+    beforeEach(() => {
+     // useSelectorMock.mockClear();
+      useDispatchMock.mockClear();
+    })
 
 
-test('SignIn displays expected text', async () => {
-  useSelectorMock.mockReturnValue(INITIAL_STATE)
-
+test('Profile dispatches editProfile action', async () => {
+   const profile = {firstname:'fntest', lastname:'tttttttest', email:'test@email.com', phone:'1230900982'};
      render(
       <ReactRedux.Provider store={store}>
         <BrowserRouter>
         <Routes>
-        <Route path="/" element={<Profile/>} />
+             <Route path={"/"} element={<Profile/>} />
         </Routes>
         </BrowserRouter>
         </ReactRedux.Provider>);
 
- 
- const emailField =  screen.getByLabelText('EmailAddress');
+   //get all the elements to be tested
+   const emailField =  screen.getByLabelText('EmailAddress');
+   const phone = screen.getByLabelText('Phone');
+   const firstNameField =  screen.getByLabelText('FirstName');
+   const lastNameField = screen.getByLabelText('LastName');
+   const saveButton = screen.getByLabelText('SaveProfile');
 
-  const phone = screen.getByLabelText('Phone');
- 
- const firstNameField =  screen.getByLabelText('FirstName');
+    userEvent.clear(phone);
+    userEvent.type(phone, profile.phone);
 
-  const lastNameField = screen.getByLabelText('LastName');
- 
+    userEvent.clear(emailField);
+    userEvent.type(emailField, profile.email);
+
+    userEvent.clear(firstNameField)
+    userEvent.type(firstNameField, profile.firstname);
+
+    userEvent.clear(lastNameField)
+    userEvent.type(lastNameField, profile.lastname)
+
+    userEvent.click(saveButton);
+    expect(useDispatchMock).toHaveBeenCalledWith(editProfile(profile));
 });
 
 
-
-/*
-
-test('user get error when credentials don\'t match', async () => {
-    useSelectorMock.mockReturnValue(INITIAL_STATE)
-
-     render( <ReactRedux.Provider store={store}>
+test('Profile button not clickable if all fields not valid', async () => {
+ // useSelectorMock.mockReturnValue(INITIAL_STATE)
+//  console.log(store.getState());
+  
+     render(
+      <ReactRedux.Provider store={store}>
         <BrowserRouter>
         <Routes>
-        <Route path="/" element={<SignIn/>} />
+             <Route path={"/"} element={<Profile/>} />
         </Routes>
-        </BrowserRouter></ReactRedux.Provider>);
+        </BrowserRouter>
+        </ReactRedux.Provider>);
+ 
+     //get all the elements to be tested
+     const emailField =  screen.getByLabelText('EmailAddress');
+     const phone = screen.getByLabelText('Phone');
+     const firstNameField =  screen.getByLabelText('FirstName');
+     const lastNameField = screen.getByLabelText('LastName');
+     const saveButton = screen.getByLabelText('SaveProfile');
 
-  const passwordField = screen.getByLabelText('Password');
-  fireEvent.change(passwordField, {target: {value: '123456789'}})
+    userEvent.clear(phone);
+    userEvent.type(phone, '1230900982');
 
-  const emailField =  screen.getByLabelText('EmailAddress');
-  await act(async () =>fireEvent.change(emailField, {target: {value: 'jaxonetic@gmail.com'}}));
+      //userEvent.clear(emailField);
+    userEvent.type(emailField, 'test@email.com');
 
-  const signInButton = screen.getByLabelText('Submit');
- const forgotPwdLink = screen.getByText(/forgot password?/i); 
- const signUpLink = screen.getByText(`Don't have an account? Sign Up`);
+    userEvent.clear(firstNameField)
+    userEvent.type(firstNameField, 'fntest');
 
-  userEvent.click(signInButton);
-  userEvent.click(forgotPwdLink);
-  userEvent.click(signUpLink);
+    userEvent.clear(lastNameField)
+    userEvent.type(lastNameField, 'tttttttest')
 
+    userEvent.click(saveButton);
+    expect(useDispatchMock).not.toHaveBeenCalledWith(editProfile({firstname:'fntest', lastname:'tttttttest', email:'test@email.com', phone:'1230900982'}));
 });
-
-*/
 
 /**afterAll(() => {
   app.logout();
