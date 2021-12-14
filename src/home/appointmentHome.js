@@ -32,7 +32,7 @@ import {  isAdminSelector} from '../constants';
  * @description  InfoCards, is a an editable fragment of the  home page.  If User is Admin then 
  *      a special "admin" menu is available allowing the user to change text
  */
-function AppointmentHome(props) {
+function AppointmentHome({bgColor}) {
   const navigate = useNavigate();
   const [getCardData] = useState([{title:'View Availability Calendar', imageURL:'astroclock.jpeg'},{title:'Book Appointment',imageURL:'openCalendar.jpeg'}])
 const url = 'coveredInFlowers.jpeg';
@@ -40,10 +40,10 @@ const url = 'coveredInFlowers.jpeg';
 
   return (
     <React.Fragment>
-      <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
+      <GlobalStyles styles={{backgroundColor: bgColor, ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
 
-<Container sx={{margin:5}}>
+<Container sx={{margin:5, backgroundColor: bgColor}}>
     <Grid container spacing={3} columns={6}>
   <Grid item xs={3}>
      <Card><CardMedia component="img" alt="banner" image={url} /></Card>

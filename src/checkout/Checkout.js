@@ -28,7 +28,7 @@ const theme = createTheme();
 /**
  *  Module to take reservations from user. 
  */
- function Checkout() {
+ function Checkout({bgColor}) {
   const currentUser = useSelector((state)=>state?.profile);
 //  const hasProfile = useSelector((state)=>state?.profile);
   const dispatch = useDispatch();
@@ -205,10 +205,9 @@ setError(null);
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+  
 
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      <Container component="main" maxWidth="sm" sx={{ mb: 4 , backgroundColor: bgColor}}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">
             Checkout 
@@ -260,7 +259,7 @@ setError(null);
           </React.Fragment>
         </Paper>
       </Container>
-    </ThemeProvider>
+
   );
 }
 

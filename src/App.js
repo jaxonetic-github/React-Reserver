@@ -25,12 +25,12 @@ import FullScreenAgendaDialog from './calendars/fullScreenAgendaDialog.js'
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
-  const bgColor = 'cadetblue';
+  const bgColor = 'silver';// 'cadetblue';
   return (
     <Router basename='/' >
     <Routes >
           <Route   element={<MainComponent companyTitle={COMPANY_NAME} bannerURL={HOME_BANNER_URL} />} >
-             <Route  index   element={<AppointmentHome />} />
+             <Route  index   element={<AppointmentHome  bgColor={bgColor}/>} />
              <Route path={"profile"} element={<Profile bgColor={bgColor} />} />
              <Route  path={'signin'} element={<SignIn bgColor={bgColor} />} />
              <Route  path={"availabilityCalendar"} element={<FullScreenAgendaDialog  bgColor={bgColor} displayAs={'full'} />} />
