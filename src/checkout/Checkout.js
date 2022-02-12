@@ -33,6 +33,7 @@ const theme = createTheme();
 //  const hasProfile = useSelector((state)=>state?.profile);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [whenToPay, setWhenToPay] = React.useState('later');
 
   const [firstName, setFirstName] = React.useState(currentUser?.firstname||'');
   const [lastName, setLastName] = React.useState(currentUser?.lastname||'');
@@ -42,8 +43,8 @@ const theme = createTheme();
   const [phone, setPhone] = React.useState(currentUser?.phone||'');
 
   const [activeStep, setActiveStep] = React.useState(0);
-  const [pickUpDate, setPickUpDate] = React.useState(new Date());
-  const [dropOffDate, setDropoffDate] = React.useState(new Date());
+  const [pickUpDate, setPickUpDate] = React.useState(new Date().toUTCString());
+  const [dropOffDate, setDropoffDate] = React.useState(new Date().toUTCString());
   const [dropOffLocation, setDropoffLocation] = React.useState('');
   const [pickupLocation, setPickupLocation] = React.useState('');
   //const [itineraryValid, setItineraryValid] = React.useState(false);
@@ -52,7 +53,7 @@ const theme = createTheme();
   const [agreementChecked, setAgreementChecked] =React.useState(false);
 
   const [paymentSucceeded, setPaymentSucceeded] = React.useState(false);
-  const [ScheduledItem,setScheduledItem] = React.useState();
+  const [scheduledItem,setScheduledItem] = React.useState();
 
   React.useEffect(() => {
  //console.log(`firstNameState = ${firstName}--,`,currentUser);
@@ -70,7 +71,7 @@ const theme = createTheme();
          const firstNameValidated = firstName && !validator.isEmpty(firstName) ;
          const lastNameValidated =  lastName && !validator.isEmpty(lastName);
            validated = (phoneValidated && emailValidated && pickupLocationValidated && dropOffLocationValidated && firstNameValidated && lastNameValidated);
-          console.log(`phone=${phone}, email(${email}),  pickupDate(${pickUpDate}),pickupLocation(${pickupLocation}),dropOffLocationValidated, firstNameValidated(${firstNameValidated}), firstName(${firstName}), lastNameValidated(${lastNameValidated}/ ${lastName})`);
+        //  console.log(`phone=${phone}, email(${email}),  pickupDate(${pickUpDate}),pickupLocation(${pickupLocation}),dropOffLocationValidated(${dropOffLocation})), firstNameValidated(${firstNameValidated}), firstName(${firstName}), lastNameValidated(${lastNameValidated}/${lastName})`);
       }else
          if(currentStep===1){
           const agreementSignatureValidated = !validator.isEmpty(agreementSignature);
@@ -79,14 +80,14 @@ const theme = createTheme();
          else 
           if(currentStep===2) {
             //if we made it this far everything has been validated
-            validated = paymentSucceeded;
+            validated = (whenToPay=='later') || (whenToPay=='now'&& paymentSucceeded);
           }
 
       return validated;
 }
 
-function getStepContent(step) {
-  const tmpRes = {
+const buildAppointment =()=>{
+    return {
                     userid:'realmApp?.currentUser?.id',
                    pickUpDate:pickUpDate,
                     dropOffDate:dropOffDate,
@@ -94,14 +95,19 @@ function getStepContent(step) {
                    pickupLocation:pickupLocation,
                    firstName:firstName,
                     lastName:lastName,
+                    paid:paymentSucceeded,
                       email:email,
-                      createdDate:new Date(),
-                      phone:phone}; 
+                      createdDate:(new Date()).toUTCString(),
+                      phone:phone};
+                    }
 
-console.log(tmpRes);
+function getStepContent(step) {
+ const tmpRes = buildAppointment();
+
+//console.log('step=,,,,,,,,,,,,',step);
   switch (step) {
     case 0:
-    console.log("checkout.getStepContent before ItineraryFragment-->",firstName,lastName,email,phone);
+   // console.log("checkout.getStepContent before ItineraryFragment-->",firstName,lastName,email,phone);
       return <SetAppointmentFragment  onChange={(event)=>onChange(event)}/>;
     case 1:
       return <AgreementForm onChange={onChange} />;
@@ -117,6 +123,7 @@ console.log(tmpRes);
                                               dispatch(creditPaymenError('Payment Error',successEvent.toString()))}
                                       }}
                       reservation={tmpRes}
+                       whenToPay = {whenToPay}
             />;
     default:
       throw new Error('Unknown step');
@@ -125,25 +132,28 @@ console.log(tmpRes);
 
 
  const onChange = (event) =>{
-  console.log(event)
-    console.log(event.target.name,'---',event.target.value);
-     
+ // console.log('EVT::',event)
+   //      console.log(event.target.name,'---',event.target.value);
+
     switch (event.target.name) {
   case 'appointmentDateTime':setScheduledItem(event.target.value);
                             setPickUpDate(event.target.value.start); break;
-  case 'locationSelect':setPickupLocation(event.target.value); break;
   case 'agreementSignature':setAgreementSignature(event.target.value); break;
   case 'agreementChecked' : setAgreementChecked(event.target.checked); break;
   case 'email':setEmail(event.target.value);break;
   case 'password':setPassword(event.target.value);break;
   case 'phone':setPhone(event.target.value);break;
+  case 'controlled-radio-buttons-group' : setWhenToPay(event.target.value); break;
 
   case 'firstName':setFirstName(event.target.value);break;
   case 'lastName':setLastName(event.target.value);break;
   case 'pickupdate':setPickUpDate(event.target.value);break;
   case 'dropoffDate': setDropoffDate(event.target.value); break;
-  case 'dropoffLocation': setDropoffLocation(event.target.value); break;
-  case 'pickupLocation': setPickupLocation(event.target.value); break;
+  case 'locationSelectDropOff': 
+  case 'dropoffLocation':  setDropoffLocation(event.target.value); break;
+  case 'locationSelectPickup': 
+  case 'pickupLocation':    
+setPickupLocation(event.target.value); break;
   default:
     console.log(`Sorry, we are out of ${event.target.name}.`);
 
@@ -153,7 +163,7 @@ console.log(tmpRes);
     const stampedEvent = { ...event,
           event_id: event.event_id || Math.random()
         }
-    console.log(event, action);
+ //   console.log(event, action);
     if (action === "edit") {
       /** PUT event to remote DB */
       console.log('edit');
@@ -166,9 +176,13 @@ console.log(tmpRes);
 
   const handleNext = async (event) => {
           let canContinue = false;
+          console.log(activeStep,'---',steps.length,'---');
     if(activeStep === steps.length - 1){
         //  const data = new FormData(event.currentTarget);
-       
+              //  const data = new FormData(event.currentTarget);
+        dispatch(insertReservation(buildAppointment())); 
+        dispatch(addScheduledItem(scheduledItem))
+        setActiveStep(activeStep + 1); 
     }
     else if (activeStep === 0){
         //if(fullyValidated){
@@ -206,7 +220,6 @@ setError(null);
 
   return (
   
-
       <Container component="main" maxWidth="sm" sx={{ mb: 4 , backgroundColor: bgColor}}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
           <Typography component="h1" variant="h4" align="center">

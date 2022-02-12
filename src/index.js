@@ -18,6 +18,7 @@ import {appReducer,fetchScheduledItems,refreshCustomData,fetchReservations,login
 import saga from './redux/sagas';
 import {logger} from 'redux-logger';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Cookies from 'universal-cookie';
 
 // create the saga middleware
 const sagaMiddleware = createSagaMiddleware()
@@ -27,7 +28,7 @@ const initialState=mock?INITIAL_STATE : INITIAL_STATE_EMPTY;
 
 // mount it on the Store
    const store = createStore(appReducer, initialState,  applyMiddleware(sagaMiddleware, logger))
-   
+   const cookies = new Cookies();
    // start the saga
    sagaMiddleware.run(saga);
 
@@ -35,7 +36,10 @@ const initialState=mock?INITIAL_STATE : INITIAL_STATE_EMPTY;
   
    store.dispatch(loadBackEnd(app));
 
-   if(!app.app.currentUser){
+   const _cookie = cookies.get('alchemeia');
+   console.log(_cookie,'++++++++',cookies.getAll());
+
+   if(!_cookie || !app.app.currentUser){
     //logging in anonymously to load changeable data
       store.dispatch(loginAnonymously());
    

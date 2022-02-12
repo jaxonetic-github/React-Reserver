@@ -16,12 +16,14 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import {  useDispatch, useSelector } from 'react-redux'
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/styles';
+import TextField from '@mui/material/TextField';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import {PickUpDateAriaLabel,PickUpLocationAriaLabel}  from '../constants'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,7 +39,9 @@ export default function FullScreenAgendaDialog({displayAs, onConfirm}) {
  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme?.breakpoints?.down('md'));
+ 
+ // const fullScreen = useMediaQuery(theme?.breakpoints?.down('md'));
+ 
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -84,6 +88,18 @@ const AccordionView = ({children})=><Accordion>
         </AccordionSummary>
         <AccordionDetails>
         {children}
+         <TextField
+            onChange = {onConfirm}
+            inputProps={PickUpDateAriaLabel}
+        name="pickupdate"
+        id="pickupdate"
+        label="Choose a pick up date"
+       type="datetime-local"
+         defaultValue="2021-11-21T11:30"
+        sx={{ width: 220 }}
+        InputLabelProps={{
+          shrink: true,
+        }}/>
         </AccordionDetails>
       </Accordion>
 
@@ -113,7 +129,6 @@ dialogMaxWidth="sm"
   events={scheduledItems?.map((item)=>item)}
 />     
 
- console.log(Object.keys(scheduledItems),'massages=>',typeof scheduledItems,typeof scheduledItems[0]);
   return (
     displayAs==='Accordion'?(<AccordionView><AppScheduler/></AccordionView>) :(<AppScheduler onClick={(event)=>console.log('schedulue cal event lick::', event)}/>)
 

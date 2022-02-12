@@ -52,7 +52,7 @@ function Profile({bgColor}) {
 function componentValidated  (){
 
     const validated = (isPhoneValid && isEmailValid  && isFirstNameValid && isLastNameValid);
-
+console.log('component validated',validated, isLastNameValid,'---', lastName)
     return validated;
 }
 
@@ -114,14 +114,16 @@ else{setError('Unable to continue, found invalid fields')}
                   id="lastName"
                   label="Last Name"
                   name="lastName"
-                  defaultValue={profile.lastname}
+                  defaultValue={profile?.lastname}
                   inputProps={LastNameAriaLabel}
                   placeholder='Last Name'
                   onChange={(event)=>{
                     const validLastName = !validator.isEmpty(event.target.value);
-                        if(validLastName){
-                        setLastName(event.target.value);
-                        setIsLastNameValid(validLastName);
+                    console.log(event.target.value,'--',validLastName)
+                    setLastName(event.target.value);
+                    setIsLastNameValid(validLastName);
+
+                        if(validLastName){  
                         setError('');
                         } else setError('Invalid or missing Last Name');
                       }
@@ -130,7 +132,7 @@ else{setError('Unable to continue, found invalid fields')}
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  defaultValue={profile.email}
+                  defaultValue={profile?.email}
                   fullWidth
                   id="email"
                   label="Email Address"
@@ -139,9 +141,11 @@ else{setError('Unable to continue, found invalid fields')}
                   inputProps={EmailAriaLabel}
                   onChange={(event)=>{
                     const validEmail = !validator.isEmpty(event.target.value);
-                        if(validEmail){
                         setEmail(event.target.value);
                         setIsEmailValid(validEmail);
+                      
+
+                        if(validEmail){
                         setError('');
                         } else setError('Invalid or missing Email');
                       }
@@ -150,7 +154,7 @@ else{setError('Unable to continue, found invalid fields')}
               </Grid>
               <Grid item xs={12}>
                 <TextField 
-                  defaultValue={profile.phone}
+                  defaultValue={profile?.phone}
                   fullWidth
                   name="phone"
                   label="phone"

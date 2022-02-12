@@ -43,7 +43,7 @@ const app={
   }
 }
 
-const appDAO={
+export const appDAO={
       
       refreshCustomData:(()=>({firstName:'first', email:'first@test.com', lastName:'test'  })),
       logIn:(()=>true),
@@ -61,7 +61,7 @@ const appDAO={
  *   @type {string}
  *   @default
  */
-export const INITIAL_STATE={
+export const INITIAL_STATE_FULL={
   auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
             backEnd:{}
        },
@@ -88,9 +88,10 @@ export const INITIAL_STATE_EMPTY={
   profile:null,
   siteData:null,
   settings:{notifyAfterReservation:false},
-  error:'Initial Empty State'
+  error:''
 };
 
+export const INITIAL_STATE = process.env.NODE_ENV=='test'? INITIAL_STATE_FULL: INITIAL_STATE_FULL;
 
 
 /******************    ARIA Labels   *************/

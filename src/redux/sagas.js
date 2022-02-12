@@ -1,7 +1,8 @@
 import {  put,call, takeEvery, select } from 'redux-saga/effects'
+import log from 'loglevel';
 
 
-import {logout,loginError, login,loginSucceeded, register,
+import {editSiteData,editSiteDataSuccess,bubbleError,loadAnonymousDataSuccess,logout,loginError, login,loginSucceeded, register,
 fetchSiteDataSuccess,fetchSiteData,fetchSiteDataError,loginAnonymously,
  refreshCustomData,fetchReservations,fetchReservationsError,fetchReservationsSuccess,
   loadProfile,insertReservation,editProfile,editProfileSuccess,editProfileError,
@@ -27,7 +28,7 @@ function* registerSaga(action) {
  */
 function* signOutSaga(action) {
     const app = yield select(state=>state.app);
-    call(app.logOut ); 
+    yield call(app.logOut ); 
 }
 
 /**
@@ -80,12 +81,13 @@ function* loginAnonymouslySaga(action) {
   const loginResult = yield call(app.loginAnonymously );
 console.log('anonymouse result in saga',loginResult);
      
- const site = yield call(app.getSiteData);
-if(site.screen) {
-  yield put(fetchSiteDataSuccess(site))
- yield put(fetchScheduledItems())
+if(loginResult.error) {
+ yield put (bubbleError(loginResult.error));
 }
- yield call(app.logOut);
+else
+{
+  yield put(loadAnonymousDataSuccess(loginResult))
+}
 
 }
 
@@ -99,7 +101,12 @@ function* loginSaga(action) {
 const email = action.payload.email;
 const password = action.payload.password;
 const loginResult = yield call(app.login,{email,password} );
+  if( loginResult.error)
+  { 
+    log.warn('login errer',loginResult.error)
+   yield put(loginError(loginResult.error));
 
+  }else
   if( loginResult)
   { 
     yield put(loginSucceeded(loginResult));
@@ -112,7 +119,6 @@ const loginResult = yield call(app.login,{email,password} );
    put(loginError(loginResult.error));
 
 }
-
 
 /**
  * @description Attempt to Log in. If successful,fetch reservations, profile 
@@ -164,6 +170,28 @@ function* UnhandledSaga(action) {
 }
 */
 
+
+
+/**
+ * @description Attempt to Log in. If successful,fetch reservations, profile 
+ * @param {object }action - action.payload={first, last, email, phone}
+ */
+function* editSiteDataSaga(action) {
+    console.log('editProfileSaga', action);
+   const app = yield select(state=>state.app);
+
+
+const {modifiedCount, profile} = yield call(app.editProfile,action.payload );
+
+  if( modifiedCount>0)
+  { 
+    yield put(editSiteDataSuccess());
+    yield put(refreshCustomData());
+  }
+  else 
+   put(editProfileError('Profile was not modified'));
+
+}
 
 /**
  *  worker Saga: will be fired on USER_FETCH_REQUESTED actions
@@ -234,6 +262,7 @@ function* appSaga(app) {
   yield takeEvery(register,registerSaga);
   yield takeEvery(fetchReservations,getReservationsSaga);
 yield takeEvery(fetchSiteData,fetchSiteDataSaga);
+yield takeEvery(editSiteData,fetchSiteDataSaga);
 }
 
 export default appSaga;

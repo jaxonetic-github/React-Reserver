@@ -1,6 +1,7 @@
 import * as Realm from "realm-web";
 import { handleAuthenticationError, parseAuthenticationError} from './constants';
-    import emailjs, { init } from 'emailjs-com';
+import emailjs, { init } from 'emailjs-com';
+import Cookies from 'universal-cookie';
 
 /**
  * @class
@@ -72,15 +73,32 @@ return result;
 
   /**
    *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
+   * @return object {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile}
    */
   loginAnonymously = async  ()=> {
+    try{
       const loginResult = await this.app?.logIn(Realm.Credentials.anonymous());
       console.log("loginAnonymously:",loginResult);
      // await this.getSiteData();
+  const site =   await this.getSiteData();
+      const schedule = await this.getScheduleItems(); 
+      let reservations = null;
+      let profile = null; 
 
-      //this.logOut();
-      return loginResult;
+      if(this.app.currentUser?.customData?.email){
+       reservations = await this.getReservations(); 
+
+       profile = this.app.currentUser.customData;
+      }
+//console.log({user: this.anonUser, site:this.site, schedule:this.schedule});
+      return {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile};
+    }catch(error){
+        return{error:error.message};
+    }
+    
 }
+
+
 
   /**
    *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
@@ -92,7 +110,22 @@ console.log(credentials)
     //tell store that a login is being attempted
    //dispatch(login('Attempting to login'));
    const loginResult =  await this.app.logIn(Realm.Credentials.emailPassword(credentials.email, credentials.password));
-   return loginResult;
+ const cookies = new Cookies();
+ //const token = cookies.set('alchemeia');
+ cookies.set('alchemeia', loginResult.accessToken, { path: '/', httpOnly:false, maxAge:60000*10 });
+ const site =   await this.getSiteData();
+      const schedule = await this.getScheduleItems(); 
+      let reservations = null;
+      let profile = null; 
+
+      if(this.app.currentUser?.customData?.email){
+       reservations = await this.getReservations(); 
+
+       profile = this.app.currentUser.customData;
+      }
+    return {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile};
+
+
     } catch(err)
     {
       const msg = handleAuthenticationError(err);
@@ -102,12 +135,17 @@ console.log(credentials)
   }
  
 
-/**
+/*
  *  Logout current user, by clearing the CurrentUSer, Profile, and Reservations
  */
   logOut = async ()=> {
+    console.log('logging out?');
+
     // Log out the currently active user
     this.app?.currentUser?.logOut();
+     const cookies = new Cookies();
+  console.log('logging out:removing cookie',cookies.getAll());
+   cookies.remove('alchemeia');
   }
 
 

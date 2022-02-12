@@ -8,7 +8,7 @@ import Profile from './profile/Profile';
 import SignIn from './signinup/Signin';
 import SignUp from './signinup/Signup';
 import AppointmentHome from './home/appointmentHome.js';
-import {HOME_BANNER_URL, COMPANY_NAME} from './altconstants.js'
+import {HOME_BANNER_URL, COMPANY_NAME} from './constants.js'
 //import { useIdleTimer } from 'react-idle-timer';
 import FullScreenAgendaDialog from './calendars/fullScreenAgendaDialog.js'
 
@@ -30,7 +30,7 @@ console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
     <Router basename='/' >
     <Routes >
           <Route   element={<MainComponent companyTitle={COMPANY_NAME} bannerURL={HOME_BANNER_URL} />} >
-             <Route  index   element={<AppointmentHome  bgColor={bgColor}/>} />
+             <Route  index   element={<GeneralInfo  bgColor={bgColor}/>} />
              <Route path={"profile"} element={<Profile bgColor={bgColor} />} />
              <Route  path={'signin'} element={<SignIn bgColor={bgColor} />} />
              <Route  path={"availabilityCalendar"} element={<FullScreenAgendaDialog  bgColor={bgColor} displayAs={'full'} />} />

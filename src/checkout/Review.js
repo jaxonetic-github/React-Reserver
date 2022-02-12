@@ -11,6 +11,13 @@ import Divider from '@mui/material/Divider';
 import { FEE_FORMULA, NameOnCardAriaLabel } from '../constants';
 import TextField from '@mui/material/TextField';
 import SquarePaymentForm from './squarePayComponent.js';
+import Fade from '@mui/material/Fade';
+
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 /**
 * Review component is the final stage of the Reservation process where the user can
 * view the details of the desired reservation  and finalize with payment
@@ -19,7 +26,7 @@ import SquarePaymentForm from './squarePayComponent.js';
 *     props.reservation   - expects a Reservation javascript object {} used to fill component data
 *     props.handleSuccess - expects a callback upon succesful submission of credit card info 
 */
-function ReviewFragment(props) {
+function ReviewFragment( {reservation, handleSuccess, onChange, whenToPay}) {
 
   return (
     <React.Fragment>
@@ -52,12 +59,28 @@ function ReviewFragment(props) {
           <Typography variant="h5" gutterBottom >
             Itinerary
           </Typography>
-          <Typography gutterBottom>{'Contact : '}{props.reservation.firstName} {props.reservation.lastName}</Typography>
-          <Typography gutterBottom>{'Pick-up : '}{props.reservation.pickupLocation}{new Date(props.reservation.pickupDate).toLocaleString()}</Typography>
-          <Typography gutterBottom>{'Drop-off : '}{props.reservation.dropOffLocation}{new Date(props.reservation.dropOffDate).toLocaleString()}</Typography>                    
+          <Typography gutterBottom>{'Contact : '}{reservation.firstName} {reservation.lastName}</Typography>
+          <Typography gutterBottom>{'Pick-up : '}{reservation.pickupLocation}{new Date(reservation.pickupDate).toLocaleString()}</Typography>
+          <Typography gutterBottom>{'Drop-off : '}{reservation.dropOffLocation}{new Date(reservation.dropOffDate).toLocaleString()}</Typography>                    
           </Box>
         </Grid>
       </Grid>
+
+ <FormControl component="fieldset">
+      <FormLabel component="legend">Payment now or later</FormLabel>
+      <RadioGroup
+        aria-label="Payment"
+        name="controlled-radio-buttons-group"
+        value={whenToPay}
+        onChange={onChange}
+      >
+        <FormControlLabel value="now" control={<Radio />} label="Pay Now" />
+        <FormControlLabel value="later" control={<Radio />} label="Pay Later" />
+      </RadioGroup>
+    </FormControl>
+
+<Box  sx={{display:(whenToPay==='later')? 'none' : 'inline-block' }}>
+
 
        <Typography variant="h5" gutterBottom sx={{marginTop:3}}>
         Secure Payment
@@ -74,7 +97,8 @@ function ReviewFragment(props) {
           />
         </Grid>
 
-   <SquarePaymentForm data-testid="SquarePay" handleSuccess={props.handleSuccess}/>
+   <SquarePaymentForm aria-label="SquarePay" data-testid="SquarePay" handleSuccess={handleSuccess}/>
+    </Box>
     </React.Fragment>
   );
 }

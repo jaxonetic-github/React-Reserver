@@ -8,7 +8,7 @@ import Input from '@mui/material/Input';
 import TextField from '@mui/material/TextField';
 import {PickUpDateAriaLabel,PickUpLocationAriaLabel,DropOffDateAriaLabel,DropOffLocationAriaLabel,
 FirstNameAriaLabel,LastNameAriaLabel,EmailAriaLabel,PasswordAriaLabel,PhoneAriaLabel}  from '../constants'
-import LocationSelect from './locationSelect.js';
+//import LocationSelect from './locationSelect.js';
 import CreatableSelect from 'react-select/creatable';
 import {  OnChangeValue } from 'react-select';
 /**
@@ -25,13 +25,15 @@ const locations = [{label:'Alchemeia Center', value:'262 E Pastime rd, Tucson Az
 
   return (
     <React.Fragment>
-    <FullScreenAgendaDialog onConfirm={onChange} displayAs={'Accordion'}/>
+    <FullScreenAgendaDialog  onConfirm={onChange} displayAs={'Accordion'}/>
+     
       <Typography variant="h6" sx={{marginBottom:3, marginTop:3}} >
         Appointment Location
       </Typography>
         
-        <CreatableSelect name='locationSelect' isClearable onChange={(event)=>{ const newArg={target:{name:'locationSelect', value:event.value} };  onChange(newArg);}} options={locations}/>
-      
+        <CreatableSelect aria-label={DropOffLocationAriaLabel['aria-label']}  name='locationSelectDropOff' isClearable onChange={(event)=>{ const newArg={target:{name:'locationSelectDropOff', value:event.value} }; onChange(newArg);}} options={locations}/>
+        <CreatableSelect  aria-label={PickUpLocationAriaLabel['aria-label']} name='locationSelectPickup' isClearable   onChange={(event)=>{ const newArg={target:{name:'locationSelectPickup', value:event.value} }; onChange(newArg);}} options={locations}/>
+
       <Typography variant="h6" sx={{marginBottom:3, marginTop:3}} >
         Contact Info
       </Typography>

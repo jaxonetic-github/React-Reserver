@@ -89,19 +89,22 @@ test('Profile button not clickable if all fields not valid', async () => {
      const saveButton = screen.getByLabelText('SaveProfile');
 
     userEvent.clear(phone);
-    userEvent.type(phone, '1230900982');
+   // userEvent.type(phone, '1230900982');
 
-      //userEvent.clear(emailField);
-    userEvent.type(emailField, 'test@email.com');
+      userEvent.clear(emailField);
+    //userEvent.type(emailField, 'test@email.com');
 
     userEvent.clear(firstNameField)
-    userEvent.type(firstNameField, 'fntest');
+    //userEvent.type(firstNameField, 'fntest');
 
     userEvent.clear(lastNameField)
-    userEvent.type(lastNameField, 'tttttttest')
+   // userEvent.type(lastNameField, 'pp')
+   //userEvent.type(lastNameField, '')
 
+//console.log(saveButton);
     userEvent.click(saveButton);
-    expect(useDispatchMock).not.toHaveBeenCalledWith(editProfile({firstname:'fntest', lastname:'tttttttest', email:'test@email.com', phone:'1230900982'}));
+    expect(useDispatchMock).not.toHaveBeenCalled();
+   // expect(useDispatchMock).not.toHaveBeenCalledWith(editProfile({firstname:'fntest', lastname:'tttttttest', email:'test@email.com', phone:'1230900982'}));
 });
 
 /**afterAll(() => {

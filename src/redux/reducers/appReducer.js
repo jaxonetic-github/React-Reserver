@@ -5,10 +5,15 @@
  */
 
 import { createAction, createReducer } from '@reduxjs/toolkit'
-import {INITIAL_STATE } from '../../constants.js';
+import {INITIAL_STATE} from '../../constants.js';
 export const FETCH_SITEDATA ='FETCH_SITEDATA';
 export const FETCH_SITEDATA_SUCCESS ='FETCH_SITEDATA_SUCCESS';
 export const FETCH_SITEDATA_ERROR ='FETCH_SITEDATA_FAILED';
+
+export const EDIT_SITEDATA ='FETCH_SITEDATA';
+export const EDIT_SITEDATA_SUCCESS ='FETCH_SITEDATA_SUCCESS';
+export const EDIT_SITEDATA_ERROR ='FETCH_SITEDATA_FAILED';
+
 export const FETCH_RESERVATION ='FETCH_RESERVATIONS';
 export const FETCH_RESERVATION_SUCCESS ='FETCH_RESERVATION_SUCCESS';
 export const FETCH_RESERVATION_ERROR ='FETCH_RESERVATION_FAILED';
@@ -48,11 +53,17 @@ export const CREDIT_PAYMENT_ERROR = 'CREDIT_PAYMENT_ERROR';
 export const LOGIN_ANONYMOUSLY = 'LOGIN_ANONYMOUSLY';
 
 
+export const LOAD_ANONYMOUS_DATA = 'LOAD_ANONYMOUS_DATA';
+export const LOAD_ANONYMOUS_DATA_SUCCESS = 'LOAD_ANONYMOUS_DATA_SUCCESS';
 
 
+export const editSiteData = createAction(EDIT_SITEDATA);
+export const editSiteDataError = createAction(EDIT_SITEDATA_ERROR);
+export const editSiteDataSuccess = createAction(EDIT_SITEDATA_SUCCESS);
 export const fetchSiteData = createAction(FETCH_SITEDATA);
 export const fetchSiteDataError = createAction(FETCH_SITEDATA_ERROR);
 export const fetchSiteDataSuccess = createAction(FETCH_SITEDATA_SUCCESS);
+
 export const loadBackEnd = createAction(FETCH_BACKEND);
 export const loadProfile = createAction(LOAD_PROFILE);
 export const loadUser = createAction(LOAD_USER);
@@ -63,6 +74,8 @@ export const bubbleError = createAction(BUBBLE_ERROR);
 
 export const loginError = createAction(LOGIN_ERROR);
 export const loginAnonymously = createAction(LOGIN_ANONYMOUSLY);
+export const loadAnonymousDataSuccess = createAction(LOAD_ANONYMOUS_DATA_SUCCESS)
+export const loadAnonymousData = createAction(LOAD_ANONYMOUS_DATA)
 
 /** 
  * 
@@ -259,9 +272,17 @@ export const creditPaymentSuccess = createAction(CREDIT_PAYMENT_SUCCESS);
 
  * @returns The new state
  */
-export const appReducer = createReducer(INITIAL_STATE, (builder) => {
+export const appReducer = createReducer( INITIAL_STATE, (builder) => {
 
   builder
+      .addCase(loadAnonymousDataSuccess, (state, action) => {
+      state.trace = action.type;
+      state.availability = action.payload.schedule;
+      state.profile = action.payload.profile;
+      state.siteData= action.payload.site;
+      state.reservations= action.payload.reservations;
+      return state;
+    })
   .addCase(addScheduledItemSuccess, (state, action) => {
       state.trace = action.type;
       state.availability.push(action.payload);
