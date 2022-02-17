@@ -1,5 +1,4 @@
-[![codecov](https://codecov.io/gh/jaxonetic-github/React-Reserver/branch/main/graph/badge.svg?token=50hHSCbMPG)](https://codecov.io/gh/jaxonetic-github/React-Reserver)
-
+[![codecov](https://codecov.io/gh/jaxonetic-github/React-Reserver/branch/hashrouter/graph/badge.svg?token=50hHSCbMPG)](https://codecov.io/gh/jaxonetic-github/React-Reserver)
 
 # Getting Started with Create React App
 
