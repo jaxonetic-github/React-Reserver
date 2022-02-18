@@ -2,7 +2,7 @@ import {  put,call, takeEvery, select } from 'redux-saga/effects'
 import log from 'loglevel';
 
 
-import {editSiteData,editSiteDataSuccess,bubbleError,loadAnonymousDataSuccess,logout,loginError, login,loginSucceeded, register,
+import {editSiteData/*,editSiteDataSuccess*/,bubbleError,loadAnonymousDataSuccess,logout,loginError, login,loginSucceeded, register,
 fetchSiteDataSuccess,fetchSiteData,fetchSiteDataError,loginAnonymously,
  refreshCustomData,fetchReservations,fetchReservationsError,fetchReservationsSuccess,
   loadProfile,insertReservation,editProfile,editProfileSuccess,editProfileError,
@@ -175,7 +175,7 @@ function* UnhandledSaga(action) {
 /**
  * @description Attempt to Log in. If successful,fetch reservations, profile 
  * @param {object }action - action.payload={first, last, email, phone}
- */
+
 function* editSiteDataSaga(action) {
     console.log('editProfileSaga', action);
    const app = yield select(state=>state.app);
@@ -192,6 +192,7 @@ const {modifiedCount, profile} = yield call(app.editProfile,action.payload );
    put(editProfileError('Profile was not modified'));
 
 }
+ */
 
 /**
  *  worker Saga: will be fired on USER_FETCH_REQUESTED actions
@@ -219,7 +220,11 @@ function* addScheduledItemSaga(action) {
   const app = yield select(state=>state.app);
   const newItemResult = yield call(app.addScheduledItem, action.payload );
   console.log('new item result',newItemResult.insertedId)
-  yield put(addScheduledItemSuccess(action.payload))
+  if (newItemResult.insertedId)
+    yield put(addScheduledItemSuccess(action.payload))
+  else
+    yield put(addScheduledItemError(newItemResult))
+
   // yield put(fetchScheduledItems())
 
   //yield put(loadProfile( customData));

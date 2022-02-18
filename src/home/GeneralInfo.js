@@ -8,13 +8,13 @@ import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 
 //import CardContent from '@mui/material/CardContent';
 //import CardHeader from '@mui/material/CardHeader';
-import CssBaseline from '@mui/material/CssBaseline';
+//import CssBaseline from '@mui/material/CssBaseline';
 //import Grid from '@mui/material/Grid';
 //import StarIcon from '@mui/icons-material/StarBorder';
 import Typography from '@mui/material/Typography';
 import AdminDrawerMenu from './AdminMenu';
 import Input from '@mui/material/Input';
-import GlobalStyles from '@mui/material/GlobalStyles';
+//import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 import { useNavigate} from "react-router-dom";
 import InfoCards from './InfoCards'
@@ -46,7 +46,7 @@ const getIsAdmin = useSelector(isAdminSelector)
   //const [error, setError] = useState();
   const [title, setTitle] = useState(getSiteData?.title);
   const [reservationButton, setReservationButton] = useState(app?.siteData?.pageData?.reservationButton);
-  const [subtitle, setSubTitle] = useState(getSiteData?.subtitle);
+  const [subtitle] = useState(getSiteData?.subtitle);
   const [paragraph1, setParagraph1] = useState(getSiteData?.paragraphs[0]);
   const [paragraph2, setParagraph2] = useState(getSiteData?.paragraphs[1]);
   const [drawerState, setDrawerState] = React.useState(false);
@@ -54,13 +54,14 @@ const getIsAdmin = useSelector(isAdminSelector)
  // const [authedUser, setAuthedUser] = useState(authedUserSelector?.email!==undefined);
 
    React.useEffect(() => {
-    setReservationButton(getSiteData?.reservationButton);
+/*    setReservationButton(getSiteData?.reservationButton);
     setSubTitle( getSiteData?.subtitle)
     setParagraph1(getSiteData?.paragraphs[0]);
     setParagraph2( getSiteData?.paragraphs[1]);
-    setTitle(getSiteData?.title)
+    setTitle(getSiteData?.title)*/
     setEditableMode(getIsAdmin);
-  },[getSiteData?.title,getSiteData?.subtitle, getSiteData?.paragraphs[0],getSiteData?.paragraphs[1], getIsAdmin]);  
+  },[/*getSiteData?.title,getSiteData?.subtitle, getSiteData?.paragraphs[0],getSiteData?.paragraphs[1],*/
+      getIsAdmin]);  
   
 
   const toggleDrawer = (event) => {
