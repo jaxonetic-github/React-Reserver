@@ -3,7 +3,6 @@
 /* Base Application Styles */
 body {
 
-margin-top: "-200px";
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -26,7 +25,7 @@ margin-top: "-200px";
 
 /* Over-writing the default container style */
 .css-1u8t36f-MuiContainer-root{padding-top: 34px !important;}
-
+#root > div > div:nth-child(2) > div._2Ryc0EdrAlBmLFgxh2MAWb > div:nth-child(2) {display: flex}
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

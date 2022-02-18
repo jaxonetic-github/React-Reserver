@@ -1,6 +1,6 @@
-import React, {  useState }from 'react';
+import React from 'react';
 import { useNavigate} from "react-router-dom";
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import Container from '@mui/material/Container';
 import Table from '@mui/material/Table';
@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import {fetchReservations} from '../redux/reducers/appReducer'
+//import {fetchReservations} from '../redux/reducers/appReducer'
 
 
 
@@ -32,29 +32,27 @@ import {fetchReservations} from '../redux/reducers/appReducer'
  *
  */
 
-function Reservations() {
-  const dispatch = useDispatch();
+function Reservations({bgColor}) {
   const getReservations = useSelector(state=>state?.reservations);
-  const [reservations] = useState(getReservations||[]);
   const navigate = useNavigate();
 
    const loginSuccessful = useSelector((state)=>state.profile);
 
      React.useEffect(() => {
-      if(!loginSuccessful){console.log('An attempt to view Reservations from an Unauthorized User has been flagged; so, forcing home redirect.');  navigate('/');}  },[loginSuccessful, navigate]);
+        if((process.env.NODE_ENV!='test') && !loginSuccessful)
+          {console.log('An attempt to view Reservations from an Unauthorized User has been flagged; so, forcing home redirect.');  navigate('/');}  
+      },[loginSuccessful, navigate]);
 
-  console.log(getReservations.reservations,'--2--', Object.keys( reservations) );
   //const adjustDate = (someDate)=>(someDate && ((typeof someDate) === 'object' )? someDate.toDateString() : someDate);
  
   return (
     <React.Fragment>
-    <Container >
+    <Container sx={{backgroundColor: bgColor}}>
    <Toolbar>
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-             { reservations?.length} Reservations 
+             { getReservations?.length} Reservations 
           </Typography>
-          <Button contained="true" color="success" onClick={()=>dispatch(fetchReservations())}>Refresh</Button>
         </Toolbar>
    
   
@@ -67,9 +65,9 @@ function Reservations() {
             </TableRow>
         </TableHead>
         <TableBody>
-          {reservations.map((reservation, index) => 
+          {getReservations.map((reservation, index) => 
             (<TableRow key={index}>
-              <TableCell>{reservation?.createdDate?.toString()}</TableCell>
+              <TableCell>{new Date(reservation?.createdDate?.toString()).toLocaleString()}</TableCell>
               <TableCell><span aria-label='wholename'>{reservation?.firstName}{' '}{reservation?.lastName}</span>
               <Divider/><span aria-label='email'>{reservation?.email}</span><p aria-label='phone'>{reservation?.phone}</p></TableCell>
               <TableCell><span aria-label='pickupLocation'>{reservation?.pickupLocation}</span><p >{new Date( reservation?.pickUpDate).toLocaleString()}</p><span aria-label='dropOffLocation'>{reservation?.dropOffLocation}</span><p>{new Date(reservation?.dropOffDate).toLocaleString()}</p></TableCell>

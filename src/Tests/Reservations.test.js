@@ -45,6 +45,7 @@ test('Reservation displays expected text',  () => {
     useSelectorMock.mockReturnValue(INITIAL_STATE.reservations);
    const reservation = INITIAL_STATE.reservations[0];
 console.log(store.getState().reservations);
+console.log(INITIAL_STATE.reservations);
      render(
         <ReactRedux.Provider store={store}><BrowserRouter>
         <Routes>
@@ -54,8 +55,8 @@ console.log(store.getState().reservations);
 
  
   const headerColumn = screen.getByLabelText('createdColumn');
-  const wholename = screen.getByLabelText('wholename');
- screen.debug(wholename);
+  //const wholename = screen.getByLabelText('wholename');
+ //screen.debug(wholename);
   screen.getByText(reservation.email);
   screen.getByText(reservation.phone);
   screen.getByText(reservation.dropOffLocation);

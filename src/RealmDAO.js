@@ -1,6 +1,7 @@
 import * as Realm from "realm-web";
 import { handleAuthenticationError, parseAuthenticationError} from './constants';
-    import emailjs, { init } from 'emailjs-com';
+import emailjs, { init } from 'emailjs-com';
+import Cookies from 'universal-cookie';
 
 /**
  * @class
@@ -28,17 +29,76 @@ this.app = new Realm.App(demoAppId);
 }
    
 
+/**
+ * @desc Add an item to schedule
+ * 
+ * @returns profile info as object
+ *
+*/
+ addScheduledItem = async (item)=>{
+    try
+    {
+ const result = await this.app?.currentUser?.functions.addScheduledItem(item); 
+console.log(result);
+return result;
+
+}catch(error){
+    return{error}
+}
+}
+
+/**
+ * @desc ensure customData object is not stale
+ * 
+ * @returns profile info as object
+ *
+*/
+ getScheduleItems = async ()=>{
+
+ const results =  await this.app?.currentUser?.functions.getScheduleItems({}); 
+ console.log('results', results);
+ return results;
+
+
+}
+/**
+ * @desc ensure customData object is not stale
+ * 
+ * @returns profile info as object
+ *
+*/
+ removeScheduledItems = async ()=>{
+ return await this.app?.currentUser?.functions.DeleteFromAvailabilityCalendar(); 
+}
+
   /**
    *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
+   * @return object {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile}
    */
   loginAnonymously = async  ()=> {
+    try{
       const loginResult = await this.app?.logIn(Realm.Credentials.anonymous());
       console.log("loginAnonymously:",loginResult);
      // await this.getSiteData();
+  const site =   await this.getSiteData();
+      const schedule = await this.getScheduleItems(); 
+      let reservations = null;
+      let profile = null; 
 
-      //this.logOut();
-      return loginResult;
+      if(this.app.currentUser?.customData?.email){
+       reservations = await this.getReservations(); 
+
+       profile = this.app.currentUser.customData;
+      }
+//console.log({user: this.anonUser, site:this.site, schedule:this.schedule});
+      return {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile};
+    }catch(error){
+        return{error:error.message};
+    }
+    
 }
+
+
 
   /**
    *  login with the provided Login Credentials.  After loggin in , set Profile and Reservations
@@ -50,7 +110,22 @@ console.log(credentials)
     //tell store that a login is being attempted
    //dispatch(login('Attempting to login'));
    const loginResult =  await this.app.logIn(Realm.Credentials.emailPassword(credentials.email, credentials.password));
-   return loginResult;
+ const cookies = new Cookies();
+ //const token = cookies.set('alchemeia');
+ cookies.set('alchemeia', loginResult.accessToken, { path: '/', httpOnly:false, maxAge:60000*10 });
+ const site =   await this.getSiteData();
+      const schedule = await this.getScheduleItems(); 
+      let reservations = null;
+      let profile = null; 
+
+      if(this.app.currentUser?.customData?.email){
+       reservations = await this.getReservations(); 
+
+       profile = this.app.currentUser.customData;
+      }
+    return {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile};
+
+
     } catch(err)
     {
       const msg = handleAuthenticationError(err);
@@ -60,12 +135,17 @@ console.log(credentials)
   }
  
 
-/**
+/*
  *  Logout current user, by clearing the CurrentUSer, Profile, and Reservations
  */
   logOut = async ()=> {
+    console.log('logging out?');
+
     // Log out the currently active user
     this.app?.currentUser?.logOut();
+     const cookies = new Cookies();
+  console.log('logging out:removing cookie',cookies.getAll());
+   cookies.remove('alchemeia');
   }
 
 
@@ -128,6 +208,23 @@ try {
 return prof;
 }
 
+/**
+ * Edit Profile of registered user.
+ * 
+ * @param profileObj: 
+ * 
+ */
+ editProfile = async (profileObj)=> {
+  
+     let prof = null;
+     try{
+     prof = await this.app?.currentUser?.functions?.EditProfile(profileObj);
+    }catch(error){
+      console.log(error);
+       return {error:error.message};
+    }
+return prof;
+}
 
 
 
@@ -135,7 +232,7 @@ return prof;
  * Read Site Data: If user object has the *?.functions* variable available
  *   then retrieve the Site Data, otherwise anonymously login first for access 
  *   to backend functions.
- *  @return site =  {pageData:HOME_PAGE_DEFAULT, cardData:TIERS};
+ *  @return {object} site -  {pageData:HOME_PAGE_DEFAULT, cardData:TIERS};
  */
   getSiteData = async ()=> {
  
@@ -197,15 +294,19 @@ this.setSiteData({screen:'home_general',pageData:newPageData.pageData, contactDa
     const newReservation = {...reservation, dateAdded :(new Date()), userid:this.app.currentUser?.id };
    const result = await this.app.currentUser?.functions.InsertReservation(newReservation);
 
-//dispatch(createAction('SENDING_EMAIL/SMS_NOTIFICATION')())
-init(process.env.REACT_APP_EMAILJS_USERID);
-const message = `Reservation requested from (${newReservation.firstName} ${newReservation.lastName}). Contact Info:${newReservation.phone}, ${newReservation.email}`;
- const emailTemplate  = 
- {to_name:'Awan', from_name:'8Angels Transportation Email Notifier',
-  message:message};
+//allow env variable to prevent email/text notifications
+if(!process.env.REACT_APP_BLOCK_NOTIFY_ON_RESERVE){
+    //dispatch(createAction('SENDING_EMAIL/SMS_NOTIFICATION')())
+    init(process.env.REACT_APP_EMAILJS_USERID);
+    const message = `Reservation requested from (${newReservation.firstName} ${newReservation.lastName}). Contact Info:${newReservation.phone}, ${newReservation.email}`;
+     const emailTemplate  = 
+     {to_name:'Awan', from_name:'8Angels Transportation Email Notifier',
+      message:message};
 
-const emailResult = await emailjs.send(process.env.REACT_APP_SERVICEID, process.env.REACT_APP_EMAILJS_TEMPLATEID, emailTemplate, process.env.REACT_APP_EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
-console.log("Notification Result",emailResult);
+
+    const emailResult = await emailjs.send(process.env.REACT_APP_SERVICEID, process.env.REACT_APP_EMAILJS_TEMPLATEID, emailTemplate, process.env.REACT_APP_EMAILJS_USERID).then((result)=>console.log('Notification Success', result),(error)=>console.log('Notification Error', error));
+    console.log("Notification Result",emailResult);
+    }
  return result;
 }
 

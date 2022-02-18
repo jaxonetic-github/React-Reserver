@@ -43,7 +43,7 @@ const app={
   }
 }
 
-export const appDAO={
+const appDAO={
       
       refreshCustomData:(()=>({firstName:'first', email:'first@test.com', lastName:'test'  })),
       logIn:(()=>true),
@@ -61,7 +61,7 @@ export const appDAO={
  *   @type {string}
  *   @default
  */
-export const INITIAL_STATE_FULL={
+export const INITIAL_STATE={
   auth:{loginState :{isLoggedIn:false, isLoggingIn:false},
             backEnd:{}
        },
@@ -88,10 +88,9 @@ export const INITIAL_STATE_EMPTY={
   profile:null,
   siteData:null,
   settings:{notifyAfterReservation:false},
-  error:''
+  error:'Initial Empty State'
 };
 
-export const INITIAL_STATE = /*process.env.NODE_ENV=='test'? INITIAL_STATE_FULL: */INITIAL_STATE_FULL;
 
 
 /******************    ARIA Labels   *************/
@@ -126,26 +125,26 @@ export const CONTACTINFO =  {
 
     price: '15',
     description: [
-      'Driver:            Mr Awan Kur',
-      'Phone :           480-809-7897',
-      'Email :      kurawan@yahoo.com',
+      'Driver:            Alora Cohen',
+      'Phone :           520-000-0000',
+      'Email :      aloracohen@yahoo.com',
       'Or click below  to get started',     ],
-      imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/c46c8c01d73d95464eb3931cb4f93fc1c5c2e6bd/public/driver1.jpeg',
+      imageURL: 'https://instagram.fphx1-2.fna.fbcdn.net/v/t51.2885-19/s150x150/226645404_514622019831148_3353726531057499936_n.jpg?_nc_ht=instagram.fphx1-2.fna.fbcdn.net&_nc_cat=104&_nc_ohc=yVVkUhT2_eMAX9dolJi&edm=AEoLEWgBAAAA&ccb=7-4&oh=49c70ded0c052c15e09d7c578f40ab5e&oe=61BD9718&_nc_sid=eabaf6',
     buttonText: 'Get started',
     buttonVariant: 'contained',
   };
 
 export const TIERS = [
   {
-    title: 'Features',
+    title: 'Massage',
     price: 'For your Comfort and Protection',
     description: [
-      'Seats upto 8 Passengers',
-      'No smoking or Pets',
-      'camera in vehicle',
+      'Cupping',
+      'Tai Massage',
+      'Full or Partial Massage',
       'hand sanitizers and wipes',
     ],
-     imageURL: 'https://raw.githubusercontent.com/jaxonetic-github/React-Reserver/3f90afcd4efbb7e8a62559deaf8162e7bcdba2b8/public/banner_inside_carview.jpeg',
+     imageURL: 'https://instagram.fphx1-1.fna.fbcdn.net/v/t51.2885-15/e35/p1080x1080/217278443_267284748501693_421826271010334924_n.jpg?_nc_ht=instagram.fphx1-1.fna.fbcdn.net&_nc_cat=109&_nc_ohc=lkzL5Ic-xGYAX_Qd_gW&edm=APU89FABAAAA&ccb=7-4&oh=00_AT9oMY3usJg7o_4dBxwxY9RON92DfT5Dmaxk7G9CrRTLGg&oe=61BD5086&_nc_sid=86f79a',
   },
  
   {
@@ -162,11 +161,11 @@ export const TIERS = [
   },
 ]
 
-export const HOME_BANNER_URL = 'https://picsum.photos/id/1018/1000/600/';
-
-export const COMPANY_NAME = '8Angels AK OK Transportation';
+export const COMPANY_NAME = 'Alchemeia';
+export const HOME_BANNER_URL = 'https://instagram.fphx1-2.fna.fbcdn.net/v/t51.2885-15/e35/211493852_1515322732138516_6545539816536996866_n.jpg?_nc_ht=instagram.fphx1-2.fna.fbcdn.net&_nc_cat=104&_nc_ohc=naMzpoWL_vcAX_Qd7eT&edm=APU89FABAAAA&ccb=7-4&oh=d85cf58ed87659d2c7cf801501da532f&oe=61BD9AF4&_nc_sid=86f79a';
 export const APPBAR_INITIAL_HEIGHT = 64;
-export const APPBAR_INITIAL_COLOR = '#605757';
+export const APPBAR_INITIAL_COLOR = 'transparent';
+
 /*********************  fee structue used by Review screen to display to user  ******/
 export const FEE_FORMULA = [
   {

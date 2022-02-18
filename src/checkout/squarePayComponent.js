@@ -11,7 +11,8 @@ import  {SquarePaymentsForm,  CreditCardInput} from 'react-square-web-payments-s
  * 
  */
 const SquarePaymentForm = ({handleSuccess}) => (
-  <SquarePaymentsForm
+  <SquarePaymentsForm inputProps={{ 'aria-label': 'SquarePay' }}
+  aria-label="SquarePay" data-testid="SquarePay"
     /**
      * Identifies the calling form with a verified application ID
      * generated from the Square Application Dashboard.
@@ -48,7 +49,7 @@ const SquarePaymentForm = ({handleSuccess}) => (
      */
     locationId={process.env.REACT_APP_SQUARE_LOCATIONID}
   >
-    <CreditCardInput />
+    <CreditCardInput aria-label="SquarePay" data-testid="SquarePay"/>
   </SquarePaymentsForm>
 );
 

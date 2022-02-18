@@ -1,6 +1,6 @@
 import  React , {useState} from 'react';
 
-import { useSelector } from 'react-redux'
+import {  useSelector, useDispatch } from 'react-redux';
 //import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -21,18 +21,20 @@ import InfoCards from './InfoCards'
 import ContactCard from './ContactCard'
 //import { useRealmApp } from "../RealmApp";
 //import { useLocation } from 'react-router-dom';
-
+import {editSiteData} from '../redux/reducers/appReducer';
 import {  isAdminSelector} from '../constants';
 //import { createBrowserHistory } from 'history';
-const selectSiteData = state => state.siteData.pageData;
+const selectSiteData = state => state?.siteData?.pageData;
 //const selectAuthedUserDataState = state => state?.app?.currentUser?.customData;
 /**
  * @description General Info, is the home page.  If User is Admin then 
  *      a special "admin" menu is available allowing the user to change text
  */
 function GeneralInfo({siteData}) {
-
+console.log('GeneralInfo sitedata params',siteData);
 //const location = useLocation();
+  const  dispatch = useDispatch();
+
 const getSiteData = useSelector(selectSiteData)
 const getIsAdmin = useSelector(isAdminSelector)
   const app  = {};
@@ -42,26 +44,23 @@ const getIsAdmin = useSelector(isAdminSelector)
   const [editable, setEditableMode] = useState(getIsAdmin);
 
   //const [error, setError] = useState();
-  const [title, setTitle] = useState(app?.siteData?.pageData?.title);
+  const [title, setTitle] = useState(getSiteData?.title);
   const [reservationButton, setReservationButton] = useState(app?.siteData?.pageData?.reservationButton);
-  const [subtitle, setSubTitle] = useState(app?.siteData?.pageData?.subtitle);
+  const [subtitle, setSubTitle] = useState(getSiteData?.subtitle);
   const [paragraph1, setParagraph1] = useState(getSiteData?.paragraphs[0]);
   const [paragraph2, setParagraph2] = useState(getSiteData?.paragraphs[1]);
   const [drawerState, setDrawerState] = React.useState(false);
  //   const authedUserSelector = useSelector(selectAuthedUserDataState);
  // const [authedUser, setAuthedUser] = useState(authedUserSelector?.email!==undefined);
 
-
    React.useEffect(() => {
-/*
-     setTitle(app?.siteData?.pageData?.title );
-    setReservationButton(app?.siteData?.pageData?.reservationButton);
-    setSubTitle(app?.siteData?.pageData?.subtitle);
-    setParagraph1(app?.siteData?.pageData?.paragraphs[0]);
-    setParagraph2(app?.siteData?.pageData?.paragraphs[1]);*/
-console.log('history',getSiteData)
+    setReservationButton(getSiteData?.reservationButton);
+    setSubTitle( getSiteData?.subtitle)
+    setParagraph1(getSiteData?.paragraphs[0]);
+    setParagraph2( getSiteData?.paragraphs[1]);
+    setTitle(getSiteData?.title)
     setEditableMode(getIsAdmin);
-  },[getIsAdmin, getSiteData]);  
+  },[getSiteData?.title,getSiteData?.subtitle, getSiteData?.paragraphs[0],getSiteData?.paragraphs[1], getIsAdmin]);  
   
 
   const toggleDrawer = (event) => {
@@ -82,63 +81,44 @@ console.log('history',getSiteData)
       try {   
        const obj = {title, subtitle, reservationButton,paragraphs: [paragraph1, paragraph2]};
        const cardData = {pageData:obj,cardData:app?.siteData?.cardData };
-       app?.editHomeData(cardData);
-
+       
+       dispatch(editSiteData(cardData));
     } catch (err) {
      console.log(err)
   }
-  //window.location.reload(true);
 }
 
 
 
   return (
     <React.Fragment>
-      <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
-      <CssBaseline />
+
       <Container disableGutters maxWidth="sm" component="main" sx={{ pt: 8, pb: 6 }}>
+
 {AdminDrawerMenu(toggleDrawer,handleSave, drawerState,editable,setEditMode, edit)}
 
           {edit  ? <Box> <label>Replace title with::</label><Input   id="subTitle-replacement"
-                  label="Replacetitle"
-                  name="Replacetitle"
-                  onChange={(event)=>{console.log(event.target.value); setTitle(event.target.value)}}
-
-                  value={title}
-                  placeholder='Enter Title text'
-                /></Box>
-         :<Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>
-          {title} </Typography>}
+                  label="Replacetitle" name="Replacetitle" value={title} placeholder='Enter Title text' onChange={(event)=>{console.log(event.target.value); setTitle(event.target.value)}}/> </Box>
+                  :<Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>{title} </Typography>}
           {edit ? <Box> <label>Replace Subtitle With::</label><Input   id="subTitle-replacement"
-                  label="ReplaceSubtitle"
-                  name="ReplaceSubtitle"
-                  onChange={(event)=>setSubTitle(event.target.value)}
-                  value={subtitle}
-                  placeholder='Enter Button Text'
-                /></Box>:
-        <Typography variant="h5" align="center" color="text.secondary" component="p">
-          {subtitle}</Typography>}
+                  label="ReplaceSubtitle" name="ReplaceSubtitle" value={subtitle} placeholder='Enter Button Text' /></Box>
+                  :<Typography variant="h5" align="center" color="text.secondary" component="p">{subtitle}</Typography>}
         
         <Box>{edit && <label>Replace 1st Paragraph Text::</label>}
-        <Typography onChange={(event)=>setParagraph1(event.target.value)}  component={edit ? "textarea" :'div'}>{paragraph1}</Typography>
+          <Typography onChange={(event)=>setParagraph1(event.target.value)}  component={edit ? "textarea" :'div'}>{paragraph1}</Typography>
         </Box>
-         <Box>{edit && <label>Paragraph 2 Replacement Text::</label>} <Typography onChange={(event)=>setParagraph2(event.target.value)}
- component={edit ? "textarea" :'div'}   >{paragraph2}</Typography>
+         <Box>{edit && <label>Paragraph 2 Replacement Text::</label>} 
+          <Typography onChange={(event)=>setParagraph2(event.target.value)} component={edit ? "textarea" :'div'}   >{paragraph2}</Typography>
          </Box>
          <Typography>  </Typography>
           <Typography>  </Typography>
-          {edit ? <Box>
-        <label>Replace ButtonText::</label>
-         <Input   id="makeReservation"
-                  label="Make Reservation"
-                  onChange={(event)=>setReservationButton(event.target.value)}
-                  name="makeReservation"
-                  value={reservationButton}
-                  placeholder='Enter Button Text'
-                /></Box>: <Button variant='outlined' fullWidth size="large" onClick={()=>navigate('/checkout')}  sx={{ mt: 2 , color:'605757'}}>{reservationButton}<AirportShuttleIcon/></Button>}
+          {edit ? <Box><label>Replace ButtonText::</label>
+                    <Input id="makeReservation" label="Make Reservation" onChange={(event)=>setReservationButton(event.target.value)} name="makeReservation" value={reservationButton} placeholder='Enter Button Text'/>
+                  </Box>
+                : <Button variant='outlined' fullWidth size="large" onClick={()=>navigate('/checkout')}  sx={{ mt: 2 , color:'605757'}}>{reservationButton}<AirportShuttleIcon/></Button>}
           
          <Typography> </Typography>
-         <Typography> </Typography>
+         <Typography></Typography>
           <InfoCards /> 
           <ContactCard />       
       </Container>

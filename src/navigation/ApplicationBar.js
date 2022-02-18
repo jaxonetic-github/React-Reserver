@@ -17,14 +17,13 @@ import Menu from '@mui/material/Menu';
 import {logout} from '../redux/reducers/appReducer'
 
 import { useNavigate,useLocation} from "react-router-dom";
-//import {  isAdminSelector} from '../constants';
 
 const selectAuthedUserDataState = state => state?.profile;
 //const selectProfile = state=>state?.profile;
 /**
- * @description Main Application Bar with menus
+ * @description Main Application Bar with menus, title and  greeting tologged in users
  */
-function ApplicationBar() {
+function ApplicationBar({companyTitle, barColor, barHeight}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authedUserSelector = useSelector(selectAuthedUserDataState);
@@ -44,14 +43,12 @@ const location = useLocation();
   React.useEffect(() => {
     console.log('Applicatin Bar location change? ',location)
 
-     if(!hasProfileSelector) navigate("/");
-  },[hasProfileSelector, navigate, location]);
+  },[hasProfileSelector, navigate, location, ]);
 
    
   return (
-    <Box sx={{ flexGrow: 1 }}>
  
-      <AppBar position="fixed"  sx={{  bgcolor: '#605757' }}>
+      <AppBar  sx={{  bgcolor: barColor, minHeight:0, height:barHeight, color:'black' }}>
         <Toolbar >
         <Grid container spacing={3}>
   <Grid item xs={1}>
@@ -59,7 +56,7 @@ const location = useLocation();
             size="large"
             edge="start"
             aria-label="menu"
-            sx={{ mr: 4, color:'white' }}
+            sx={{ mr: 4,  }}
             onClick={handleMenu}
           >
             <MenuIcon />
@@ -73,7 +70,7 @@ const location = useLocation();
           gutterBottom
           sx={{fontFamily: "cursive",fontWeight: 650}}
          >
-            8Angels Transportation
+            {companyTitle}
           </Typography>
           </Box>
           
@@ -121,10 +118,10 @@ const location = useLocation();
                
               </Menu>
       }
-         {hasProfileSelector? `Hello,${authedUserSelector?.firstName}` : ''}
+         {hasProfileSelector? `Hello,${authedUserSelector?.firstname}` : ''}
         </Toolbar>
       </AppBar>
-    </Box>
+   
   );
 }
 
