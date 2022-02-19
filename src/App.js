@@ -1,6 +1,6 @@
 import React from "react";
 import MainComponent from "./home/MainComponent.js";
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 import GeneralInfo from './home/GeneralInfo';
 import Reservations from './checkout/Reservations';
 import Checkout from './checkout/Checkout';
