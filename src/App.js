@@ -1,13 +1,13 @@
 import React from "react";
 import MainComponent from "./home/MainComponent.js";
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {HashRouter as Router, Routes, Route} from 'react-router-dom';
 import GeneralInfo from './home/GeneralInfo';
 import Reservations from './checkout/Reservations';
 import Checkout from './checkout/Checkout';
 import Profile from './profile/Profile';
 import SignIn from './signinup/Signin';
 import SignUp from './signinup/Signup';
-import AppointmentHome from './home/appointmentHome.js';
+
 import {HOME_BANNER_URL, COMPANY_NAME} from './constants.js'
 //import { useIdleTimer } from 'react-idle-timer';
 import FullScreenAgendaDialog from './calendars/fullScreenAgendaDialog.js'

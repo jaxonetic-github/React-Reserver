@@ -6,9 +6,9 @@ name: CI - Build, Test, Deploy to gh-pages
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ hashrouter ]
   pull_request:
-    branches: [ main ]
+    branches: [ hashrouter ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

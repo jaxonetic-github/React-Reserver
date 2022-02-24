@@ -39,7 +39,7 @@ function Reservations({bgColor}) {
    const loginSuccessful = useSelector((state)=>state.profile);
 
      React.useEffect(() => {
-        if((process.env.NODE_ENV!='test') && !loginSuccessful)
+        if((process.env.NODE_ENV!=='test') && !loginSuccessful)
           {console.log('An attempt to view Reservations from an Unauthorized User has been flagged; so, forcing home redirect.');  navigate('/');}  
       },[loginSuccessful, navigate]);
 
