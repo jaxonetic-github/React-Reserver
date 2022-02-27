@@ -68,18 +68,18 @@ test('Checkout advances to Review if all fields are valid', async () => {
    userEvent.type(lastName, profile.lastname);
 
    userEvent.type(pickUpLocation, '123 pickup st');
-   var typedElem = screen.getByText('Create "123 pickup st"');
+   //var typedElem = screen.getByText('Create "123 pickup st"');
    
-   userEvent.click(typedElem);//userEvent.type(lastName, profile.lastname);
-  const pickupElem = screen.getByText("123 pickup st");
+ //  userEvent.click(typedElem);//userEvent.type(lastName, profile.lastname);
+ // const pickupElem = screen.getByText("123 pickup st");
 //console.log('pickupElem',pickupElem)
    //userEvent.click(pickUpDate);
   
    userEvent.type(dropOffLocation, '123 dropoff street');
-   const typedDropoffElem = screen.getByText('Create "123 dropoff street"');
-     userEvent.click(typedDropoffElem);//userEvent.type(lastName, profile.lastname);
+ //  const typedDropoffElem = screen.getByText('Create "123 dropoff street"');
+  //   userEvent.click(typedDropoffElem);//userEvent.type(lastName, profile.lastname);
 
-  const dropOffElem = screen.getByText("123 dropoff street");
+  //const dropOffElem = screen.getByText("123 dropoff street");
 
    //userEvent.type(pickUpLocation, '123 pickup st');
 
@@ -90,7 +90,7 @@ test('Checkout advances to Review if all fields are valid', async () => {
 //console.log(tst);
 
 //userEvent.click(pickUpLocation);
-  const week = await screen.getByText('View Availability');
+//  const week = await screen.getByText('View Availability');
  // userEvent.selectOptions(pickUpLocation,locations[0].value);
 //console.log(pickupElem.value,'next click error',dropOffElem.value);
   const pickUpDate = screen.getByLabelText(PickUpDateAriaLabel['aria-label']);
