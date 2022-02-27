@@ -79,15 +79,6 @@ test('Checkout advances to Review if all fields are valid', async () => {
  //  const typedDropoffElem = screen.getByText('Create "123 dropoff street"');
   //   userEvent.click(typedDropoffElem);//userEvent.type(lastName, profile.lastname);
 
-  //const dropOffElem = screen.getByText("123 dropoff street");
-
-   //userEvent.type(pickUpLocation, '123 pickup st');
-
-  // userEvent.type(lastName, profile.lastname);
-   // userEvent.clear(phone);
-   // userEvent.type(phone, profile.phone);
-//const tst = screen.getAllByRole('option');
-//console.log(tst);
 
 //userEvent.click(pickUpLocation);
 //  const week = await screen.getByText('View Availability');

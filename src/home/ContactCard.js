@@ -76,7 +76,7 @@ const [displayData, setDisplayData] = useState(componentData);
             <Grid item key={componentData?.title} xs={12} sm={12} md={12}>
               <Card><img src={componentData?.imageURL}  className="driver1-image" alt="logo" />
                 <CardHeader
-                  title={componentData?.title+'hjbghjgj'}
+                  title={componentData?.title}
                   subheader={componentData?.subheader}
                   titleTypographyProps={{ align: 'center' }}
                   action={componentData?.title === 'Pro' ? <StarIcon /> : null}
