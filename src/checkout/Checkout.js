@@ -12,7 +12,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 // import { createTheme, ThemeProvider } from '@mui/material/styles';
-import SetAppointmentFragment from './setAppointmentFragment';
+import ItineraryFragment from './ItineraryFragment.js';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import AgreementForm from './AgreementForm';
@@ -108,7 +108,7 @@ function getStepContent(step) {
   switch (step) {
     case 0:
    // console.log("checkout.getStepContent before ItineraryFragment-->",firstName,lastName,email,phone);
-      return <SetAppointmentFragment  onChange={(event)=>onChange(event)}/>;
+      return <ItineraryFragment  onChange={(event)=>onChange(event)}/>;
     case 1:
       return <AgreementForm onChange={onChange} />;
     case 2:

@@ -25,8 +25,11 @@ this.app = new Realm.App(demoAppId);
 */
  refreshCustomData = async ()=>{
  await this.app?.currentUser?.refreshCustomData(); 
- return this.app?.currentUser?.customData;
-}
+return {firstname:(this.app?.currentUser?.customData.firstname||this.app?.currentUser?.customData.firstName), 
+        lastname:(this.app?.currentUser?.customData.lastname||this.app?.currentUser?.customData.lastName),
+        phone:this.app?.currentUser?.customData.phone,
+        email:this.app?.currentUser?.customData.email}
+    }
    
 
 /**
@@ -121,8 +124,10 @@ console.log(credentials)
       if(this.app.currentUser?.customData?.email){
        reservations = await this.getReservations(); 
 
-       profile = this.app.currentUser.customData;
-      }
+profile = {firstname:(this.app?.currentUser?.customData.firstname||this.app?.currentUser?.customData.firstName), 
+        lastname:(this.app?.currentUser?.customData.lastname||this.app?.currentUser?.customData.lastName),
+        phone:this.app?.currentUser?.customData.phone,
+        email:this.app?.currentUser?.customData.email};      }
     return {user: loginResult, site:site, schedule:schedule, reservations:reservations, profile:profile};
 
 
@@ -169,7 +174,7 @@ console.log(credentials)
          //add CustomData
          await this.app?.currentUser?.functions?.AddUserData({...registerData, userid:this.app?.currentUser?.id});
     
-          return  this.reloadCustomData();
+          return  this.refreshCustomData();
 
     }catch(err1){console.log("errer adding userdata",err1)}
        // const prof = await newUser.functions.GetUserData(newUser.id);

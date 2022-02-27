@@ -25,7 +25,7 @@ import FullScreenAgendaDialog from './calendars/fullScreenAgendaDialog.js'
  */
 function App() {
 console.log(process.env.REACT_APP_WEBPATH,',',process.env.PUBLIC_URL)
-  const bgColor = 'silver';// 'cadetblue';
+  const bgColor = 'transparent';
   return (
     <Router basename='/' >
     <Routes >

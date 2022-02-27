@@ -166,7 +166,7 @@ export const HOME_BANNER_URL = 'https://picsum.photos/id/1018/1000/600/';
 
 export const COMPANY_NAME = '8Angels AK OK Transportation';
 export const APPBAR_INITIAL_HEIGHT = 64;
-export const APPBAR_INITIAL_COLOR = '#605757';
+export const APPBAR_INITIAL_COLOR = '#ffffff';//'#605757';
 /*********************  fee structue used by Review screen to display to user  ******/
 export const FEE_FORMULA = [
   {
